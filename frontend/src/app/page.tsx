@@ -28,8 +28,8 @@ export default function Home() {
             <Link href="/panels" className="bg-white text-orange-600 px-8 py-4 rounded-2xl text-lg font-black flex items-center justify-center gap-3 transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-105">
               <FaUsers className="text-xl" /> <TranslatedText>Panelleri Görüntüle</TranslatedText>
             </Link>
-            <Link href="#pricing" className="bg-orange-700 hover:bg-orange-800 text-white px-8 py-4 rounded-2xl text-lg font-black transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-105">
-              <FaRocket className="inline mr-3 text-xl" /> <TranslatedText>14 Gün Ücretsiz Deneyin</TranslatedText>
+            <Link href="/panels" className="bg-orange-700 hover:bg-orange-800 text-white px-8 py-4 rounded-2xl text-lg font-black transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-105">
+              <FaRocket className="inline mr-3 text-xl" /> <TranslatedText>Demo İncele</TranslatedText>
             </Link>
           </div>
         </div>
@@ -181,113 +181,6 @@ export default function Home() {
               <FaUsers className="inline mr-2" />
               Panelleri Görüntüle
             </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section className="py-20 bg-white" id="pricing">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-6">Fiyatlandırma</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-              14 gün ücretsiz deneme, 30 gün iade garantisi ve uzun süreli paketlerde büyük indirimler!
-            </p>
-            <div className="inline-flex items-center bg-green-100 text-green-800 px-6 py-3 rounded-full font-semibold">
-              <FaRocket className="mr-2" />
-              Yıllık planlar %20 daha avantajlı!
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {/* Premium Paket - En Popüler */}
-            <div className="bg-white rounded-3xl shadow-2xl border-2 border-orange-400 p-10 text-center relative transform scale-105">
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                <span className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-3 rounded-full text-lg font-bold shadow-lg">
-                  🔥 EN POPÜLER
-                </span>
-              </div>
-              <h3 className="text-3xl font-bold text-gray-900 mb-6 mt-4">Premium Paket</h3>
-              <div className="mb-8">
-                <div className="text-5xl font-black text-orange-600 mb-4">₺4.980<span className="text-xl text-gray-500">/ay</span></div>
-                <div className="space-y-3">
-                  <div className="bg-red-100 text-red-800 px-4 py-2 rounded-full text-base font-bold inline-block">6 Ay: ₺24.900 (%17 İndirim)</div>
-                  <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-base font-bold inline-block ml-2">Yıllık: ₺47.900 (%20 İndirim)</div>
-                </div>
-              </div>
-              <ul className="text-left space-y-4 mb-10 text-base">
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-3 text-lg" /> QR Menü & Sipariş Sistemi</li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-3 text-lg" /> AI Menü Optimizasyonu</li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-3 text-lg" /> Tüm Panel Erişimi</li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-3 text-lg" /> Gelişmiş Analitik</li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-3 text-lg" /> Öncelikli Destek</li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-3 text-lg" /> Ücretsiz Kurulum</li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-3 text-lg" /> SSL Güvenlik</li>
-              </ul>
-              <a href="https://wa.me/905393222797?text=Premium%20paket%20hakkında%20bilgi%20almak%20istiyorum" target="_blank" className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-4 rounded-2xl text-xl font-bold hover:from-orange-600 hover:to-red-600 transition-colors inline-block shadow-xl">
-                Premium Paketi Seç
-              </a>
-            </div>
-
-            {/* Kurumsal Paket */}
-            <div className="bg-white rounded-3xl shadow-xl border-2 border-purple-300 p-10 text-center relative">
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <span className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg">
-                  🏢 KURUMSAL
-                </span>
-              </div>
-              <h3 className="text-3xl font-bold text-gray-900 mb-6 mt-4">Kurumsal Paket</h3>
-              <p className="text-lg text-purple-600 mb-6 font-semibold">Büyük işletmeler ve zincirler için</p>
-              <div className="mb-8">
-                <div className="text-5xl font-black text-purple-600 mb-4">₺9.980<span className="text-xl text-gray-500">/ay</span></div>
-                <div className="space-y-3">
-                  <div className="bg-red-100 text-red-800 px-4 py-2 rounded-full text-base font-bold inline-block">6 Ay: ₺49.900 (%17 İndirim)</div>
-                  <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-base font-bold inline-block ml-2">Yıllık: ₺95.900 (%20 İndirim)</div>
-                </div>
-              </div>
-              <ul className="text-left space-y-4 mb-10 text-base">
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-3 text-lg" /> Özel Menü & Logo Entegrasyonu</li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-3 text-lg" /> Sınırsız Kullanıcı (Tüm Paneller)</li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-3 text-lg" /> Çoklu Şube Yönetimi</li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-3 text-lg" /> API Entegrasyonları</li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-3 text-lg" /> 7/24 Telefon Desteği</li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-3 text-lg" /> Beyaz Etiket Çözümü</li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-3 text-lg" /> Özel Eğitim & Kurulum</li>
-              </ul>
-              <a href="https://wa.me/905393222797?text=Kurumsal%20paket%20hakkında%20bilgi%20almak%20istiyorum" target="_blank" className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 rounded-2xl text-xl font-bold hover:from-purple-700 hover:to-pink-700 transition-colors inline-block shadow-xl">
-                Kurumsal Çözüm Al
-              </a>
-            </div>
-          </div>
-          
-          {/* Güven Unsurları */}
-          <div className="mt-16 text-center">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
-              <div className="flex flex-col items-center">
-                <FaRocket className="text-3xl text-green-500 mb-2" />
-                <p className="font-semibold text-gray-900">14 Gün Ücretsiz</p>
-                <p className="text-sm text-gray-600">Deneme Süresi</p>
-          </div>
-              <div className="flex flex-col items-center">
-                <FaShieldAlt className="text-3xl text-blue-500 mb-2" />
-                <p className="font-semibold text-gray-900">30 Gün İade</p>
-                <p className="text-sm text-gray-600">Garantisi</p>
-        </div>
-              <div className="flex flex-col items-center">
-                <FaCheckCircle className="text-3xl text-purple-500 mb-2" />
-                <p className="font-semibold text-gray-900">SSL Güvenlik</p>
-                <p className="text-sm text-gray-600">Sertifikası</p>
-          </div>
-              <div className="flex flex-col items-center">
-                <FaUsers className="text-3xl text-orange-500 mb-2" />
-                <p className="font-semibold text-gray-900">Ücretsiz Kurulum</p>
-                <p className="text-sm text-gray-600">6+ Ay Planlar</p>
-            </div>
-            </div>
-            <p className="text-sm text-gray-500 mt-6 max-w-2xl mx-auto">
-              * Kurulum yapıldıktan sonra iptal durumunda sadece kurulum ücreti alınır. 
-              Tüm planlar SSL güvenlik sertifikası ile korunmaktadır.
-            </p>
           </div>
         </div>
       </section>
@@ -477,8 +370,8 @@ export default function Home() {
             <a href="tel:+905393222797" className="bg-white text-orange-600 px-10 py-5 rounded-2xl text-xl font-black flex items-center justify-center gap-3 transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-105">
               <FaPhone className="text-2xl" /> Hemen Bizi Arayın
             </a>
-            <Link href="#pricing" className="bg-orange-700 hover:bg-orange-800 text-white px-10 py-5 rounded-2xl text-xl font-black transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-105">
-              <FaRocket className="inline mr-3 text-2xl" /> 14 Gün Ücretsiz Deneyin
+            <Link href="/panels" className="bg-orange-700 hover:bg-orange-800 text-white px-10 py-5 rounded-2xl text-xl font-black transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-105">
+              <FaRocket className="inline mr-3 text-2xl" /> Demo İncele
             </Link>
           </div>
         </div>
