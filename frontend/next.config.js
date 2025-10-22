@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export', // Re-enabled for Netlify static hosting
   trailingSlash: true,
   typescript: {
     ignoreBuildErrors: true,
