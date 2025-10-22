@@ -356,8 +356,8 @@ export default function PanelsPage() {
               <TranslatedText>restXqr panellerini 14 gün ücretsiz deneyin ve restoranınızın verimliliğini artırın.</TranslatedText>
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-6">
-              <Link href="#pricing" className="bg-white text-orange-600 px-8 py-4 rounded-2xl text-lg font-bold hover:bg-orange-50 transition-colors">
-                <TranslatedText>Ücretsiz Deneme Başlat</TranslatedText>
+              <Link href="/menu" className="bg-white text-orange-600 px-8 py-4 rounded-2xl text-lg font-bold hover:bg-orange-50 transition-colors">
+                <TranslatedText>Menüyü İncele</TranslatedText>
               </Link>
               <a href="tel:+905393222797" className="bg-orange-700 hover:bg-orange-800 text-white px-8 py-4 rounded-2xl text-lg font-bold transition-colors">
                 <TranslatedText>Hemen Arayın</TranslatedText>

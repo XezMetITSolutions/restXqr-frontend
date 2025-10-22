@@ -881,56 +881,13 @@ export default function BusinessDashboard() {
                       </div>
                     </div>
                     
-                    {/* Fiyatlandırma Seçenekleri */}
+                    {/* Ödeme Bilgileri */}
                     <div className="bg-white rounded-lg p-4 mb-4">
-                      <h6 className="font-semibold text-gray-800 mb-3 text-sm">Fiyatlandırma Seçenekleri</h6>
-                      <div className="space-y-2">
-                        <button
-                          onClick={() => setCorporateBillingCycle('monthly')}
-                          className={`w-full p-3 rounded-lg border-2 text-left transition-all ${
-                            corporateBillingCycle === 'monthly'
-                              ? 'border-purple-500 bg-purple-50'
-                              : 'border-gray-200 hover:border-purple-300'
-                          }`}
-                        >
-                          <div className="flex justify-between items-center">
-                            <span className="text-sm text-gray-600">Aylık</span>
-                            <span className="font-bold text-purple-800">₺9,980</span>
-                          </div>
-                    </button>
-                        <button
-                          onClick={() => setCorporateBillingCycle('sixMonths')}
-                          className={`w-full p-3 rounded-lg border-2 text-left transition-all ${
-                            corporateBillingCycle === 'sixMonths'
-                              ? 'border-purple-500 bg-purple-50'
-                              : 'border-gray-200 hover:border-purple-300'
-                          }`}
-                        >
-                          <div className="flex justify-between items-center">
-                            <span className="text-sm text-gray-600">6 Aylık (%17 İndirim)</span>
-                            <div className="text-right">
-                              <span className="font-bold text-purple-800">₺49,900</span>
-                              <div className="text-xs text-gray-500">8,320₺/ay</div>
-                  </div>
-                </div>
-                        </button>
-                        <button
-                          onClick={() => setCorporateBillingCycle('yearly')}
-                          className={`w-full p-3 rounded-lg border-2 text-left transition-all ${
-                            corporateBillingCycle === 'yearly'
-                              ? 'border-purple-500 bg-purple-50'
-                              : 'border-gray-200 hover:border-purple-300'
-                          }`}
-                        >
-                          <div className="flex justify-between items-center">
-                            <span className="text-sm text-gray-600">1 Yıllık (%20 İndirim)</span>
-                            <div className="text-right">
-                              <span className="font-bold text-purple-800">₺95,900</span>
-                              <div className="text-xs text-gray-500">7,990₺/ay</div>
-              </div>
-            </div>
-                        </button>
-          </div>
+                      <h6 className="font-semibold text-gray-800 mb-3 text-sm">Ödeme Bilgileri</h6>
+                      <p className="text-sm text-gray-600 mb-4">Ödeme bilgileriniz güvenli bir şekilde saklanmaktadır.</p>
+                      <a href="tel:+905393222797" className="inline-block bg-orange-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-orange-600 transition-colors">
+                        Hemen Arayın
+                      </a>
                     </div>
                     
                     <button
