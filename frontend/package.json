@@ -31,7 +31,6 @@
     "zustand": "^4.5.7"
   },
   "devDependencies": {
-    "@netlify/plugin-nextjs": "^4.41.3",
     "@types/testing-library__jest-dom": "^5.14.9",
     "autoprefixer": "^10.4.20",
     "eslint": "^8.57.0",

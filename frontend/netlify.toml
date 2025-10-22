@@ -5,6 +5,7 @@
 [build.environment]
   NODE_VERSION = "18"
   NEXT_PUBLIC_API_URL = "https://masapp-backend.onrender.com/api"
+  NETLIFY_NEXT_PLUGIN_SKIP = "true"
 
 # API routes için Netlify Functions
 [[redirects]]
