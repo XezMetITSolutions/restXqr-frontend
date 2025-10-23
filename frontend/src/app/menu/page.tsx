@@ -11,8 +11,7 @@ import MenuItemModal from '@/components/MenuItemModal';
 import { LanguageProvider, useLanguage } from '@/context/LanguageContext';
 import TranslatedText from '@/components/TranslatedText';
 import useBusinessSettingsStore from '@/store/useBusinessSettingsStore';
-import SetBrandColor from '@/components/SetBrandColor';
-import apiService from '@/services/api';
+import QuickServiceModal from '@/components/QuickServiceModal';
 
 function MenuPageContent() {
   // Store states
@@ -44,6 +43,7 @@ function MenuPageContent() {
   const { settings } = useBusinessSettingsStore();
   const [tokenValid, setTokenValid] = useState<boolean | null>(null);
   const [tokenMessage, setTokenMessage] = useState('');
+  const [isQuickServiceModalOpen, setIsQuickServiceModalOpen] = useState(false);
   const primary = settings.branding.primaryColor;
   const secondary = settings.branding.secondaryColor || settings.branding.primaryColor;
   
@@ -359,12 +359,6 @@ function MenuPageContent() {
                 <TranslatedText>Masa</TranslatedText> #{tableNumber}
               </div>
               )}
-              <Link 
-                href="/debug" 
-                className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200 ml-2"
-              >
-                🔍 Debug
-              </Link>
             </div>
           </div>
         </header>
@@ -568,10 +562,14 @@ function MenuPageContent() {
               </div>
               <span className="text-[10px]"><TranslatedText>Sepet</TranslatedText></span>
             </Link>
-            <Link href="/waiter" className="flex flex-col items-center" style={{ color: primary }}>
+            <button 
+              onClick={() => setIsQuickServiceModalOpen(true)}
+              className="flex flex-col items-center" 
+              style={{ color: primary }}
+            >
               <FaBell className="mb-0.5" size={16} />
               <span className="text-[10px]"><TranslatedText>Garson Çağır</TranslatedText></span>
-            </Link>
+            </button>
           </div>
         </nav>
       </main>
@@ -584,6 +582,12 @@ function MenuPageContent() {
           onClose={closeModal}
         />
       )}
+
+      {/* Quick Service Modal */}
+      <QuickServiceModal
+        isOpen={isQuickServiceModalOpen}
+        onClose={() => setIsQuickServiceModalOpen(false)}
+      />
     </>
   );
 }
