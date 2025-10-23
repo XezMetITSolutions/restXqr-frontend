@@ -67,10 +67,17 @@ function MenuPageContent() {
   useEffect(() => {
     setIsClient(true);
     
+    console.log('🔄 Menu page useEffect triggered');
+    console.log('🏪 Current restaurants:', restaurants.length);
+    console.log('📋 Current categories:', categories.length);
+    console.log('🍽️ Current menuItems:', menuItems.length);
+    
     // Load restaurants first
     fetchRestaurants().then(() => {
       const restaurant = getCurrentRestaurant();
+      console.log('🏪 Found restaurant:', restaurant);
       if (restaurant) {
+        console.log('🔄 Fetching menu for restaurant:', restaurant.id);
         fetchRestaurantMenu(restaurant.id);
       }
     });
@@ -212,9 +219,9 @@ function MenuPageContent() {
             placeholder={searchPlaceholder}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-          <FaFilter className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <FaFilter className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
           </div>
         </div>
@@ -298,8 +305,8 @@ function MenuPageContent() {
                         placeholder="blur"
                         blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
                         priority={false}
-          />
-        </div>
+                      />
+                    </div>
                     
                     <div className="flex-1 p-4">
                       <div className="flex justify-between items-start mb-2">
@@ -309,8 +316,8 @@ function MenuPageContent() {
                         <div className="flex items-center space-x-1">
                           <FaStar className="text-yellow-400" size={12} />
                           <span className="text-xs text-gray-600">4.5</span>
-                        </div>
-                      </div>
+                </div>
+                  </div>
                       
                       <p className="text-gray-600 text-xs mb-3 line-clamp-2">
                         {item.description}
@@ -319,140 +326,33 @@ function MenuPageContent() {
                       <div className="flex justify-between items-center">
                         <div className="text-lg font-bold" style={{ color: primary }}>
                           ₺{item.price}
-                        </div>
+                    </div>
                         
                         <div className="flex items-center space-x-2">
-                          <button
+                    <button
                             onClick={() => handleItemClick(item)}
                             className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
-                          >
+                    >
                             <FaInfo size={14} />
-                          </button>
+                    </button>
                           
-                          <button
+                    <button
                             onClick={() => handleAddToCart(item)}
                             className="p-2 rounded-full text-white transition-colors"
                             style={{ backgroundColor: primary }}
-                          >
+                    >
                             <FaPlus size={14} />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+                    </button>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Mobile Grid View */}
-        <div className="md:hidden">
-          <div className="px-4 py-6">
-          <div className="grid grid-cols-1 gap-3">
-              {finalFilteredItems.map((item: any) => (
-              <div key={item.id} className="bg-white rounded-lg shadow-sm border p-3 flex">
-
-                <div className="relative h-20 w-20 rounded-lg overflow-hidden bg-gray-200 flex-shrink-0">
-
-                  <Image
-                    src={item.imageUrl ? 
-                      (item.imageUrl.startsWith('http') ? 
-                        item.imageUrl : 
-                        `${process.env.NEXT_PUBLIC_API_URL}${item.imageUrl}`) 
-                      : '/placeholder-food.jpg'} 
-                    alt={typeof item.name === 'string' ? item.name : (item.name?.tr || item.name?.en || 'Menu item')} 
-                    width={80}
-                    height={80}
-                    className="object-cover w-full h-full rounded-lg"
-                    placeholder="blur"
-                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
-                    priority={false}
-                  />
-
-                  {item.isPopular && (
-
-                    <div className="absolute top-0 left-0 text-white text-xs px-1 py-0.5 rounded" style={{ backgroundColor: 'var(--brand-strong)' }}>
-
-                      <TranslatedText>Popüler</TranslatedText>
-
-                    </div>
-
-                  )}
-
-                </div>
-
-                <div className="flex-1 ml-3 flex flex-col justify-between">
-
-                  <div>
-
-                    <h3 className="font-semibold text-gray-800 text-sm mb-1">
-
-                      {typeof item.name === 'string' ? item.name : (item.name?.tr || item.name?.en || 'Menu item')}
-
-                    </h3>
-
-                    <p className="text-gray-600 text-xs mb-2 line-clamp-2">
-
-                    {typeof item.description === 'string' ? item.description : (item.description?.tr || item.description?.en || '')}
-
-                    </p>
-
-                    </div>
-
-                  <div className="flex justify-between items-center">
-
-                    <div className="text-lg font-bold" style={{ color: primary }}>
-
-                      ₺{item.price}
-
-                    </div>
-
-                    <div className="flex items-center space-x-2">
-
-                    <button
-
-                        onClick={() => handleItemClick(item)}
-
-                        className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
-
-                      >
-
-                        <FaInfo size={12} />
-
-                    </button>
-
-                    <button
-
-                        onClick={() => handleAddToCart(item)}
-
-                        className="p-2 rounded-full text-white transition-colors"
-
-                        style={{ backgroundColor: primary }}
-
-                      >
-
-                        <FaPlus size={12} />
-
-                    </button>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
               </div>
-
-            ))}
-
           </div>
-
         </div>
-
-        </div>
-
+              ))}
+              </div>
+              )}
           </div>
+        </div>
 
       {/* Modals */}
         <MenuItemModal
