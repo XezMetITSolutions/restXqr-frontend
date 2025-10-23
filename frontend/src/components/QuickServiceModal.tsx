@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { FaTimes, FaGlassWater, FaBroom, FaReceipt, FaUtensils, FaPaperPlane } from 'react-icons/fa';
+import { FaTimes, FaTint, FaBroom, FaReceipt, FaUtensils, FaPaperPlane } from 'react-icons/fa';
 import { useLanguage } from '@/context/LanguageContext';
 import TranslatedText from '@/components/TranslatedText';
 import useRestaurantStore from '@/store/useRestaurantStore';
@@ -10,9 +10,10 @@ import { useCartStore } from '@/store';
 interface QuickServiceModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onServiceCall?: (serviceType: string, customNote?: string) => void;
 }
 
-export default function QuickServiceModal({ isOpen, onClose }: QuickServiceModalProps) {
+export default function QuickServiceModal({ isOpen, onClose, onServiceCall }: QuickServiceModalProps) {
   const { currentLanguage } = useLanguage();
   const { restaurants } = useRestaurantStore();
   const tableNumber = useCartStore(state => state.tableNumber);
@@ -37,7 +38,7 @@ export default function QuickServiceModal({ isOpen, onClose }: QuickServiceModal
   const quickServices = [
     {
       id: 'water',
-      icon: FaGlassWater,
+      icon: FaTint,
       title: isTurkish ? 'Su İstiyorum' : 'Water Please',
       message: isTurkish ? 'Su getirebilir misiniz?' : 'Could you bring water?'
     },
@@ -62,6 +63,14 @@ export default function QuickServiceModal({ isOpen, onClose }: QuickServiceModal
   ] as const;
 
   const handleQuickService = async (service: typeof quickServices[number]) => {
+    if (onServiceCall) {
+      // Use parent component's service call handler if provided
+      onServiceCall(service.id, service.message);
+      onClose();
+      return;
+    }
+
+    // Fallback to internal API call
     if (!currentRestaurant?.id || !tableNumber) {
       setToastMessage('Masa numarası bulunamadı');
       return;
@@ -96,8 +105,22 @@ export default function QuickServiceModal({ isOpen, onClose }: QuickServiceModal
   };
 
   const handleCustomNote = async () => {
-    if (!currentRestaurant?.id || !tableNumber || !customNote.trim()) {
-      setToastMessage('Masa numarası veya not bulunamadı');
+    if (!customNote.trim()) {
+      setToastMessage('Lütfen bir not yazın');
+      return;
+    }
+
+    if (onServiceCall) {
+      // Use parent component's service call handler if provided
+      onServiceCall('custom_request', customNote);
+      setCustomNote('');
+      onClose();
+      return;
+    }
+
+    // Fallback to internal API call
+    if (!currentRestaurant?.id || !tableNumber) {
+      setToastMessage('Masa numarası bulunamadı');
       return;
     }
 
