@@ -21,6 +21,7 @@ import { LanguageProvider, useLanguage } from '@/context/LanguageContext';
 import TranslatedText from '@/components/TranslatedText';
 import useBusinessSettingsStore from '@/store/useBusinessSettingsStore';
 import SetBrandColor from '@/components/SetBrandColor';
+import QuickServiceModal from '@/components/QuickServiceModal';
 import apiService from '@/services/api';
 import useRestaurantStore from '@/store/useRestaurantStore';
 
@@ -37,6 +38,7 @@ function CartPageContent() {
   const [showTipModal, setShowTipModal] = useState(false);
   const [showDonationModal, setShowDonationModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isQuickServiceModalOpen, setIsQuickServiceModalOpen] = useState(false);
   
   const primary = settings.branding.primaryColor;
 
@@ -140,6 +142,37 @@ function CartPageContent() {
 
   const handleDonation = () => {
     setShowDonationModal(true);
+  };
+
+  // Handle quick service
+  const handleQuickService = async (serviceType: string, customNote?: string) => {
+    if (!currentRestaurant) return;
+    
+    try {
+      const response = await fetch('/api/service-call/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          restaurantId: currentRestaurant.id,
+          tableNumber: tableNumber || 1,
+          message: customNote || serviceType,
+          type: serviceType
+        })
+      });
+
+      if (response.ok) {
+        alert('Garson çağrısı gönderildi!');
+        setIsQuickServiceModalOpen(false);
+      } else {
+        console.error('Service call failed');
+        alert('Garson çağrısı gönderilemedi');
+      }
+    } catch (error) {
+      console.error('Service call error:', error);
+      alert('Bir hata oluştu');
+    }
   };
 
   if (!isClient) {
@@ -373,10 +406,14 @@ function CartPageContent() {
               </div>
               <span className="text-[10px]"><TranslatedText>Sepet</TranslatedText></span>
             </Link>
-            <Link href="/waiter" className="flex flex-col items-center" style={{ color: primary }}>
+            <button
+              onClick={() => setIsQuickServiceModalOpen(true)}
+              className="flex flex-col items-center" 
+              style={{ color: primary }}
+            >
               <FaBell className="mb-0.5" size={16} />
               <span className="text-[10px]"><TranslatedText>Garson Çağır</TranslatedText></span>
-            </Link>
+            </button>
           </div>
         </nav>
       </main>
@@ -546,6 +583,13 @@ function CartPageContent() {
           </div>
         </div>
       )}
+
+      {/* Quick Service Modal */}
+      <QuickServiceModal
+        isOpen={isQuickServiceModalOpen}
+        onClose={() => setIsQuickServiceModalOpen(false)}
+        onServiceCall={handleQuickService}
+      />
     </>
   );
 }
