@@ -48,8 +48,6 @@ function MenuPageContent() {
   const [tokenValid, setTokenValid] = useState<boolean | null>(null);
   const [tokenMessage, setTokenMessage] = useState('');
   const [isQuickServiceModalOpen, setIsQuickServiceModalOpen] = useState(false);
-  const [debugLogs, setDebugLogs] = useState<string[]>([]);
-  const [showDebugLogs, setShowDebugLogs] = useState(false);
   const primary = settings.branding.primaryColor;
   const secondary = settings.branding.secondaryColor || settings.branding.primaryColor;
   
@@ -167,88 +165,54 @@ function MenuPageContent() {
       <SetBrandColor />
       
       <div className="min-h-screen bg-gray-50">
-        {/* Header */}
+        {/* Navbar */}
         <div className="bg-white shadow-sm border-b sticky top-0 z-40">
           <div className="max-w-4xl mx-auto px-4 py-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <Link 
-                  href="/" 
-                  className="text-gray-600 hover:text-gray-800 transition-colors"
-                >
-                  <FaArrowLeft size={20} />
-              </Link>
                 <div>
                   <h1 className="text-lg font-semibold text-gray-800">
                     {currentRestaurant?.name || 'Restoran'}
                   </h1>
                   <p className="text-sm text-gray-600">
-                <TranslatedText>Menü</TranslatedText>
+                    <TranslatedText>Masa {tableNumber || 1}</TranslatedText>
                   </p>
                 </div>
               </div>
               
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-6">
                 <button
-                  onClick={() => {
-                    const logs: string[] = [];
-                    
-                    logs.push('🔍 DEBUG INFO:');
-                    logs.push(`Restaurants: ${restaurants.length}`);
-                    logs.push(`Categories: ${categories.length}`);
-                    logs.push(`Menu Items: ${menuItems.length}`);
-                    logs.push(`Current Restaurant: ${currentRestaurant ? currentRestaurant.name : 'Not found'}`);
-                    logs.push(`Loading: ${loading}`);
-                    logs.push(`Final Filtered Items: ${finalFilteredItems.length}`);
-                    logs.push(`Active Category: ${activeCategory}`);
-                    logs.push(`Search: ${search}`);
-                    logs.push(`Hostname: ${typeof window !== 'undefined' ? window.location.hostname : 'server'}`);
-                    logs.push(`Subdomain: ${typeof window !== 'undefined' ? window.location.hostname.split('.')[0] : 'server'}`);
-                    
-                    // Test API call
-                    if (currentRestaurant) {
-                      logs.push('🔄 Testing API call...');
-                      logs.push(`API URL: https://masapp-backend.onrender.com/api/restaurants/${currentRestaurant.id}/menu`);
-                      fetchRestaurantMenu(currentRestaurant.id);
-                    } else {
-                      logs.push('❌ No restaurant found - cannot test API call');
-                    }
-                    
-                    setDebugLogs(logs);
-                    setShowDebugLogs(true);
-                    
-                    // Also log to console
-                    logs.forEach(log => console.log(log));
-                  }}
-                  className="px-3 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600"
+                  className="flex flex-col items-center text-gray-600 hover:text-gray-800 transition-colors"
+                  style={{ color: primary }}
                 >
-                  DEBUG
+                  <FaUtensils className="mb-0.5" size={18} />
+                  <span className="text-xs font-medium"><TranslatedText>Menü</TranslatedText></span>
                 </button>
                 
+                <Link 
+                  href="/cart" 
+                  className="flex flex-col items-center text-gray-600 hover:text-gray-800 transition-colors relative"
+                  style={{ color: primary }}
+                >
+                  <FaShoppingCart className="mb-0.5" size={18} />
+                  <span className="text-xs font-medium"><TranslatedText>Sepet</TranslatedText></span>
+                  {cartItems.length > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {cartItems.length}
+                    </span>
+                  )}
+                </Link>
+
                 <button
                   onClick={() => setIsQuickServiceModalOpen(true)}
                   className="flex flex-col items-center text-gray-600 hover:text-gray-800 transition-colors"
                   style={{ color: primary }}
                 >
-                  <FaBell className="mb-0.5" size={16} />
-                  <span className="text-[10px]"><TranslatedText>Garson Çağır</TranslatedText></span>
+                  <FaBell className="mb-0.5" size={18} />
+                  <span className="text-xs font-medium"><TranslatedText>Garson Çağır</TranslatedText></span>
                 </button>
-                
-              <Link 
-                  href="/cart" 
-                  className="flex flex-col items-center text-gray-600 hover:text-gray-800 transition-colors relative"
-                  style={{ color: primary }}
-                >
-                  <FaShoppingCart className="mb-0.5" size={16} />
-                  <span className="text-[10px]"><TranslatedText>Sepet</TranslatedText></span>
-                  {cartItems.length > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                      {cartItems.length}
-                    </span>
-                  )}
-              </Link>
+              </div>
             </div>
-          </div>
           </div>
         </div>
 
@@ -417,37 +381,6 @@ function MenuPageContent() {
         type="success"
       />
 
-      {/* Debug Logs Modal */}
-      {showDebugLogs && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-96 overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">🔍 Debug Logs</h3>
-              <button
-                onClick={() => setShowDebugLogs(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="space-y-2">
-              {debugLogs.map((log, index) => (
-                <div key={index} className="text-sm font-mono bg-gray-100 p-2 rounded">
-                  {log}
-                </div>
-              ))}
-            </div>
-            <div className="mt-4 flex justify-end">
-              <button
-                onClick={() => setShowDebugLogs(false)}
-                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-              >
-                Kapat
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }
