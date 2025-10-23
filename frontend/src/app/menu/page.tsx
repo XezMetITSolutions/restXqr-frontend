@@ -70,12 +70,8 @@ function MenuPageContent() {
     // Load restaurants first
     fetchRestaurants().then(() => {
       const restaurant = getCurrentRestaurant();
-      console.log('🏪 Current restaurant:', restaurant);
       if (restaurant) {
-        console.log('📋 Fetching menu for restaurant:', restaurant.id);
         fetchRestaurantMenu(restaurant.id);
-      } else {
-        console.log('❌ No restaurant found');
       }
     });
 
@@ -83,19 +79,9 @@ function MenuPageContent() {
     if (currentLanguage === 'Turkish') {
       setSearchPlaceholder('Menüde ara...');
     } else {
-      setSearchPlaceholder('Search menu...');
-    }
+          setSearchPlaceholder('Search menu...');
+        }
   }, [currentLanguage]);
-
-  // Debug menu data
-  console.log('📊 Menu data:', { 
-    categories: categories.length, 
-    menuItems: menuItems.length,
-    loading,
-    restaurants: restaurants.length
-  });
-  console.log('📋 Categories:', categories);
-  console.log('🍽️ Menu items:', menuItems);
 
   // Filter menu items based on search and category
   const filteredItems = menuItems.filter((item: any) => {
@@ -112,20 +98,19 @@ function MenuPageContent() {
 
   // Get final filtered items
   const finalFilteredItems = filteredItems;
-  console.log('🔍 Filtered items:', finalFilteredItems.length);
 
   // Handle add to cart
   const handleAddToCart = (item: any) => {
-    addItem({
+      addItem({
       id: item.id,
-      name: item.name,
+        name: item.name,
       price: parseFloat(item.price),
       imageUrl: item.imageUrl,
       description: item.description,
       quantity: 1
-    });
-    setToastVisible(true);
-    setTimeout(() => setToastVisible(false), 3000);
+      });
+      setToastVisible(true);
+      setTimeout(() => setToastVisible(false), 3000);
   };
 
   // Handle item click
@@ -160,7 +145,7 @@ function MenuPageContent() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
+        </div>
     );
   }
 
@@ -179,13 +164,13 @@ function MenuPageContent() {
                   className="text-gray-600 hover:text-gray-800 transition-colors"
                 >
                   <FaArrowLeft size={20} />
-                </Link>
+              </Link>
                 <div>
                   <h1 className="text-lg font-semibold text-gray-800">
                     {currentRestaurant?.name || 'Restoran'}
                   </h1>
                   <p className="text-sm text-gray-600">
-                    <TranslatedText>Menü</TranslatedText>
+                <TranslatedText>Menü</TranslatedText>
                   </p>
                 </div>
               </div>
@@ -200,7 +185,7 @@ function MenuPageContent() {
                   <span className="text-[10px]"><TranslatedText>Garson Çağır</TranslatedText></span>
                 </button>
                 
-                <Link 
+              <Link 
                   href="/cart" 
                   className="flex flex-col items-center text-gray-600 hover:text-gray-800 transition-colors relative"
                   style={{ color: primary }}
@@ -230,7 +215,7 @@ function MenuPageContent() {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
           <FaFilter className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-        </div>
+            </div>
           </div>
         </div>
 
@@ -274,8 +259,8 @@ function MenuPageContent() {
                 {category.name}
               </button>
             ))}
-            </div>
           </div>
+        </div>
         </div>
 
         {/* Menu Items */}
@@ -364,7 +349,7 @@ function MenuPageContent() {
         {/* Mobile Grid View */}
         <div className="md:hidden">
           <div className="px-4 py-6">
-            <div className="grid grid-cols-1 gap-3">
+          <div className="grid grid-cols-1 gap-3">
               {finalFilteredItems.map((item: any) => (
               <div key={item.id} className="bg-white rounded-lg shadow-sm border p-3 flex">
 
@@ -409,11 +394,11 @@ function MenuPageContent() {
 
                     <p className="text-gray-600 text-xs mb-2 line-clamp-2">
 
-                      {typeof item.description === 'string' ? item.description : (item.description?.tr || item.description?.en || '')}
+                    {typeof item.description === 'string' ? item.description : (item.description?.tr || item.description?.en || '')}
 
                     </p>
 
-                  </div>
+                    </div>
 
                   <div className="flex justify-between items-center">
 
@@ -425,7 +410,7 @@ function MenuPageContent() {
 
                     <div className="flex items-center space-x-2">
 
-                      <button
+                    <button
 
                         onClick={() => handleItemClick(item)}
 
@@ -435,9 +420,9 @@ function MenuPageContent() {
 
                         <FaInfo size={12} />
 
-                      </button>
+                    </button>
 
-                      <button
+                    <button
 
                         onClick={() => handleAddToCart(item)}
 
@@ -449,7 +434,7 @@ function MenuPageContent() {
 
                         <FaPlus size={12} />
 
-                      </button>
+                    </button>
 
                     </div>
 
@@ -461,19 +446,19 @@ function MenuPageContent() {
 
             ))}
 
-            </div>
-
           </div>
 
         </div>
 
-      </div>
+        </div>
+
+          </div>
 
       {/* Modals */}
-      <MenuItemModal
+        <MenuItemModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        item={selectedItem}
+          item={selectedItem}
         onAddToCart={handleAddToCart}
       />
 
