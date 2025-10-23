@@ -74,8 +74,12 @@ const useRestaurantStore = create<RestaurantState>((set, get) => ({
   fetchRestaurants: async () => {
     set({ loading: true, error: null });
     try {
+      console.log('🔄 fetchRestaurants called');
       const response = await apiService.getRestaurants();
+      console.log('📦 fetchRestaurants response:', response);
+      
       if (response.success && response.data) {
+        console.log('✅ fetchRestaurants success, data length:', response.data.length);
         // Backend'den gelen veriyi frontend formatına çevir
         const restaurants = response.data.map((restaurant: any) => ({
           ...restaurant,
@@ -89,9 +93,15 @@ const useRestaurantStore = create<RestaurantState>((set, get) => ({
           updatedAt: new Date(restaurant.updated_at),
           status: restaurant.isActive ? 'active' : 'inactive'
         }));
+        console.log('💾 Setting restaurants in state:', restaurants.length);
         set({ restaurants, loading: false });
+        console.log('✅ fetchRestaurants completed');
+      } else {
+        console.log('❌ fetchRestaurants failed - no data or not successful');
+        set({ loading: false });
       }
     } catch (error) {
+      console.error('❌ fetchRestaurants error:', error);
       set({ error: error instanceof Error ? error.message : 'Failed to fetch restaurants', loading: false });
     }
   },
@@ -391,11 +401,19 @@ const useRestaurantStore = create<RestaurantState>((set, get) => ({
       if (response.success) {
         // Backend'den gelen veriyi frontend formatına dönüştür
         const categories = response.data.categories || [];
-        const items = response.data.items || [];
+        let allItems: any[] = [];
         
         console.log('📊 Raw categories from backend:', categories.length);
-        console.log('📊 Raw items from backend:', items.length);
-        console.log('📋 First item:', items[0]);
+        
+        // Kategorilerden tüm ürünleri çıkar
+        categories.forEach((cat: any) => {
+          if (cat.items && Array.isArray(cat.items)) {
+            allItems = allItems.concat(cat.items);
+          }
+        });
+        
+        console.log('📊 Total items extracted:', allItems.length);
+        console.log('📋 First item:', allItems[0]);
         
         const transformedCategories = categories.map((cat: any) => ({
           id: cat.id,
@@ -406,7 +424,7 @@ const useRestaurantStore = create<RestaurantState>((set, get) => ({
           isActive: cat.isActive !== false
         }));
         
-        const transformedItems = items.map((item: any) => ({
+        const transformedItems = allItems.map((item: any) => ({
           id: item.id,
           restaurantId: item.restaurantId,
           categoryId: item.categoryId,
