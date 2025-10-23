@@ -74,8 +74,12 @@ const useRestaurantStore = create<RestaurantState>((set, get) => ({
   fetchRestaurants: async () => {
     set({ loading: true, error: null });
     try {
+      console.log('🔄 fetchRestaurants called');
       const response = await apiService.getRestaurants();
+      console.log('📦 fetchRestaurants response:', response);
+      
       if (response.success && response.data) {
+        console.log('✅ fetchRestaurants success, data length:', response.data.length);
         // Backend'den gelen veriyi frontend formatına çevir
         const restaurants = response.data.map((restaurant: any) => ({
           ...restaurant,
@@ -89,9 +93,15 @@ const useRestaurantStore = create<RestaurantState>((set, get) => ({
           updatedAt: new Date(restaurant.updated_at),
           status: restaurant.isActive ? 'active' : 'inactive'
         }));
+        console.log('💾 Setting restaurants in state:', restaurants.length);
         set({ restaurants, loading: false });
+        console.log('✅ fetchRestaurants completed');
+      } else {
+        console.log('❌ fetchRestaurants failed - no data or not successful');
+        set({ loading: false });
       }
     } catch (error) {
+      console.error('❌ fetchRestaurants error:', error);
       set({ error: error instanceof Error ? error.message : 'Failed to fetch restaurants', loading: false });
     }
   },
