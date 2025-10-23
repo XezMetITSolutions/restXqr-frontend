@@ -1,14 +1,61 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function DebugImagesPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadResult, setUploadResult] = useState<any>(null);
   const [testResult, setTestResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [restaurantData, setRestaurantData] = useState<any>(null);
+  const [updateResults, setUpdateResults] = useState<any[]>([]);
+  const [clearResults, setClearResults] = useState<any>(null);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
+
+  // Improved product image mapping with better quality images
+  const productImageMap: { [key: string]: string } = {
+    // Çorbalar (Soups)
+    'Mercimek Çorbası': 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=300&fit=crop&q=80',
+    'Ezogelin Çorbası': 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&q=80',
+    'Tavuk Çorbası': 'https://images.unsplash.com/photo-1562967916-eb82221dfb92?w=400&h=300&fit=crop&q=80',
+
+    // Ana Yemekler (Main Dishes)
+    'Karnıyarık': 'https://images.unsplash.com/photo-1599043513900-ed6fe01d3833?w=400&h=300&fit=crop&q=80',
+    'Mantı': 'https://images.unsplash.com/photo-1544025162-d76694265947?w=400&h=300&fit=crop&q=80',
+    'Etli Pilav': 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=400&h=300&fit=crop&q=80',
+
+    // Izgara (Grilled)
+    'Adana Kebap': 'https://images.unsplash.com/photo-1529042410759-befb1204b468?w=400&h=300&fit=crop&q=80',
+    'Urfa Kebap': 'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=400&h=300&fit=crop&q=80',
+    'Tavuk Şiş': 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop&q=80',
+
+    // Pizza
+    'Margherita Pizza': 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&h=300&fit=crop&q=80',
+    'Pepperoni Pizza': 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=300&fit=crop&q=80',
+    'Karışık Pizza': 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=300&fit=crop&q=80',
+
+    // Salatalar (Salads)
+    'Çoban Salata': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop&q=80',
+    'Mevsim Salata': 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400&h=300&fit=crop&q=80',
+    'Tavuk Salata': 'https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400&h=300&fit=crop&q=80',
+
+    // İçecekler (Beverages)
+    'Ayran': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop&q=80',
+    'Türk Kahvesi': 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=300&fit=crop&q=80',
+    'Çay': 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400&h=300&fit=crop&q=80',
+    'Kola': 'https://images.unsplash.com/photo-1581636625402-29b2a704ef13?w=400&h=300&fit=crop&q=80',
+
+    // Tatlılar (Desserts)
+    'Baklava': 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=300&fit=crop&q=80',
+    'Künefe': 'https://images.unsplash.com/photo-1571115764595-644a1f56a55c?w=400&h=300&fit=crop&q=80',
+    'Sütlaç': 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=300&fit=crop&q=80',
+
+    // Kahvaltı (Breakfast)
+    'Serpme Kahvaltı': 'https://images.unsplash.com/photo-1551218808-94e220e084d2?w=400&h=300&fit=crop&q=80',
+    'Menemen': 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&h=300&fit=crop&q=80',
+    'Omlet': 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=400&h=300&fit=crop&q=80'
+  };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -35,7 +82,7 @@ export default function DebugImagesPage() {
       const result = await response.json();
       setUploadResult(result);
     } catch (error) {
-      setUploadResult({ error: error.message });
+      setUploadResult({ error: (error as Error).message });
     } finally {
       setLoading(false);
     }
@@ -68,10 +115,150 @@ export default function DebugImagesPage() {
       };
       reader.readAsDataURL(selectedFile);
     } catch (error) {
-      setTestResult({ error: error.message });
+      setTestResult({ error: (error as Error).message });
       setLoading(false);
     }
   };
+
+  // Load restaurant data
+  const loadRestaurantData = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/restaurants/username/aksaray`);
+      const data = await response.json();
+      setRestaurantData(data);
+      console.log('Restaurant data loaded:', data);
+    } catch (error) {
+      console.error('Error loading restaurant data:', error);
+      setRestaurantData({ error: (error as Error).message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Clear all product images (set to null)
+  const clearAllProductImages = async () => {
+    if (!restaurantData?.success || !restaurantData?.data) {
+      alert('Önce restoran verilerini yükleyin!');
+      return;
+    }
+
+    setLoading(true);
+    const results = [];
+    
+    try {
+      const restaurant = restaurantData.data;
+      
+      for (const category of restaurant.categories) {
+        for (const item of category.items) {
+          console.log(`🗑️ Clearing image for: ${item.name}`);
+          
+          const updateResponse = await fetch(`${API_URL}/restaurants/${restaurant.id}/menu/items/${item.id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              imageUrl: null
+            })
+          });
+
+          const result = await updateResponse.json();
+          results.push({
+            itemName: item.name,
+            success: updateResponse.ok,
+            result: result
+          });
+
+          // Small delay to avoid overwhelming the API
+          await new Promise(resolve => setTimeout(resolve, 50));
+        }
+      }
+      
+      setClearResults({
+        success: true,
+        totalItems: results.length,
+        results: results
+      });
+      
+    } catch (error) {
+      setClearResults({
+        success: false,
+        error: error.message
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Update all product images with correct ones
+  const updateAllProductImages = async () => {
+    if (!restaurantData?.success || !restaurantData?.data) {
+      alert('Önce restoran verilerini yükleyin!');
+      return;
+    }
+
+    setLoading(true);
+    const results = [];
+    
+    try {
+      const restaurant = restaurantData.data;
+      
+      for (const category of restaurant.categories) {
+        for (const item of category.items) {
+          const correctImageUrl = productImageMap[item.name];
+          
+          if (correctImageUrl) {
+            console.log(`🖼️ Updating image for: ${item.name}`);
+            console.log(`   New image: ${correctImageUrl}`);
+            
+            const updateResponse = await fetch(`${API_URL}/restaurants/${restaurant.id}/menu/items/${item.id}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                imageUrl: correctImageUrl
+              })
+            });
+
+            const result = await updateResponse.json();
+            results.push({
+              itemName: item.name,
+              newImageUrl: correctImageUrl,
+              success: updateResponse.ok,
+              result: result
+            });
+          } else {
+            results.push({
+              itemName: item.name,
+              success: false,
+              error: 'No image mapping found'
+            });
+          }
+
+          // Small delay to avoid overwhelming the API
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+      }
+      
+      setUpdateResults(results);
+      
+    } catch (error) {
+      setUpdateResults([{
+        itemName: 'ERROR',
+        success: false,
+        error: error.message
+      }]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load restaurant data on component mount
+  useEffect(() => {
+    loadRestaurantData();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -82,7 +269,73 @@ export default function DebugImagesPage() {
           <h2 className="font-semibold mb-2">API Configuration</h2>
           <div className="text-sm text-gray-700">
             <div>API URL: {API_URL}</div>
+            <div>Restaurant: {restaurantData?.success ? restaurantData.data.name : 'Loading...'}</div>
+            <div>Total Items: {restaurantData?.success ? 
+              restaurantData.data.categories.reduce((total: number, cat: any) => total + cat.items.length, 0) : 
+              'Loading...'
+            }</div>
           </div>
+        </div>
+
+        {/* Product Image Management */}
+        <div className="bg-white p-4 rounded border space-y-4">
+          <h2 className="font-semibold text-red-600">🚨 Ürün Resim Yönetimi</h2>
+          
+          <div className="bg-yellow-50 border border-yellow-200 rounded p-3">
+            <p className="text-sm text-yellow-800">
+              <strong>Uyarı:</strong> Bu işlemler tüm ürün resimlerini etkileyecektir. 
+              Önce tüm resimleri temizleyip sonra doğru resimleri atayın.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={loadRestaurantData}
+              disabled={loading}
+              className="bg-blue-600 text-white rounded px-4 py-2 disabled:opacity-50"
+            >
+              {loading ? 'Yükleniyor...' : '🔄 Restoran Verilerini Yenile'}
+            </button>
+            
+            <button
+              onClick={clearAllProductImages}
+              disabled={loading || !restaurantData?.success}
+              className="bg-red-600 text-white rounded px-4 py-2 disabled:opacity-50"
+            >
+              {loading ? 'İşleniyor...' : '🗑️ Tüm Resimleri Temizle'}
+            </button>
+            
+            <button
+              onClick={updateAllProductImages}
+              disabled={loading || !restaurantData?.success}
+              className="bg-green-600 text-white rounded px-4 py-2 disabled:opacity-50"
+            >
+              {loading ? 'İşleniyor...' : '🖼️ Doğru Resimleri Ata'}
+            </button>
+          </div>
+
+          {restaurantData?.success && (
+            <div className="mt-4">
+              <h3 className="font-semibold mb-2">Mevcut Ürünler:</h3>
+              <div className="max-h-40 overflow-y-auto bg-gray-50 p-3 rounded text-sm">
+                {restaurantData.data.categories.map((category: any) => (
+                  <div key={category.id} className="mb-2">
+                    <strong>{category.name}:</strong>
+                    <ul className="ml-4 text-gray-600">
+                      {category.items.map((item: any) => (
+                        <li key={item.id} className="flex justify-between">
+                          <span>{item.name}</span>
+                          <span className={item.imageUrl ? 'text-green-600' : 'text-red-600'}>
+                            {item.imageUrl ? '✅' : '❌'}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="bg-white p-4 rounded border space-y-4">
@@ -126,7 +379,58 @@ export default function DebugImagesPage() {
           )}
         </div>
 
+        {/* Results Section */}
         <div className="grid md:grid-cols-2 gap-4">
+          {/* Clear Results */}
+          {clearResults && (
+            <div className="bg-white p-4 rounded border">
+              <h3 className="font-semibold mb-2 text-red-600">🗑️ Temizleme Sonuçları</h3>
+              <div className="text-sm">
+                <div className="mb-2">
+                  <span className={clearResults.success ? 'text-green-600' : 'text-red-600'}>
+                    {clearResults.success ? '✅ Başarılı' : '❌ Hatalı'}
+                  </span>
+                  {clearResults.totalItems && (
+                    <span className="ml-2">({clearResults.totalItems} ürün)</span>
+                  )}
+                </div>
+                {clearResults.error && (
+                  <div className="text-red-600 bg-red-50 p-2 rounded">
+                    {clearResults.error}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Update Results */}
+          {updateResults.length > 0 && (
+            <div className="bg-white p-4 rounded border">
+              <h3 className="font-semibold mb-2 text-green-600">🖼️ Güncelleme Sonuçları</h3>
+              <div className="max-h-60 overflow-y-auto text-sm">
+                {updateResults.map((result, index) => (
+                  <div key={index} className="mb-2 p-2 bg-gray-50 rounded">
+                    <div className="flex justify-between items-center">
+                      <span className="font-medium">{result.itemName}</span>
+                      <span className={result.success ? 'text-green-600' : 'text-red-600'}>
+                        {result.success ? '✅' : '❌'}
+                      </span>
+                    </div>
+                    {result.error && (
+                      <div className="text-red-600 text-xs mt-1">{result.error}</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <div className="mt-2 text-sm text-gray-600">
+                Toplam: {updateResults.length} | 
+                Başarılı: {updateResults.filter(r => r.success).length} | 
+                Hatalı: {updateResults.filter(r => !r.success).length}
+              </div>
+            </div>
+          )}
+
+          {/* Upload Result */}
           <div className="bg-white p-4 rounded border">
             <h3 className="font-semibold mb-2">Upload Result</h3>
             {uploadResult && (
@@ -136,6 +440,7 @@ export default function DebugImagesPage() {
             )}
           </div>
 
+          {/* Test Endpoint Result */}
           <div className="bg-white p-4 rounded border">
             <h3 className="font-semibold mb-2">Test Endpoint Result</h3>
             {testResult && (
