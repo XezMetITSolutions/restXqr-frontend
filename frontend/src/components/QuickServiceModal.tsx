@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { FaTimes, FaTint, FaBroom, FaReceipt, FaUtensils, FaPaperPlane } from 'react-icons/fa';
+import { FaTimes, FaTint, FaBroom, FaReceipt, FaUtensils, FaPaperPlane, FaBell } from 'react-icons/fa';
 import { useLanguage } from '@/context/LanguageContext';
 import TranslatedText from '@/components/TranslatedText';
 import useRestaurantStore from '@/store/useRestaurantStore';
@@ -39,14 +39,8 @@ export default function QuickServiceModal({ isOpen, onClose, onServiceCall }: Qu
     {
       id: 'water',
       icon: FaTint,
-      title: isTurkish ? 'Su İstiyorum' : 'Water Please',
+      title: isTurkish ? 'Su Getir' : 'Bring Water',
       message: isTurkish ? 'Su getirebilir misiniz?' : 'Could you bring water?'
-    },
-    {
-      id: 'clean',
-      icon: FaBroom,
-      title: isTurkish ? 'Masayı Temizler misiniz?' : 'Clean Table',
-      message: isTurkish ? 'Masayı temizleyebilir misiniz?' : 'Could you clean the table?'
     },
     {
       id: 'bill',
@@ -59,6 +53,12 @@ export default function QuickServiceModal({ isOpen, onClose, onServiceCall }: Qu
       icon: FaUtensils,
       title: isTurkish ? 'Yeni Çatal Bıçak' : 'New Utensils',
       message: isTurkish ? 'Yeni çatal bıçak getirebilir misiniz?' : 'Could you bring new utensils?'
+    },
+    {
+      id: 'come_here',
+      icon: FaBell,
+      title: isTurkish ? 'Buraya Gelir misiniz?' : 'Could You Come Here?',
+      message: isTurkish ? 'Buraya gelir misiniz?' : 'Could you come here please?'
     }
   ] as const;
 
