@@ -1,14 +1,71 @@
 'use client';
 
 import Link from 'next/link';
-import { FaQrcode, FaUtensils, FaShoppingCart, FaBell, FaMagic, FaChartLine, FaUsers, FaClock, FaCheckCircle, FaRocket, FaShieldAlt, FaStar, FaPhone, FaWhatsapp } from 'react-icons/fa';
+import { useState } from 'react';
+import { FaQrcode, FaUtensils, FaShoppingCart, FaBell, FaMagic, FaChartLine, FaUsers, FaClock, FaCheckCircle, FaRocket, FaShieldAlt, FaStar, FaPhone, FaWhatsapp, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { LanguageProvider } from '@/context/LanguageContext';
 import TranslatedText from '@/components/TranslatedText';
 
-export default function Home() {
+function HomeContent() {
+  const [openFAQ, setOpenFAQ] = useState<number | null>(null);
+
+  const toggleFAQ = (index: number) => {
+    setOpenFAQ(openFAQ === index ? null : index);
+  };
+
+  const faqs = [
+    {
+      icon: FaQrcode,
+      color: "orange-500",
+      question: "restXqr nedir?",
+      answer: "restXqr, menüden siparişe, personelden muhasebeye kadar tüm operasyonu tek platformda yöneten restoran işletim sistemidir. AI ile görsellerinizi profesyonelleştirir, menüyü optimize eder ve satışları artırır; POS ve muhasebe sistemlerinizle sorunsuz entegre olur."
+    },
+    {
+      icon: FaRocket,
+      color: "blue-500",
+      question: "Kurulum süreci nasıl işliyor?",
+      answer: "6 ay ve üzeri planlar için kurulum tamamen ücretsizdir. Uzman teknik ekibimiz restoranınıza gelir, sistemi kurar ve tüm personellerinizi eğitir. Kurulum süreci 1-2 gün sürer ve hemen kullanmaya başlayabilirsiniz."
+    },
+    {
+      icon: FaShieldAlt,
+      color: "green-500",
+      question: "İade garantisi nasıl çalışır?",
+      answer: "30 gün içinde herhangi bir sebeple memnun kalmazsanız, ücretinizi tam olarak iade ediyoruz. Kurulum yapılmış ise sadece kurulum maliyeti kesilerek kalan tutar iade edilir. Risk almadan deneyin!"
+    },
+    {
+      icon: FaShoppingCart,
+      color: "purple-500",
+      question: "Hangi ödeme yöntemlerini kabul ediyorsunuz?",
+      answer: "Kredi kartı, banka kartı, havale/EFT ve tüm mobil ödeme seçeneklerini kabul ediyoruz. 6 aylık ve yıllık ödemeler için büyük indirimler sunuyoruz. Taksit seçenekleri de mevcuttur."
+    },
+    {
+      icon: FaPhone,
+      color: "red-500",
+      question: "Teknik destek sağlıyor musunuz?",
+      answer: "Elbette! Premium pakette WhatsApp ve öncelikli destek, Kurumsal pakette 7/24 telefon desteği sunuyoruz. Ayrıca tüm müşterilerimiz için online eğitim videoları ve dokümantasyon sağlıyoruz."
+    },
+    {
+      icon: FaClock,
+      color: "yellow-500",
+      question: "Sistemi öğrenmek ne kadar sürer?",
+      answer: "restXqr çok kullanıcı dostu tasarlandı. Personelleriniz 1-2 saatte sistemi öğrenebilir. Kurulum sırasında detaylı eğitim veriyoruz ve sürekli destek sağlıyoruz."
+    },
+    {
+      icon: FaUtensils,
+      color: "indigo-500",
+      question: "Mevcut POS sistemimle uyumlu mu?",
+      answer: "restXqr bağımsız çalışır ancak mevcut POS sistemlerinizle entegre edilebilir. Kurumsal pakette API entegrasyonları ile tüm sistemlerinizi birbirine bağlayabilirsiniz."
+    },
+    {
+      icon: FaChartLine,
+      color: "pink-500",
+      question: "Raporlama özellikleri neler?",
+      answer: "Günlük/haftalık/aylık satış raporları, en çok satan ürünler, masa verimliliği, personel performansı ve müşteri analitikleri gibi detaylı raporlar alabilirsiniz."
+    }
+  ];
+
   return (
-    <LanguageProvider>
-      <main className="min-h-screen bg-white relative">
+    <main className="min-h-screen bg-white relative">
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-orange-400 via-orange-500 to-orange-600 text-white py-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-white/5"></div>
@@ -258,101 +315,50 @@ export default function Home() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <h2 className="text-5xl font-bold text-gray-900 mb-6 text-center">Sıkça Sorulan Sorular</h2>
           <p className="text-xl text-gray-600 text-center mb-16 max-w-3xl mx-auto">
             restXqr hakkında merak ettiklerinizin cevapları burada. Başka sorularınız için bize ulaşın!
           </p>
-          <div className="max-w-5xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="bg-white p-8 rounded-2xl shadow-lg border-l-4 border-orange-500">
-                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                  <FaQrcode className="text-orange-500 mr-3" />
-                  restXqr nedir?
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  restXqr, menüden siparişe, personelden muhasebeye kadar tüm operasyonu tek platformda yöneten restoran işletim sistemidir. AI ile görsellerinizi profesyonelleştirir, menüyü optimize eder ve satışları artırır; POS ve muhasebe sistemlerinizle sorunsuz entegre olur.
-                </p>
-              </div>
-
-              <div className="bg-white p-8 rounded-2xl shadow-lg border-l-4 border-blue-500">
-                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                  <FaRocket className="text-blue-500 mr-3" />
-                  Kurulum süreci nasıl işliyor?
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  6 ay ve üzeri planlar için kurulum tamamen ücretsizdir. Uzman teknik ekibimiz restoranınıza gelir, 
-                  sistemi kurar ve tüm personellerinizi eğitir. Kurulum süreci 1-2 gün sürer ve hemen kullanmaya başlayabilirsiniz.
-                </p>
-              </div>
-
-              <div className="bg-white p-8 rounded-2xl shadow-lg border-l-4 border-green-500">
-                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                  <FaShieldAlt className="text-green-500 mr-3" />
-                  İade garantisi nasıl çalışır?
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  30 gün içinde herhangi bir sebeple memnun kalmazsanız, ücretinizi tam olarak iade ediyoruz. 
-                  Kurulum yapılmış ise sadece kurulum maliyeti kesilerek kalan tutar iade edilir. Risk almadan deneyin!
-                </p>
-              </div>
-
-              <div className="bg-white p-8 rounded-2xl shadow-lg border-l-4 border-purple-500">
-                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                  <FaShoppingCart className="text-purple-500 mr-3" />
-                  Hangi ödeme yöntemlerini kabul ediyorsunuz?
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Kredi kartı, banka kartı, havale/EFT ve tüm mobil ödeme seçeneklerini kabul ediyoruz. 
-                  6 aylık ve yıllık ödemeler için büyük indirimler sunuyoruz. Taksit seçenekleri de mevcuttur.
-                </p>
-              </div>
-
-              <div className="bg-white p-8 rounded-2xl shadow-lg border-l-4 border-red-500">
-                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                  <FaPhone className="text-red-500 mr-3" />
-                  Teknik destek sağlıyor musunuz?
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Elbette! Premium pakette WhatsApp ve öncelikli destek, Kurumsal pakette 7/24 telefon desteği sunuyoruz. 
-                  Ayrıca tüm müşterilerimiz için online eğitim videoları ve dokümantasyon sağlıyoruz.
-                </p>
-              </div>
-
-              <div className="bg-white p-8 rounded-2xl shadow-lg border-l-4 border-yellow-500">
-                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                  <FaClock className="text-yellow-500 mr-3" />
-                  Sistemi öğrenmek ne kadar sürer?
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  restXqr çok kullanıcı dostu tasarlandı. Personelleriniz 1-2 saatte sistemi öğrenebilir. 
-                  Kurulum sırasında detaylı eğitim veriyoruz ve sürekli destek sağlıyoruz.
-                </p>
-              </div>
-
-              <div className="bg-white p-8 rounded-2xl shadow-lg border-l-4 border-indigo-500">
-                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                  <FaUtensils className="text-indigo-500 mr-3" />
-                  Mevcut POS sistemimle uyumlu mu?
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  restXqr bağımsız çalışır ancak mevcut POS sistemlerinizle entegre edilebilir. 
-                  Kurumsal pakette API entegrasyonları ile tüm sistemlerinizi birbirine bağlayabilirsiniz.
-                </p>
-              </div>
-
-              <div className="bg-white p-8 rounded-2xl shadow-lg border-l-4 border-pink-500">
-                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                  <FaChartLine className="text-pink-500 mr-3" />
-                  Raporlama özellikleri neler?
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Günlük/haftalık/aylık satış raporları, en çok satan ürünler, masa verimliliği, 
-                  personel performansı ve müşteri analitikleri gibi detaylı raporlar alabilirsiniz.
-                </p>
-              </div>
-            </div>
+          <div className="max-w-4xl mx-auto space-y-4">
+            {faqs.map((faq, index) => {
+              const IconComponent = faq.icon;
+              const isOpen = openFAQ === index;
+              
+              return (
+                <div key={index} className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200">
+                  <button
+                    onClick={() => toggleFAQ(index)}
+                    className="w-full p-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors duration-200"
+                  >
+                    <div className="flex items-center">
+                      <div className={`w-12 h-12 rounded-full bg-${faq.color} bg-opacity-10 flex items-center justify-center mr-4`}>
+                        <IconComponent className={`text-${faq.color} text-xl`} />
+                      </div>
+                      <h3 className="text-xl font-bold text-gray-900">{faq.question}</h3>
+                    </div>
+                    <div className="ml-4">
+                      {isOpen ? (
+                        <FaChevronUp className="text-gray-400 text-lg" />
+                      ) : (
+                        <FaChevronDown className="text-gray-400 text-lg" />
+                      )}
+                    </div>
+                  </button>
+                  
+                  <div className={`transition-all duration-300 ease-in-out ${
+                    isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                  } overflow-hidden`}>
+                    <div className="px-6 pb-6">
+                      <div className="pl-16">
+                        <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -441,6 +447,13 @@ export default function Home() {
       </footer>
 
     </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <LanguageProvider>
+      <HomeContent />
     </LanguageProvider>
   );
 }
