@@ -76,33 +76,45 @@ function MenuPageContent() {
     
     // Load restaurants first
     fetchRestaurants().then(() => {
+      console.log('✅ fetchRestaurants completed, now looking for restaurant...');
       // Wait a bit for restaurants to be loaded in state
       setTimeout(() => {
         const restaurant = getCurrentRestaurant();
         console.log('🏪 Found restaurant:', restaurant);
         if (restaurant) {
           console.log('🔄 Fetching menu for restaurant:', restaurant.id);
-          fetchRestaurantMenu(restaurant.id);
-          } else {
+          fetchRestaurantMenu(restaurant.id).then(() => {
+            console.log('✅ fetchRestaurantMenu completed');
+          }).catch((error) => {
+            console.error('❌ fetchRestaurantMenu error:', error);
+          });
+        } else {
           console.log('❌ No restaurant found, trying again...');
           // Try again after a short delay
           setTimeout(() => {
             const retryRestaurant = getCurrentRestaurant();
             console.log('🔄 Retry - Found restaurant:', retryRestaurant);
             if (retryRestaurant) {
-              fetchRestaurantMenu(retryRestaurant.id);
+              console.log('🔄 Retry - Fetching menu for restaurant:', retryRestaurant.id);
+              fetchRestaurantMenu(retryRestaurant.id).then(() => {
+                console.log('✅ Retry fetchRestaurantMenu completed');
+              }).catch((error) => {
+                console.error('❌ Retry fetchRestaurantMenu error:', error);
+              });
             }
           }, 500);
         }
       }, 100);
+    }).catch((error) => {
+      console.error('❌ fetchRestaurants error:', error);
     });
 
     // Set search placeholder based on language
     if (currentLanguage === 'Turkish') {
       setSearchPlaceholder('Menüde ara...');
     } else {
-          setSearchPlaceholder('Search menu...');
-        }
+      setSearchPlaceholder('Search menu...');
+    }
   }, []); // Remove currentLanguage dependency to prevent re-runs
 
   // Filter menu items based on search and category
