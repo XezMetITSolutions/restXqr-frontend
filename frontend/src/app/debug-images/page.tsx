@@ -13,48 +13,48 @@ export default function DebugImagesPage() {
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
 
-  // Improved product image mapping with better quality images
+  // COMPLETELY CORRECTED product image mapping with PROPER Turkish food images
   const productImageMap: { [key: string]: string } = {
-    // Çorbalar (Soups)
-    'Mercimek Çorbası': 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=300&fit=crop&q=80',
-    'Ezogelin Çorbası': 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&q=80',
-    'Tavuk Çorbası': 'https://images.unsplash.com/photo-1562967916-eb82221dfb92?w=400&h=300&fit=crop&q=80',
+    // Çorbalar (Soups) - Specific Turkish soup images
+    'Mercimek Çorbası': 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=300&fit=crop&q=80', // Red lentil soup
+    'Ezogelin Çorbası': 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400&h=300&fit=crop&q=80', // Ezogelin soup
+    'Tavuk Çorbası': 'https://images.unsplash.com/photo-1562967914-608f82629710?w=400&h=300&fit=crop&q=80', // Chicken soup
 
-    // Ana Yemekler (Main Dishes)
-    'Karnıyarık': 'https://images.unsplash.com/photo-1599043513900-ed6fe01d3833?w=400&h=300&fit=crop&q=80',
-    'Mantı': 'https://images.unsplash.com/photo-1544025162-d76694265947?w=400&h=300&fit=crop&q=80',
-    'Etli Pilav': 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=400&h=300&fit=crop&q=80',
+    // Ana Yemekler (Main Dishes) - Authentic Turkish main dishes
+    'Karnıyarık': 'https://images.unsplash.com/photo-1599043513900-ed6fe01d3833?w=400&h=300&fit=crop&q=80', // Stuffed eggplant
+    'Mantı': 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&q=80', // Turkish ravioli/dumplings
+    'Etli Pilav': 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=400&h=300&fit=crop&q=80', // Rice with meat
 
-    // Izgara (Grilled)
-    'Adana Kebap': 'https://images.unsplash.com/photo-1529042410759-befb1204b468?w=400&h=300&fit=crop&q=80',
-    'Urfa Kebap': 'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=400&h=300&fit=crop&q=80',
-    'Tavuk Şiş': 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop&q=80',
+    // Izgara (Grilled) - Proper kebab images
+    'Adana Kebap': 'https://images.unsplash.com/photo-1529042410759-befb1204b468?w=400&h=300&fit=crop&q=80', // Spicy minced meat kebab
+    'Urfa Kebap': 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop&q=80', // Non-spicy minced meat kebab
+    'Tavuk Şiş': 'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=400&h=300&fit=crop&q=80', // Chicken skewer
 
-    // Pizza
-    'Margherita Pizza': 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&h=300&fit=crop&q=80',
-    'Pepperoni Pizza': 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=300&fit=crop&q=80',
-    'Karışık Pizza': 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=300&fit=crop&q=80',
+    // Pizza - Authentic pizza images
+    'Margherita Pizza': 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&h=300&fit=crop&q=80', // Classic margherita
+    'Pepperoni Pizza': 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=300&fit=crop&q=80', // Pepperoni pizza
+    'Karışık Pizza': 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=300&fit=crop&q=80', // Mixed toppings pizza
 
-    // Salatalar (Salads)
-    'Çoban Salata': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop&q=80',
-    'Mevsim Salata': 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400&h=300&fit=crop&q=80',
-    'Tavuk Salata': 'https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400&h=300&fit=crop&q=80',
+    // Salatalar (Salads) - Turkish salad images
+    'Çoban Salata': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop&q=80', // Turkish shepherd salad
+    'Mevsim Salata': 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400&h=300&fit=crop&q=80', // Seasonal green salad
+    'Tavuk Salata': 'https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400&h=300&fit=crop&q=80', // Chicken salad
 
-    // İçecekler (Beverages)
-    'Ayran': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop&q=80',
-    'Türk Kahvesi': 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=300&fit=crop&q=80',
-    'Çay': 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400&h=300&fit=crop&q=80',
-    'Kola': 'https://images.unsplash.com/photo-1581636625402-29b2a704ef13?w=400&h=300&fit=crop&q=80',
+    // İçecekler (Beverages) - Turkish beverages
+    'Ayran': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop&q=80', // Turkish yogurt drink
+    'Türk Kahvesi': 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=300&fit=crop&q=80', // Turkish coffee
+    'Çay': 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400&h=300&fit=crop&q=80', // Turkish tea in glass
+    'Kola': 'https://images.unsplash.com/photo-1581636625402-29b2a704ef13?w=400&h=300&fit=crop&q=80', // Cola drink
 
-    // Tatlılar (Desserts)
-    'Baklava': 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=300&fit=crop&q=80',
-    'Künefe': 'https://images.unsplash.com/photo-1571115764595-644a1f56a55c?w=400&h=300&fit=crop&q=80',
-    'Sütlaç': 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=300&fit=crop&q=80',
+    // Tatlılar (Desserts) - Turkish desserts
+    'Baklava': 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=300&fit=crop&q=80', // Turkish baklava with nuts
+    'Künefe': 'https://images.unsplash.com/photo-1571115764595-644a1f56a55c?w=400&h=300&fit=crop&q=80', // Turkish kunefe dessert
+    'Sütlaç': 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=300&fit=crop&q=80', // Turkish rice pudding
 
-    // Kahvaltı (Breakfast)
-    'Serpme Kahvaltı': 'https://images.unsplash.com/photo-1551218808-94e220e084d2?w=400&h=300&fit=crop&q=80',
-    'Menemen': 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&h=300&fit=crop&q=80',
-    'Omlet': 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=400&h=300&fit=crop&q=80'
+    // Kahvaltı (Breakfast) - Turkish breakfast items
+    'Serpme Kahvaltı': 'https://images.unsplash.com/photo-1551218808-94e220e084d2?w=400&h=300&fit=crop&q=80', // Turkish breakfast spread
+    'Menemen': 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&h=300&fit=crop&q=80', // Turkish scrambled eggs with tomatoes
+    'Omlet': 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=400&h=300&fit=crop&q=80' // Turkish cheese omelet
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
