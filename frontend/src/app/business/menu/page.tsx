@@ -305,14 +305,25 @@ export default function MenuManagement() {
   const handleBulkPriceUpdate = async () => {
     if (selectedItems.length === 0 || !bulkPriceValue) return;
 
+    console.log('🔄 Bulk price update başlıyor:', {
+      selectedItems: selectedItems.length,
+      bulkPriceValue,
+      bulkPriceType,
+      bulkPriceOperation,
+      currentRestaurantId
+    });
+
     try {
       if (currentRestaurantId) {
         const value = parseFloat(bulkPriceValue);
+        let successCount = 0;
         
         for (const itemId of selectedItems) {
           const item = items.find(i => i.id === itemId);
           if (item) {
             let newPrice = item.price;
+            
+            console.log(`📊 Ürün ${item.name} - Eski fiyat: ₺${item.price}`);
             
             if (bulkPriceType === 'percentage') {
               if (bulkPriceOperation === 'increase') {
@@ -330,11 +341,25 @@ export default function MenuManagement() {
             
             // Minimum fiyat kontrolü
             newPrice = Math.max(0.01, newPrice);
+            const finalPrice = Math.round(newPrice * 100) / 100;
             
-            await updateMenuItem(currentRestaurantId, itemId, {
-              ...item,
-              price: Math.round(newPrice * 100) / 100 // 2 decimal places
-            });
+            console.log(`💰 Yeni fiyat: ₺${finalPrice}`);
+            
+            const updateData = {
+              categoryId: item.categoryId,
+              name: item.name,
+              description: item.description,
+              price: finalPrice,
+              imageUrl: item.imageUrl || item.image,
+              isAvailable: item.isAvailable,
+              isPopular: item.isPopular
+            };
+            
+            console.log('📤 Update data:', updateData);
+            
+            await updateMenuItem(currentRestaurantId, itemId, updateData);
+            successCount++;
+            console.log(`✅ ${item.name} başarıyla güncellendi`);
           }
         }
         
@@ -342,11 +367,11 @@ export default function MenuManagement() {
         setShowBulkPriceModal(false);
         setBulkPriceValue('');
         await fetchRestaurantMenu(currentRestaurantId);
-        alert(`${selectedItems.length} ürünün fiyatı güncellendi`);
+        alert(`${successCount} ürünün fiyatı başarıyla güncellendi`);
       }
     } catch (error) {
-      console.error('Toplu fiyat güncelleme hatası:', error);
-      alert('Fiyatlar güncellenirken bir hata oluştu');
+      console.error('❌ Toplu fiyat güncelleme hatası:', error);
+      alert(`Fiyatlar güncellenirken bir hata oluştu: ${(error as Error).message}`);
     }
   };
 
