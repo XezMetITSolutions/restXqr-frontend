@@ -391,11 +391,19 @@ const useRestaurantStore = create<RestaurantState>((set, get) => ({
       if (response.success) {
         // Backend'den gelen veriyi frontend formatına dönüştür
         const categories = response.data.categories || [];
-        const items = response.data.items || [];
+        let allItems: any[] = [];
         
         console.log('📊 Raw categories from backend:', categories.length);
-        console.log('📊 Raw items from backend:', items.length);
-        console.log('📋 First item:', items[0]);
+        
+        // Kategorilerden tüm ürünleri çıkar
+        categories.forEach((cat: any) => {
+          if (cat.items && Array.isArray(cat.items)) {
+            allItems = allItems.concat(cat.items);
+          }
+        });
+        
+        console.log('📊 Total items extracted:', allItems.length);
+        console.log('📋 First item:', allItems[0]);
         
         const transformedCategories = categories.map((cat: any) => ({
           id: cat.id,
@@ -406,7 +414,7 @@ const useRestaurantStore = create<RestaurantState>((set, get) => ({
           isActive: cat.isActive !== false
         }));
         
-        const transformedItems = items.map((item: any) => ({
+        const transformedItems = allItems.map((item: any) => ({
           id: item.id,
           restaurantId: item.restaurantId,
           categoryId: item.categoryId,
