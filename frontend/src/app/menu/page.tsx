@@ -118,12 +118,11 @@ function MenuPageContent() {
   // Handle add to cart
   const handleAddToCart = (item: any) => {
       addItem({
-      id: item.id,
+        itemId: item.id,
         name: item.name,
-      price: parseFloat(item.price),
-      imageUrl: item.imageUrl,
-      description: item.description,
-      quantity: 1
+        price: parseFloat(item.price),
+        image: item.imageUrl,
+        quantity: 1
       });
       setToastVisible(true);
       setTimeout(() => setToastVisible(false), 3000);
@@ -164,8 +163,8 @@ function MenuPageContent() {
     <>
       <SetBrandColor />
       
-      <div className="min-h-screen bg-gray-50">
-        {/* Navbar */}
+      <div className="min-h-screen bg-gray-50 pb-20">
+        {/* Header */}
         <div className="bg-white shadow-sm border-b sticky top-0 z-40">
           <div className="max-w-4xl mx-auto px-4 py-3">
             <div className="flex items-center justify-between">
@@ -175,42 +174,9 @@ function MenuPageContent() {
                     {currentRestaurant?.name || 'Restoran'}
                   </h1>
                   <p className="text-sm text-gray-600">
-                    <TranslatedText>Masa {tableNumber || 1}</TranslatedText>
+                    <TranslatedText>{`Masa #${tableNumber || 1}`}</TranslatedText>
                   </p>
                 </div>
-              </div>
-              
-              <div className="flex items-center space-x-6">
-                <button
-                  className="flex flex-col items-center text-gray-600 hover:text-gray-800 transition-colors"
-                  style={{ color: primary }}
-                >
-                  <FaUtensils className="mb-0.5" size={18} />
-                  <span className="text-xs font-medium"><TranslatedText>Menü</TranslatedText></span>
-                </button>
-                
-                <Link 
-                  href="/cart" 
-                  className="flex flex-col items-center text-gray-600 hover:text-gray-800 transition-colors relative"
-                  style={{ color: primary }}
-                >
-                  <FaShoppingCart className="mb-0.5" size={18} />
-                  <span className="text-xs font-medium"><TranslatedText>Sepet</TranslatedText></span>
-                  {cartItems.length > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                      {cartItems.length}
-                    </span>
-                  )}
-                </Link>
-
-                <button
-                  onClick={() => setIsQuickServiceModalOpen(true)}
-                  className="flex flex-col items-center text-gray-600 hover:text-gray-800 transition-colors"
-                  style={{ color: primary }}
-                >
-                  <FaBell className="mb-0.5" size={18} />
-                  <span className="text-xs font-medium"><TranslatedText>Garson Çağır</TranslatedText></span>
-                </button>
               </div>
             </div>
           </div>
@@ -361,24 +327,53 @@ function MenuPageContent() {
         </div>
 
       {/* Modals */}
+      {isModalOpen && selectedItem && (
         <MenuItemModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
           item={selectedItem}
-        onAddToCart={handleAddToCart}
-      />
+        />
+      )}
 
       <QuickServiceModal
         isOpen={isQuickServiceModalOpen}
         onClose={() => setIsQuickServiceModalOpen(false)}
-        onServiceCall={handleQuickService}
       />
+
+      {/* Bottom Navigation */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-2 shadow-lg z-50">
+        <div className="container mx-auto flex justify-around">
+          <button className="flex flex-col items-center" style={{ color: primary }}>
+            <FaUtensils className="mb-0.5" size={16} />
+            <span className="text-[10px]"><TranslatedText>Menü</TranslatedText></span>
+          </button>
+          <Link href="/cart" className="flex flex-col items-center" style={{ color: primary }}>
+            <div className="relative">
+              <FaShoppingCart className="mb-0.5" size={16} />
+              {cartItems.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-600 text-white rounded-full text-[9px] w-4 h-4 flex items-center justify-center">
+                  {cartItems.length}
+                </span>
+              )}
+            </div>
+            <span className="text-[10px]"><TranslatedText>Sepet</TranslatedText></span>
+          </Link>
+          <button
+            onClick={() => setIsQuickServiceModalOpen(true)}
+            className="flex flex-col items-center" 
+            style={{ color: primary }}
+          >
+            <FaBell className="mb-0.5" size={16} />
+            <span className="text-[10px]"><TranslatedText>Garson Çağır</TranslatedText></span>
+          </button>
+        </div>
+      </nav>
 
       {/* Toast */}
       <Toast
         visible={toastVisible}
-        message={translate('Ürün sepete eklendi!')}
-        type="success"
+        message="Ürün sepete eklendi!"
+        onClose={() => setToastVisible(false)}
       />
 
     </>
