@@ -74,12 +74,25 @@ function MenuPageContent() {
     
     // Load restaurants first
     fetchRestaurants().then(() => {
-      const restaurant = getCurrentRestaurant();
-      console.log('🏪 Found restaurant:', restaurant);
-      if (restaurant) {
-        console.log('🔄 Fetching menu for restaurant:', restaurant.id);
-        fetchRestaurantMenu(restaurant.id);
-      }
+      // Wait a bit for restaurants to be loaded in state
+      setTimeout(() => {
+        const restaurant = getCurrentRestaurant();
+        console.log('🏪 Found restaurant:', restaurant);
+        if (restaurant) {
+          console.log('🔄 Fetching menu for restaurant:', restaurant.id);
+          fetchRestaurantMenu(restaurant.id);
+        } else {
+          console.log('❌ No restaurant found, trying again...');
+          // Try again after a short delay
+          setTimeout(() => {
+            const retryRestaurant = getCurrentRestaurant();
+            console.log('🔄 Retry - Found restaurant:', retryRestaurant);
+            if (retryRestaurant) {
+              fetchRestaurantMenu(retryRestaurant.id);
+            }
+          }, 500);
+        }
+      }, 100);
     });
 
     // Set search placeholder based on language
