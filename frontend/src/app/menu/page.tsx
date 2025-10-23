@@ -184,6 +184,29 @@ function MenuPageContent() {
               
               <div className="flex items-center space-x-4">
                 <button
+                  onClick={() => {
+                    console.log('🔍 DEBUG INFO:');
+                    console.log('Restaurants:', restaurants.length);
+                    console.log('Categories:', categories.length);
+                    console.log('Menu Items:', menuItems.length);
+                    console.log('Current Restaurant:', currentRestaurant);
+                    console.log('Loading:', loading);
+                    console.log('Final Filtered Items:', finalFilteredItems.length);
+                    console.log('Active Category:', activeCategory);
+                    console.log('Search:', search);
+                    
+                    // Test API call
+                    if (currentRestaurant) {
+                      console.log('🔄 Testing API call...');
+                      fetchRestaurantMenu(currentRestaurant.id);
+                    }
+                  }}
+                  className="px-3 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600"
+                >
+                  DEBUG
+                </button>
+                
+                <button
                   onClick={() => setIsQuickServiceModalOpen(true)}
                   className="flex flex-col items-center text-gray-600 hover:text-gray-800 transition-colors"
                   style={{ color: primary }}
@@ -192,7 +215,7 @@ function MenuPageContent() {
                   <span className="text-[10px]"><TranslatedText>Garson Çağır</TranslatedText></span>
                 </button>
                 
-              <Link 
+                <Link 
                   href="/cart" 
                   className="flex flex-col items-center text-gray-600 hover:text-gray-800 transition-colors relative"
                   style={{ color: primary }}
@@ -204,8 +227,8 @@ function MenuPageContent() {
                       {cartItems.length}
                     </span>
                   )}
-              </Link>
-            </div>
+                </Link>
+              </div>
           </div>
           </div>
         </div>
