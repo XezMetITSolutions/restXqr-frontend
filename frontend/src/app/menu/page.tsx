@@ -42,6 +42,7 @@ function MenuPageContent() {
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
   const [isClient, setIsClient] = useState(false);
   const [searchPlaceholder, setSearchPlaceholder] = useState('Menüde ara...');
   const { settings } = useBusinessSettingsStore();
@@ -124,6 +125,7 @@ function MenuPageContent() {
         image: item.imageUrl,
         quantity: 1
       });
+      setToastMessage('Ürün sepete eklendi!');
       setToastVisible(true);
       setTimeout(() => setToastVisible(false), 3000);
   };
@@ -135,20 +137,34 @@ function MenuPageContent() {
   };
 
   // Handle quick service
-  const handleQuickService = (serviceType: string, customNote?: string) => {
+  const handleQuickService = async (serviceType: string, customNote?: string) => {
     if (!currentRestaurant) return;
     
-    const serviceData = {
-      restaurantId: currentRestaurant.id,
-      tableNumber: tableNumber || 1,
-      serviceType,
-      customNote: customNote || '',
-      timestamp: new Date().toISOString()
-    };
+    try {
+      const response = await fetch('/api/service-call/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          restaurantId: currentRestaurant.id,
+          tableNumber: tableNumber || 1,
+          message: customNote || serviceType,
+          type: serviceType
+        })
+      });
 
-    // For now, just log the service call - backend endpoint needs to be implemented
-    console.log('Service call requested:', serviceData);
-    setIsQuickServiceModalOpen(false);
+      if (response.ok) {
+        setToastMessage('Garson çağrısı gönderildi!');
+        setToastVisible(true);
+        setTimeout(() => setToastVisible(false), 3000);
+        setIsQuickServiceModalOpen(false);
+      } else {
+        console.error('Service call failed');
+      }
+    } catch (error) {
+      console.error('Service call error:', error);
+    }
   };
 
   if (!isClient) {
@@ -338,6 +354,7 @@ function MenuPageContent() {
       <QuickServiceModal
         isOpen={isQuickServiceModalOpen}
         onClose={() => setIsQuickServiceModalOpen(false)}
+        onServiceCall={handleQuickService}
       />
 
       {/* Bottom Navigation */}
@@ -372,7 +389,7 @@ function MenuPageContent() {
       {/* Toast */}
       <Toast
         visible={toastVisible}
-        message="Ürün sepete eklendi!"
+        message={toastMessage}
         onClose={() => setToastVisible(false)}
       />
 
