@@ -70,8 +70,12 @@ function MenuPageContent() {
     // Load restaurants first
     fetchRestaurants().then(() => {
       const restaurant = getCurrentRestaurant();
+      console.log('🏪 Current restaurant:', restaurant);
       if (restaurant) {
+        console.log('📋 Fetching menu for restaurant:', restaurant.id);
         fetchRestaurantMenu(restaurant.id);
+      } else {
+        console.log('❌ No restaurant found');
       }
     });
 
@@ -82,6 +86,16 @@ function MenuPageContent() {
       setSearchPlaceholder('Search menu...');
     }
   }, [currentLanguage]);
+
+  // Debug menu data
+  console.log('📊 Menu data:', { 
+    categories: categories.length, 
+    menuItems: menuItems.length,
+    loading,
+    restaurants: restaurants.length
+  });
+  console.log('📋 Categories:', categories);
+  console.log('🍽️ Menu items:', menuItems);
 
   // Filter menu items based on search and category
   const filteredItems = menuItems.filter((item: any) => {
@@ -98,6 +112,7 @@ function MenuPageContent() {
 
   // Get final filtered items
   const finalFilteredItems = filteredItems;
+  console.log('🔍 Filtered items:', finalFilteredItems.length);
 
   // Handle add to cart
   const handleAddToCart = (item: any) => {
