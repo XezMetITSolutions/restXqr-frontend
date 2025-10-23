@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { FaTimes, FaGlassWater, FaBroom, FaReceipt, FaUtensils, FaPaperPlane } from 'react-icons/fa';
-import { useLanguage } from '@/context/LanguageContext';
+import { useLanguage, LanguageProvider } from '@/context/LanguageContext';
 import TranslatedText from '@/components/TranslatedText';
 import useRestaurantStore from '@/store/useRestaurantStore';
 import { useCartStore } from '@/store';
@@ -12,7 +12,7 @@ interface QuickServiceModalProps {
   onClose: () => void;
 }
 
-export default function QuickServiceModal({ isOpen, onClose }: QuickServiceModalProps) {
+function QuickServiceModalContent({ isOpen, onClose }: QuickServiceModalProps) {
   const { currentLanguage } = useLanguage();
   const { restaurants } = useRestaurantStore();
   const tableNumber = useCartStore(state => state.tableNumber);
@@ -235,6 +235,13 @@ export default function QuickServiceModal({ isOpen, onClose }: QuickServiceModal
           </div>
         </div>
       </div>
-    </>
+  );
+}
+
+export default function QuickServiceModal({ isOpen, onClose }: QuickServiceModalProps) {
+  return (
+    <LanguageProvider>
+      <QuickServiceModalContent isOpen={isOpen} onClose={onClose} />
+    </LanguageProvider>
   );
 }
