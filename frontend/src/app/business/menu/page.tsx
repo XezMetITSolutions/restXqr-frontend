@@ -129,6 +129,8 @@ export default function MenuManagement() {
   const [bulkPriceValue, setBulkPriceValue] = useState('');
   const [bulkPriceOperation, setBulkPriceOperation] = useState<'increase' | 'decrease'>('increase');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [showBulkActions, setShowBulkActions] = useState(false);
   
   // Form state'leri - Sadece Türkçe
   const [formData, setFormData] = useState({
@@ -260,6 +262,91 @@ export default function MenuManagement() {
         console.error('Ürün silinirken hata:', error);
         alert('Ürün silinirken bir hata oluştu');
       }
+    }
+  };
+
+  // Bulk actions
+  const handleSelectAll = () => {
+    if (selectedItems.length === filteredItems.length) {
+      setSelectedItems([]);
+    } else {
+      setSelectedItems(filteredItems.map(item => item.id));
+    }
+  };
+
+  const handleSelectItem = (itemId: string) => {
+    if (selectedItems.includes(itemId)) {
+      setSelectedItems(selectedItems.filter(id => id !== itemId));
+    } else {
+      setSelectedItems([...selectedItems, itemId]);
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedItems.length === 0) return;
+    
+    if (confirm(`${selectedItems.length} ürünü silmek istediğinizden emin misiniz?`)) {
+      try {
+        if (currentRestaurantId) {
+          for (const itemId of selectedItems) {
+            await deleteMenuItem(currentRestaurantId, itemId);
+          }
+          setSelectedItems([]);
+          await fetchRestaurantMenu(currentRestaurantId);
+          alert(`${selectedItems.length} ürün başarıyla silindi`);
+        }
+      } catch (error) {
+        console.error('Toplu silme hatası:', error);
+        alert('Ürünler silinirken bir hata oluştu');
+      }
+    }
+  };
+
+  const handleBulkPriceUpdate = async () => {
+    if (selectedItems.length === 0 || !bulkPriceValue) return;
+
+    try {
+      if (currentRestaurantId) {
+        const value = parseFloat(bulkPriceValue);
+        
+        for (const itemId of selectedItems) {
+          const item = items.find(i => i.id === itemId);
+          if (item) {
+            let newPrice = item.price;
+            
+            if (bulkPriceType === 'percentage') {
+              if (bulkPriceOperation === 'increase') {
+                newPrice = item.price * (1 + value / 100);
+              } else {
+                newPrice = item.price * (1 - value / 100);
+              }
+            } else {
+              if (bulkPriceOperation === 'increase') {
+                newPrice = item.price + value;
+              } else {
+                newPrice = item.price - value;
+              }
+            }
+            
+            // Minimum fiyat kontrolü
+            newPrice = Math.max(0.01, newPrice);
+            
+            await updateMenuItem(currentRestaurantId, itemId, {
+              ...item,
+              price: Math.round(newPrice * 100) / 100 // 2 decimal places
+            });
+          }
+        }
+        
+        setSelectedItems([]);
+        setShowBulkPriceModal(false);
+        setBulkPriceValue('');
+        await fetchRestaurantMenu(currentRestaurantId);
+        alert(`${selectedItems.length} ürünün fiyatı güncellendi`);
+      }
+    } catch (error) {
+      console.error('Toplu fiyat güncelleme hatası:', error);
+      alert('Fiyatlar güncellenirken bir hata oluştu');
     }
   };
 
@@ -520,19 +607,40 @@ export default function MenuManagement() {
       {/* Content */}
       {!loading && activeTab === 'items' && (
         <div className="space-y-6">
-          {/* Action Buttons - Mobile Optimized */}
-          <div className="flex justify-center items-center">
-            <div className="flex gap-2 sm:gap-3">
-              <button 
-                onClick={handleAddItem}
-                className="px-4 py-2 sm:px-4 sm:py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 flex items-center gap-2 shadow-lg text-sm font-medium min-w-[80px] sm:min-w-auto"
-              >
-                <FaPlus className="text-sm" />
-                <span className="hidden sm:inline">Yeni Ürün Ekle</span>
-                <span className="sm:hidden">Yeni</span>
-              </button>
+          {/* Bulk Actions Toolbar */}
+          {selectedItems.length > 0 && (
+            <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <span className="text-sm font-medium text-purple-700">
+                    {selectedItems.length} ürün seçildi
+                  </span>
+                  <button
+                    onClick={() => setSelectedItems([])}
+                    className="text-sm text-purple-600 hover:text-purple-800"
+                  >
+                    Seçimi Temizle
+                  </button>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setShowBulkPriceModal(true)}
+                    className="px-3 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 flex items-center gap-1"
+                  >
+                    <FaMoneyBillWave className="text-xs" />
+                    Fiyat Düzenle
+                  </button>
+                  <button
+                    onClick={handleBulkDelete}
+                    className="px-3 py-1.5 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 flex items-center gap-1"
+                  >
+                    <FaTrash className="text-xs" />
+                    Sil
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Search and Filters */}
           <div className="bg-white rounded-lg shadow-sm border p-4 space-y-4">
@@ -581,6 +689,14 @@ export default function MenuManagement() {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <input
+                        type="checkbox"
+                        checked={selectedItems.length === filteredItems.length && filteredItems.length > 0}
+                        onChange={handleSelectAll}
+                        className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                      />
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Ürün
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -600,6 +716,14 @@ export default function MenuManagement() {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {filteredItems.map(item => (
                     <tr key={item.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <input
+                          type="checkbox"
+                          checked={selectedItems.includes(item.id)}
+                          onChange={() => handleSelectItem(item.id)}
+                          className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                        />
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <img
@@ -1517,6 +1641,122 @@ export default function MenuManagement() {
                       Fotoğraf Çek
                   </button>
                   </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Bulk Price Update Modal */}
+          {showBulkPriceModal && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+              <div className="bg-white rounded-xl max-w-md w-full">
+                <div className="p-6 border-b flex justify-between items-center">
+                  <h2 className="text-xl font-bold">Toplu Fiyat Düzenle</h2>
+                  <button
+                    onClick={() => setShowBulkPriceModal(false)}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    <FaTimes size={20} />
+                  </button>
+                </div>
+                <div className="p-6 space-y-4">
+                  <p className="text-sm text-gray-600">
+                    {selectedItems.length} ürünün fiyatını güncelleyeceksiniz.
+                  </p>
+                  
+                  {/* Operation Type */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      İşlem Türü
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => setBulkPriceOperation('increase')}
+                        className={`p-2 text-sm rounded-lg border ${
+                          bulkPriceOperation === 'increase'
+                            ? 'bg-green-50 border-green-300 text-green-700'
+                            : 'border-gray-300 text-gray-700'
+                        }`}
+                      >
+                        Arttır
+                      </button>
+                      <button
+                        onClick={() => setBulkPriceOperation('decrease')}
+                        className={`p-2 text-sm rounded-lg border ${
+                          bulkPriceOperation === 'decrease'
+                            ? 'bg-red-50 border-red-300 text-red-700'
+                            : 'border-gray-300 text-gray-700'
+                        }`}
+                      >
+                        Azalt
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Price Type */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Değer Türü
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => setBulkPriceType('percentage')}
+                        className={`p-2 text-sm rounded-lg border ${
+                          bulkPriceType === 'percentage'
+                            ? 'bg-blue-50 border-blue-300 text-blue-700'
+                            : 'border-gray-300 text-gray-700'
+                        }`}
+                      >
+                        <FaPercent className="inline mr-1" />
+                        Yüzde
+                      </button>
+                      <button
+                        onClick={() => setBulkPriceType('fixed')}
+                        className={`p-2 text-sm rounded-lg border ${
+                          bulkPriceType === 'fixed'
+                            ? 'bg-blue-50 border-blue-300 text-blue-700'
+                            : 'border-gray-300 text-gray-700'
+                        }`}
+                      >
+                        ₺ Sabit
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Value Input */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Değer
+                    </label>
+                    <input
+                      type="number"
+                      value={bulkPriceValue}
+                      onChange={(e) => setBulkPriceValue(e.target.value)}
+                      placeholder={bulkPriceType === 'percentage' ? '10' : '5.00'}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {bulkPriceType === 'percentage' 
+                        ? `Fiyatları %${bulkPriceValue || '0'} ${bulkPriceOperation === 'increase' ? 'arttır' : 'azalt'}`
+                        : `Fiyatlara ₺${bulkPriceValue || '0'} ${bulkPriceOperation === 'increase' ? 'ekle' : 'çıkar'}`
+                      }
+                    </p>
+                  </div>
+                </div>
+                <div className="p-6 border-t flex justify-end gap-3">
+                  <button
+                    onClick={() => setShowBulkPriceModal(false)}
+                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  >
+                    İptal
+                  </button>
+                  <button
+                    onClick={handleBulkPriceUpdate}
+                    disabled={!bulkPriceValue}
+                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Güncelle
+                  </button>
                 </div>
               </div>
             </div>
