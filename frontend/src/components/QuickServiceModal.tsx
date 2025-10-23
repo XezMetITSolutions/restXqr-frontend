@@ -23,6 +23,8 @@ export default function QuickServiceModal({ isOpen, onClose }: QuickServiceModal
   // Subdomain'den restaurant bulma
   const getCurrentRestaurant = () => {
     if (typeof window === 'undefined') return null;
+    if (!restaurants || !Array.isArray(restaurants)) return null;
+    
     const hostname = window.location.hostname;
     const subdomain = hostname.split('.')[0];
     const mainDomains = ['localhost', 'www', 'guzellestir'];
@@ -33,30 +35,32 @@ export default function QuickServiceModal({ isOpen, onClose }: QuickServiceModal
 
   const currentRestaurant = getCurrentRestaurant();
 
+  const isTurkish = currentLanguage === 'Turkish';
+  
   const quickServices = [
     {
       id: 'water',
       icon: FaGlassWater,
-      title: currentLanguage === 'Turkish' ? 'Su İstiyorum' : 'Water Please',
-      message: currentLanguage === 'Turkish' ? 'Su getirebilir misiniz?' : 'Could you bring water?'
+      title: isTurkish ? 'Su İstiyorum' : 'Water Please',
+      message: isTurkish ? 'Su getirebilir misiniz?' : 'Could you bring water?'
     },
     {
       id: 'clean',
       icon: FaBroom,
-      title: currentLanguage === 'Turkish' ? 'Masayı Temizler misiniz?' : 'Clean Table',
-      message: currentLanguage === 'Turkish' ? 'Masayı temizleyebilir misiniz?' : 'Could you clean the table?'
+      title: isTurkish ? 'Masayı Temizler misiniz?' : 'Clean Table',
+      message: isTurkish ? 'Masayı temizleyebilir misiniz?' : 'Could you clean the table?'
     },
     {
       id: 'bill',
       icon: FaReceipt,
-      title: currentLanguage === 'Turkish' ? 'Hesap Lütfen' : 'Bill Please',
-      message: currentLanguage === 'Turkish' ? 'Hesabı getirebilir misiniz?' : 'Could you bring the bill?'
+      title: isTurkish ? 'Hesap Lütfen' : 'Bill Please',
+      message: isTurkish ? 'Hesabı getirebilir misiniz?' : 'Could you bring the bill?'
     },
     {
       id: 'utensils',
       icon: FaUtensils,
-      title: currentLanguage === 'Turkish' ? 'Yeni Çatal Bıçak' : 'New Utensils',
-      message: currentLanguage === 'Turkish' ? 'Yeni çatal bıçak getirebilir misiniz?' : 'Could you bring new utensils?'
+      title: isTurkish ? 'Yeni Çatal Bıçak' : 'New Utensils',
+      message: isTurkish ? 'Yeni çatal bıçak getirebilir misiniz?' : 'Could you bring new utensils?'
     }
   ] as const;
 
@@ -214,7 +218,7 @@ export default function QuickServiceModal({ isOpen, onClose }: QuickServiceModal
               <textarea
                 value={customNote}
                 onChange={(e) => setCustomNote(e.target.value)}
-                placeholder={currentLanguage === 'Turkish' ? 'Özel isteğinizi yazın...' : 'Write your special request...'}
+                placeholder={isTurkish ? 'Özel isteğinizi yazın...' : 'Write your special request...'}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                 rows={3}
                 disabled={isLoading}
