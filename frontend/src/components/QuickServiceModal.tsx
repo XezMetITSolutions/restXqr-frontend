@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { FaTimes, FaGlassWater, FaBroom, FaReceipt, FaUtensils, FaPaperPlane } from 'react-icons/fa';
 import { useLanguage } from '@/context/LanguageContext';
 import TranslatedText from '@/components/TranslatedText';
-import apiService from '@/services/api';
 import useRestaurantStore from '@/store/useRestaurantStore';
 import { useCartStore } from '@/store';
 
