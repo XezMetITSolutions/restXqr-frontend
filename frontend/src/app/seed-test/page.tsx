@@ -13,7 +13,7 @@ export default function SeedTestPage() {
     setResult(null);
 
     try {
-      const response = await fetch('/api/admin/seed-menu', {
+      const response = await fetch('https://masapp-backend.onrender.com/api/admin/seed-menu', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
