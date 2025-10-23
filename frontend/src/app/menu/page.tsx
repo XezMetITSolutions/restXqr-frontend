@@ -6,12 +6,12 @@ import Image from 'next/image';
 import { FaShoppingCart, FaBell, FaArrowLeft, FaStar, FaPlus, FaInfo, FaUtensils, FaFilter } from 'react-icons/fa';
 import useRestaurantStore from '@/store/useRestaurantStore';
 import { useCartStore } from '@/store';
-import AnnouncementPopup from '@/components/AnnouncementPopup';
 import Toast from '@/components/Toast';
 import MenuItemModal from '@/components/MenuItemModal';
 import { LanguageProvider, useLanguage } from '@/context/LanguageContext';
 import TranslatedText from '@/components/TranslatedText';
 import useBusinessSettingsStore from '@/store/useBusinessSettingsStore';
+import QuickServiceModal from '@/components/QuickServiceModal';
 import SetBrandColor from '@/components/SetBrandColor';
 import apiService from '@/services/api';
 
@@ -28,8 +28,10 @@ function MenuPageContent() {
     restaurants, 
     categories, 
     menuItems, 
+    currentRestaurant,
     fetchRestaurants, 
     fetchRestaurantMenu,
+    fetchRestaurantByUsername,
     loading 
   } = useRestaurantStore();
   
@@ -43,633 +45,408 @@ function MenuPageContent() {
   const [isClient, setIsClient] = useState(false);
   const [searchPlaceholder, setSearchPlaceholder] = useState('Menüde ara...');
   const { settings } = useBusinessSettingsStore();
-  const [showSplash, setShowSplash] = useState(false);
   const [tokenValid, setTokenValid] = useState<boolean | null>(null);
   const [tokenMessage, setTokenMessage] = useState('');
+  const [isQuickServiceModalOpen, setIsQuickServiceModalOpen] = useState(false);
+  const [debugLogs, setDebugLogs] = useState<string[]>([]);
+  const [showDebugLogs, setShowDebugLogs] = useState(false);
   const primary = settings.branding.primaryColor;
   const secondary = settings.branding.secondaryColor || settings.branding.primaryColor;
   
-  // Subdomain'den restaurant bulma
-  const getCurrentRestaurant = () => {
+  // Get subdomain for restaurant lookup
+  const getSubdomain = () => {
     if (typeof window === 'undefined') return null;
     const hostname = window.location.hostname;
     const subdomain = hostname.split('.')[0];
     const mainDomains = ['localhost', 'www', 'guzellestir'];
     
     if (mainDomains.includes(subdomain)) return null;
-    return restaurants.find((r: any) => r.username === subdomain);
+    return subdomain;
   };
 
-  const currentRestaurant = getCurrentRestaurant();
-
-  // Restaurant'a göre kategoriler ve ürünler filtreleme
-  const items = currentRestaurant?.id 
-    ? menuItems.filter((item: any) => item.restaurantId === currentRestaurant.id)
-    : [];
-  const filteredCategories = currentRestaurant?.id 
-    ? categories.filter((cat: any) => cat.restaurantId === currentRestaurant.id)
-    : [];
-
-  // QR Table Number Detection - Sabit QR ile çalışır
-  useEffect(() => {
-    const detectTableAndToken = async () => {
-      if (typeof window === 'undefined') return;
-      
-      const urlParams = new URLSearchParams(window.location.search);
-      const tableParam = urlParams.get('table');
-      const tokenParam = urlParams.get('token');
-      
-      // Token varsa doğrula
-      if (tokenParam) {
-        try {
-          const response = await apiService.verifyQRToken(tokenParam);
-          
-          if (response.success && response.data?.isActive) {
-            setTokenValid(true);
-            setTokenMessage('QR kod geçerli. Menüye erişebilirsiniz.');
-            
-            // Token'ı sessionStorage'a kaydet
-            sessionStorage.setItem('qr_token', tokenParam);
-            console.log('✅ Token doğrulandı:', tokenParam);
-          } else {
-            // Oturum devamlılığı için, masa parametresi varsa yeni token üretelim
-            if (currentRestaurant?.id && tableParam) {
-              try {
-                const gen = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/qr/generate`, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    restaurantId: currentRestaurant.id,
-                    tableNumber: parseInt(tableParam),
-                    duration: 2
-                  })
-                });
-                const genData = await gen.json();
-                if (genData.success) {
-                  sessionStorage.setItem('qr-session-token', genData.data.token);
-                  setTokenValid(true);
-                  setTokenMessage('Yeni QR oturumu oluşturuldu. Menüye erişebilirsiniz.');
-                } else {
-                  setTokenValid(false);
-                  setTokenMessage('QR kod geçersiz veya süresi dolmuş. Lütfen yeni bir QR kod tarayın.');
-                  return;
-                }
-              } catch (e) {
-                setTokenValid(false);
-                setTokenMessage('QR kod doğrulanamadı. Lütfen yeni bir QR kod tarayın.');
-                return;
-              }
-            } else {
-              setTokenValid(false);
-              setTokenMessage('QR kod geçersiz veya süresi dolmuş. Lütfen yeni bir QR kod tarayın.');
-              return; // Token geçersizse devam etme
-            }
-          }
-        } catch (error) {
-          console.error('❌ Token doğrulama hatası:', error);
-          setTokenValid(false);
-          setTokenMessage('QR kod doğrulanamadı. Lütfen yeni bir QR kod tarayın.');
-          return;
-        }
-      }
-      
-      // Masa numarası kontrolü
-      if (tableParam) {
-        const tableNum = parseInt(tableParam);
-        
-        if (!isNaN(tableNum) && tableNum > 0) {
-          // Token varsa masa numarasını ayarla (QR kod ile geldiğinde)
-          if (tokenParam) {
-            setTableNumber(tableNum);
-          }
-          
-          // Token yoksa yeni QR token oluştur (eski sistem için)
-          if (!tokenParam) {
-            try {
-              if (currentRestaurant?.id) {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/qr/generate`, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    restaurantId: currentRestaurant.id,
-                    tableNumber: tableNum,
-                    duration: 2 // 2 saat
-                  })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                  console.log('Masa oturumu başlatıldı:', {
-                    masa: tableNum,
-                    token: data.data.token,
-                    süre: '2 saat'
-                  });
-                  
-                  // Token'ı sessionStorage'a kaydet (sayfa yenilenirse tekrar oluşturma)
-                  sessionStorage.setItem('qr-session-token', data.data.token);
-                }
-              }
-            } catch (error) {
-              console.error('Session token oluşturma hatası:', error);
-            }
-          }
-        }
-      }
-    };
-    
-    detectTableAndToken();
-  }, [setTableNumber, currentRestaurant]);
-
-  // Fetch data on mount
+  // Load data on mount
   useEffect(() => {
     setIsClient(true);
-    // Restaurants yoksa fetch et
-    if (restaurants.length === 0) {
-      fetchRestaurants();
+    
+    console.log('🔄 Menu page useEffect triggered');
+    console.log('🏪 Current restaurants:', restaurants.length);
+    console.log('📋 Current categories:', categories.length);
+    console.log('🍽️ Current menuItems:', menuItems.length);
+    
+    // Get subdomain and fetch restaurant directly
+    const subdomain = getSubdomain();
+    console.log('🌐 Detected subdomain:', subdomain);
+    
+    if (subdomain) {
+      console.log('🔄 Fetching restaurant by username:', subdomain);
+      fetchRestaurantByUsername(subdomain).then((restaurant) => {
+        console.log('✅ fetchRestaurantByUsername completed:', restaurant);
+        if (restaurant) {
+          console.log('🔄 Restaurant found, menu data should be included');
+        } else {
+          console.error('❌ No restaurant found for subdomain:', subdomain);
+        }
+      }).catch((error) => {
+        console.error('❌ fetchRestaurantByUsername error:', error);
+      });
+    } else {
+      console.log('❌ No valid subdomain detected');
     }
-    // Restaurant varsa menüyü fetch et
-    if (currentRestaurant?.id) {
-      fetchRestaurantMenu(currentRestaurant.id);
-    }
-    try {
-      const hasVisited = typeof window !== 'undefined' && sessionStorage.getItem('menuVisitedOnce');
-      if (!hasVisited) {
-        setShowSplash(true);
-        sessionStorage.setItem('menuVisitedOnce', '1');
-        setTimeout(() => setShowSplash(false), 1600);
-      }
-    } catch {}
-  }, [restaurants.length, currentRestaurant?.id, fetchRestaurants, fetchRestaurantMenu]);
 
-  // Update search placeholder based on language
-  useEffect(() => {
+    // Set search placeholder based on language
     if (currentLanguage === 'Turkish') {
       setSearchPlaceholder('Menüde ara...');
     } else {
-      // For other languages, we'll translate this
-      const translatePlaceholder = async () => {
-        try {
-          const translated = await translate('Menüde ara...');
-          setSearchPlaceholder(translated);
-        } catch (error) {
-          setSearchPlaceholder('Search menu...');
-        }
-      };
-      translatePlaceholder();
+      setSearchPlaceholder('Search menu...');
     }
-  }, [currentLanguage, translate]);
+  }, []); // Remove currentLanguage dependency to prevent re-runs
 
-  // Helper functions - defined inside component to avoid dependency issues
-  const getPopularItems = () => {
-    return items.filter((item: any) => item.isPopular);
-  };
+  // Filter menu items based on search and category
+  const filteredItems = menuItems.filter((item: any) => {
+    const matchesSearch = search === '' || 
+      item.name.toLowerCase().includes(search.toLowerCase()) ||
+      item.description.toLowerCase().includes(search.toLowerCase());
+    
+    const matchesCategory = activeCategory === 'popular' ? 
+      item.isPopular : 
+      item.categoryId === activeCategory;
+    
+    return matchesSearch && matchesCategory;
+  });
 
-  const getItemsByCategory = (categoryId: string) => {
-    return items.filter((item: any) => item.categoryId === categoryId);
-  };
+  // Get final filtered items
+  const finalFilteredItems = filteredItems;
 
-  const getItemsBySubcategory = (subcategoryId: string) => {
-    return items.filter((item: any) => item.subcategory === subcategoryId);
-  };
-
-  const getSubcategoriesByParent = (parentId: string) => {
-    return []; // Backend'de subcategory yok
-  };
-
-  // Get cart count - only calculate on client side to avoid hydration mismatch
-  const [cartCount, setCartCount] = useState(0);
-
-  useEffect(() => {
-    if (isClient) {
-      setCartCount(cartItems.reduce((sum, item) => sum + (item.quantity || 0), 0));
-    }
-  }, [isClient, cartItems]);
-
-  // Get language code for menu data
-  const language = currentLanguage === 'Turkish' ? 'tr' : 'en';
-  
-  // Get menu categories (backend format)
-  const menuCategories = [
-    { id: 'popular', name: currentLanguage === 'Turkish' ? 'Popüler' : 'Popular' },
-    ...filteredCategories.map((cat: any) => ({
-      id: cat.id,
-      name: typeof cat.name === 'string' ? cat.name : (cat.name?.tr || cat.name?.en || 'Kategori')
-    }))
-  ];
-
-  // Get subcategories for active category
-  const activeSubcategories = activeCategory === 'popular' ? [] : getSubcategoriesByParent(activeCategory);
-  
-  // Get filtered items
-  let filteredItems = activeCategory === 'popular'
-    ? getPopularItems()
-    : activeSubcategory
-      ? getItemsBySubcategory(activeSubcategory)
-      : getItemsByCategory(activeCategory);
-
-  if (search.trim() !== '') {
-    filteredItems = filteredItems.filter((item: any) => {
-      const itemName = typeof item.name === 'string' ? item.name : (item.name?.tr || item.name?.en || '');
-      const itemDesc = typeof item.description === 'string' ? item.description : (item.description?.tr || item.description?.en || '');
-      return itemName.toLowerCase().includes(search.toLowerCase()) ||
-             itemDesc.toLowerCase().includes(search.toLowerCase());
-    });
-  }
-
-  // Event handlers
-  const handleCategoryChange = (categoryId: string) => {
-    setActiveCategory(categoryId);
-    setActiveSubcategory(null);
-  };
-
-  const handleSubcategoryChange = (subcategoryId: string | null) => {
-    setActiveSubcategory(subcategoryId);
-  };
-
-  const addToCart = (item: any) => {
-    try {
+  // Handle add to cart
+  const handleAddToCart = (item: any) => {
       addItem({
-        itemId: item.id,
+      id: item.id,
         name: item.name,
-        price: item.price,
-        quantity: 1,
-        image: item.image,
-        preparationTime: item.preparationTime // hazırlık süresini ekle
+      price: parseFloat(item.price),
+      imageUrl: item.imageUrl,
+      description: item.description,
+      quantity: 1
       });
       setToastVisible(true);
-      // Auto hide toast after 3 seconds
       setTimeout(() => setToastVisible(false), 3000);
-    } catch (error) {
-      console.error('Error adding item to cart:', error);
-    }
   };
 
-  const openModal = (item: any) => {
+  // Handle item click
+  const handleItemClick = (item: any) => {
     setSelectedItem(item);
     setIsModalOpen(true);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedItem(null);
+  // Handle quick service
+  const handleQuickService = (serviceType: string, customNote?: string) => {
+    if (!currentRestaurant) return;
+    
+    const serviceData = {
+      restaurantId: currentRestaurant.id,
+      tableNumber: tableNumber || 1,
+      serviceType,
+      customNote: customNote || '',
+      timestamp: new Date().toISOString()
+    };
+
+    // For now, just log the service call - backend endpoint needs to be implemented
+    console.log('Service call requested:', serviceData);
+    setIsQuickServiceModalOpen(false);
   };
 
-  // Token geçersizse menüyü gizle
-  if (tokenValid === false) {
+  if (!isClient) {
     return (
-      <>
-        <SetBrandColor />
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-          <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-6 text-center">
-            <div className="mb-4">
-              <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
-                <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </div>
-              <h2 className="text-xl font-bold text-gray-900 mb-2">QR Kod Geçersiz</h2>
-              <p className="text-gray-600 mb-4">{tokenMessage}</p>
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
-                <p className="text-sm text-yellow-800">
-                  Bu QR kod ödeme tamamlandıktan sonra geçersiz hale gelir. 
-                  Yeni bir QR kod tarayarak menüye erişebilirsiniz.
-                </p>
-              </div>
-              <button
-                onClick={() => window.location.reload()}
-                className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Tekrar Dene
-              </button>
-            </div>
-          </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
         </div>
-      </>
     );
   }
 
   return (
     <>
       <SetBrandColor />
-      {showSplash && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white animate-fadeIn">
-          <div className="text-center px-6 animate-scaleIn">
-            <div className="relative inline-flex items-center justify-center mb-3">
-              <div className="absolute inset-0 -z-10 h-24 w-24 rounded-full opacity-10" style={{ backgroundColor: 'var(--brand-primary)' }} />
-              {settings.branding.logo ? (
-                <img src={settings.branding.logo} alt="Logo" className="h-20 w-20 object-contain rounded-md shadow-sm" />
-              ) : (
-                <div className="h-20 w-20 rounded-full flex items-center justify-center text-white font-semibold" style={{ backgroundColor: 'var(--brand-primary)' }}>
-                  {(settings.basicInfo.name || 'Işletme').slice(0,1)}
-                </div>
-              )}
-            </div>
-            <div className="text-dynamic-xl font-bold text-gray-900">{settings.basicInfo.name || 'İşletme'}</div>
-            {settings.branding.showSloganOnLoading !== false && settings.basicInfo.slogan && (
-              <div className="text-dynamic-sm text-gray-600 mt-1">{settings.basicInfo.slogan}</div>
-            )}
-            <div className="mt-4 mx-auto h-[1px] w-40 bg-gray-200" />
-            <div className="mt-3 w-40 h-1 bg-gray-100 rounded overflow-hidden mx-auto">
-              <div className="h-full bg-brand animate-progress" />
-            </div>
-          </div>
-          <style jsx>{`
-            @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
-            @keyframes scaleIn { from { transform: scale(.96); opacity: .4 } to { transform: scale(1); opacity: 1 } }
-            @keyframes progress { 0% { transform: translateX(-100%) } 100% { transform: translateX(0) } }
-            .animate-fadeIn { animation: fadeIn 200ms ease-out }
-            .animate-scaleIn { animation: scaleIn 300ms ease-out }
-            .animate-progress { animation: progress 900ms ease-out forwards }
-          `}</style>
-        </div>
-      )}
-      <Toast message="Ürün sepete eklendi!" visible={toastVisible} onClose={() => setToastVisible(false)} />
-      <AnnouncementPopup />
-      <main className="min-h-screen pb-20">
+      
+      <div className="min-h-screen bg-gray-50">
         {/* Header */}
-        <header className="bg-white shadow-sm fixed top-0 left-0 right-0 z-20">
-          <div className="container mx-auto px-3 py-3 flex justify-between items-center">
-            <div className="flex items-center">
-              <Link href="/" className="mr-2">
-                <FaArrowLeft size={16} />
+        <div className="bg-white shadow-sm border-b sticky top-0 z-40">
+          <div className="max-w-4xl mx-auto px-4 py-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <Link 
+                  href="/" 
+                  className="text-gray-600 hover:text-gray-800 transition-colors"
+                >
+                  <FaArrowLeft size={20} />
               </Link>
-              <h1 className="text-dynamic-lg font-bold text-primary">
+                <div>
+                  <h1 className="text-lg font-semibold text-gray-800">
+                    {currentRestaurant?.name || 'Restoran'}
+                  </h1>
+                  <p className="text-sm text-gray-600">
                 <TranslatedText>Menü</TranslatedText>
-              </h1>
-              {tableNumber && (
-              <div className="ml-2 px-2 py-1 rounded-lg text-xs" style={{ backgroundColor: 'var(--tone1-bg)', color: 'var(--tone1-text)', border: '1px solid var(--tone1-border)' }}>
-                <TranslatedText>Masa</TranslatedText> #{tableNumber}
+                  </p>
+                </div>
               </div>
-              )}
+              
+              <div className="flex items-center space-x-4">
+                <button
+                  onClick={() => {
+                    const logs: string[] = [];
+                    
+                    logs.push('🔍 DEBUG INFO:');
+                    logs.push(`Restaurants: ${restaurants.length}`);
+                    logs.push(`Categories: ${categories.length}`);
+                    logs.push(`Menu Items: ${menuItems.length}`);
+                    logs.push(`Current Restaurant: ${currentRestaurant ? currentRestaurant.name : 'Not found'}`);
+                    logs.push(`Loading: ${loading}`);
+                    logs.push(`Final Filtered Items: ${finalFilteredItems.length}`);
+                    logs.push(`Active Category: ${activeCategory}`);
+                    logs.push(`Search: ${search}`);
+                    logs.push(`Hostname: ${typeof window !== 'undefined' ? window.location.hostname : 'server'}`);
+                    logs.push(`Subdomain: ${typeof window !== 'undefined' ? window.location.hostname.split('.')[0] : 'server'}`);
+                    
+                    // Test API call
+                    if (currentRestaurant) {
+                      logs.push('🔄 Testing API call...');
+                      logs.push(`API URL: https://masapp-backend.onrender.com/api/restaurants/${currentRestaurant.id}/menu`);
+                      fetchRestaurantMenu(currentRestaurant.id);
+                    } else {
+                      logs.push('❌ No restaurant found - cannot test API call');
+                    }
+                    
+                    setDebugLogs(logs);
+                    setShowDebugLogs(true);
+                    
+                    // Also log to console
+                    logs.forEach(log => console.log(log));
+                  }}
+                  className="px-3 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600"
+                >
+                  DEBUG
+                </button>
+                
+                <button
+                  onClick={() => setIsQuickServiceModalOpen(true)}
+                  className="flex flex-col items-center text-gray-600 hover:text-gray-800 transition-colors"
+                  style={{ color: primary }}
+                >
+                  <FaBell className="mb-0.5" size={16} />
+                  <span className="text-[10px]"><TranslatedText>Garson Çağır</TranslatedText></span>
+                </button>
+                
               <Link 
-                href="/debug" 
-                className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200 ml-2"
-              >
-                🔍 Debug
+                  href="/cart" 
+                  className="flex flex-col items-center text-gray-600 hover:text-gray-800 transition-colors relative"
+                  style={{ color: primary }}
+                >
+                  <FaShoppingCart className="mb-0.5" size={16} />
+                  <span className="text-[10px]"><TranslatedText>Sepet</TranslatedText></span>
+                  {cartItems.length > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                      {cartItems.length}
+                    </span>
+                  )}
               </Link>
             </div>
           </div>
-        </header>
+          </div>
+        </div>
 
-        {/* Search */}
-        <div className="pt-16 px-3 flex items-center mb-4">
+        {/* Search Bar */}
+        <div className="bg-white border-b">
+          <div className="max-w-4xl mx-auto px-4 py-3">
+            <div className="relative">
           <input
             type="text"
-            className="border rounded p-2 w-full mr-2"
             placeholder={searchPlaceholder}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
-
-        {/* Anlık Duyurular Slider */}
-        <div className="px-3 mb-4">
-          <div className="relative overflow-hidden rounded-lg shadow-lg">
-            <div className="flex animate-slide">
-              <div className="min-w-full text-white p-3 bg-brand-gradient">
-                <div className="flex items-center">
-                  <span className="text-lg mr-2">🎉</span>
-                  <div>
-                    <div className="font-semibold text-sm">
-                      <TranslatedText>Bugüne Özel!</TranslatedText>
-                    </div>
-                    <div className="text-xs opacity-90">
-                      <TranslatedText>Tüm tatlılarda %20 indirim - Sadece bugün geçerli</TranslatedText>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="min-w-full text-white p-3 bg-brand-gradient">
-                <div className="flex items-center">
-                  <span className="text-lg mr-2">🍲</span>
-                  <div>
-                    <div className="font-semibold text-sm">
-                      <TranslatedText>Günün Çorbası</TranslatedText>
-                    </div>
-                    <div className="text-xs opacity-90">
-                      <TranslatedText>Ezogelin çorbası - Ev yapımı lezzet</TranslatedText>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <FaFilter className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
           </div>
         </div>
 
-        <style jsx>{`
-          @keyframes slide {
-            0%, 45% { transform: translateX(0); }
-            50%, 95% { transform: translateX(-100%); }
-            100% { transform: translateX(0); }
-          }
-          .animate-slide {
-            animation: slide 8s infinite;
-          }
-        `}</style>
-
         {/* Categories */}
-        <div className="pb-2 overflow-x-auto">
-          <div className="flex px-3 space-x-2 min-w-max">
-            {menuCategories.map((category) => (
+        <div className="bg-white border-b">
+          <div className="max-w-4xl mx-auto px-4 py-3">
+            <div className="flex space-x-2 overflow-x-auto pb-2">
+              <button
+                onClick={() => {
+                  setActiveCategory('popular');
+                  setActiveSubcategory(null);
+                }}
+                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                  activeCategory === 'popular'
+                    ? 'text-white'
+                    : 'text-gray-600 hover:text-gray-800'
+                }`}
+                style={{
+                  backgroundColor: activeCategory === 'popular' ? primary : 'transparent'
+                }}
+              >
+                <TranslatedText>Popüler</TranslatedText>
+              </button>
+              
+              {categories.map((category: any) => (
               <button
                 key={category.id}
-                className={`px-3 py-1.5 rounded-full whitespace-nowrap text-dynamic-sm ${
+                  onClick={() => {
+                    setActiveCategory(category.id);
+                    setActiveSubcategory(null);
+                  }}
+                  className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
                   activeCategory === category.id
-                    ? 'btn-gradient'
-                    : 'bg-brand-surface text-gray-700'
+                      ? 'text-white'
+                      : 'text-gray-600 hover:text-gray-800'
                 }`}
-                onClick={() => handleCategoryChange(category.id)}
+                  style={{
+                    backgroundColor: activeCategory === category.id ? primary : 'transparent'
+                  }}
               >
                 {category.name}
               </button>
             ))}
           </div>
         </div>
-
-        {/* Subcategories - Backend'de subcategory yok, bu kısım kaldırıldı */}
+        </div>
 
         {/* Menu Items */}
-        <div className="container mx-auto px-3 py-2">
-          <div className="grid grid-cols-1 gap-3">
-            {filteredItems.map((item: any) => (
-              <div key={item.id} className="bg-white rounded-lg shadow-sm border p-3 flex">
-                <div className="relative h-20 w-20 rounded-lg overflow-hidden bg-gray-200 flex-shrink-0">
+        <div className="max-w-4xl mx-auto px-4 py-6">
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-gray-600"><TranslatedText>Menü yükleniyor...</TranslatedText></p>
+            </div>
+          ) : finalFilteredItems.length === 0 && !loading ? (
+            <div className="text-center py-12">
+              <FaUtensils className="mx-auto text-gray-400 mb-4" size={48} />
+              <h3 className="text-lg font-medium text-gray-800 mb-2">
+                <TranslatedText>Ürün bulunamadı</TranslatedText>
+              </h3>
+              <p className="text-gray-600">
+                <TranslatedText>Aradığınız kriterlere uygun ürün bulunamadı.</TranslatedText>
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {finalFilteredItems.map((item: any) => (
+                <div
+                  key={item.id}
+                  className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+                >
+                  <div className="flex">
+                    <div className="w-24 h-24 relative flex-shrink-0">
                   <Image
-                    src={item.imageUrl ? 
-                      (item.imageUrl.startsWith('http') ? 
-                        item.imageUrl : 
-                        `${process.env.NEXT_PUBLIC_API_URL}${item.imageUrl}`) 
-                      : '/placeholder-food.jpg'} 
-                    alt={typeof item.name === 'string' ? item.name : (item.name?.tr || item.name?.en || 'Menu item')} 
-                    width={80}
-                    height={80}
-                    className="object-cover w-full h-full rounded-lg"
-                  />
-                  {item.isPopular && (
-                    <div className="absolute top-0 left-0 text-white text-xs px-1 py-0.5 rounded" style={{ backgroundColor: 'var(--brand-strong)' }}>
-                      <FaStar className="inline-block mr-1" size={8} />
-                      <TranslatedText>Popüler</TranslatedText>
+                        src={item.imageUrl || '/placeholder-food.jpg'}
+                        alt={item.name}
+                        fill
+                        className="object-cover"
+                        sizes="96px"
+                        placeholder="blur"
+                        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
+                        priority={false}
+                      />
                     </div>
-                  )}
+                    
+                    <div className="flex-1 p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <h3 className="font-semibold text-gray-800 text-sm">
+                          {item.name}
+                        </h3>
+                        <div className="flex items-center space-x-1">
+                          <FaStar className="text-yellow-400" size={12} />
+                          <span className="text-xs text-gray-600">4.5</span>
                 </div>
-                <div className="ml-3 flex-grow">
-                  <div className="flex justify-between items-start">
-                    <h3 className="font-semibold text-dynamic-sm">{typeof item.name === 'string' ? item.name : (item.name?.tr || item.name?.en || 'Ürün')}</h3>
-                    <span className="font-semibold text-dynamic-sm" style={{ color: primary }}>{item.price} ₺</span>
                   </div>
-                  <p className="text-xs text-gray-600 line-clamp-2 mb-2">
-                    {typeof item.description === 'string' ? item.description : (item.description?.tr || item.description?.en || '')}
-                  </p>
-
-                  {/* Allergens */}
-                  {item.allergens && item.allergens.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mb-2">
-                      {item.allergens.slice(0, 3).map((allergen: any, i: number) => (
-                        <span key={i} className="bg-red-100 text-red-700 text-[10px] px-2 py-0.5 rounded-full">
-                          {typeof allergen === 'string' ? allergen : (allergen[language as keyof typeof allergen] || allergen.tr || allergen.en)}
-                        </span>
-                      ))}
+                      
+                      <p className="text-gray-600 text-xs mb-3 line-clamp-2">
+                        {item.description}
+                      </p>
+                      
+                      <div className="flex justify-between items-center">
+                        <div className="text-lg font-bold" style={{ color: primary }}>
+                          ₺{item.price}
                     </div>
-                  )}
-                  
-                  {/* Debug: Allergens */}
-                  {process.env.NODE_ENV === 'development' && item.allergens && (
-                    <div className="text-xs text-gray-400">
-                      Debug: {JSON.stringify(item.allergens)}
-                    </div>
-                  )}
-
-                  <div className="flex justify-between items-center">
+                        
+                        <div className="flex items-center space-x-2">
                     <button
-                      onClick={() => openModal(item)}
-                      className="text-xs flex items-center"
-                      style={{ color: primary }}
+                            onClick={() => handleItemClick(item)}
+                            className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
                     >
-                      <FaInfo className="mr-1" size={10} />
-                      <TranslatedText>Detayları Gör</TranslatedText>
+                            <FaInfo size={14} />
                     </button>
+                          
                     <button
-                      className="btn btn-secondary py-1 px-3 text-xs rounded flex items-center"
-                      onClick={() => addToCart(item)}
+                            onClick={() => handleAddToCart(item)}
+                            className="p-2 rounded-full text-white transition-colors"
+                            style={{ backgroundColor: primary }}
                     >
-                      <FaPlus className="mr-1" size={10} />
-                      <TranslatedText>Sepete Ekle</TranslatedText>
+                            <FaPlus size={14} />
                     </button>
                   </div>
                 </div>
               </div>
-            ))}
+          </div>
+        </div>
+              ))}
+              </div>
+              )}
           </div>
         </div>
 
-        {/* Sabit Duyurular */}
-        <div className="container mx-auto px-3 py-4 mb-20">
-          <div className="rounded-xl p-5 shadow-lg border bg-tone1">
-            <div className="grid grid-cols-1 gap-3">
-              {/* WiFi Info */}
-              {settings.basicInfo.showWifiInMenu && (
-              <div className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm border-l-4" style={{ borderLeftColor: 'var(--brand-subtle)' }}>
-                <div className="flex items-center">
-                  <span className="text-lg mr-3">📶</span>
-                  <span className="text-sm font-medium text-gray-700">
-                    <TranslatedText>WiFi Şifresi</TranslatedText>
-                  </span>
-                </div>
-                  <span className="text-sm font-bold px-2 py-1 rounded" style={{ color: 'var(--brand-strong)', backgroundColor: 'var(--brand-surface)' }}>
-                    {settings.basicInfo.wifiPassword || 'restoran2024'}
-                  </span>
-              </div>
-              )}
-              {/* Google Review Button */}
-              <a
-                href="https://www.google.com/maps/place/restoranadi/reviews" // Change to actual Google review URL
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between p-3 rounded-lg shadow-sm border-l-4 transition group bg-tone2"
-                style={{ textDecoration: 'none' }}
+      {/* Modals */}
+        <MenuItemModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+          item={selectedItem}
+        onAddToCart={handleAddToCart}
+      />
+
+      <QuickServiceModal
+        isOpen={isQuickServiceModalOpen}
+        onClose={() => setIsQuickServiceModalOpen(false)}
+        onServiceCall={handleQuickService}
+      />
+
+      {/* Toast */}
+      <Toast
+        visible={toastVisible}
+        message={translate('Ürün sepete eklendi!')}
+        type="success"
+      />
+
+      {/* Debug Logs Modal */}
+      {showDebugLogs && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-96 overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">🔍 Debug Logs</h3>
+              <button
+                onClick={() => setShowDebugLogs(false)}
+                className="text-gray-500 hover:text-gray-700"
               >
-                <div className="flex items-center">
-                  <span className="text-lg mr-3">⭐</span>
-                  <span className="text-sm font-medium text-gray-800">
-                    <TranslatedText>Google'da Değerlendir</TranslatedText>
-                  </span>
+                ✕
+              </button>
+            </div>
+            <div className="space-y-2">
+              {debugLogs.map((log, index) => (
+                <div key={index} className="text-sm font-mono bg-gray-100 p-2 rounded">
+                  {log}
                 </div>
-                <button className="text-xs font-semibold px-3 py-1 rounded-lg shadow group-hover:scale-105 transition btn-secondary">
-                  <TranslatedText>Yorum Yap</TranslatedText>
-                </button>
-              </a>
-              {/* Working Hours */}
-              {settings.basicInfo.showHoursInMenu && (
-              <div className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm border-l-4" style={{ borderLeftColor: 'var(--brand-subtle)' }}>
-                <div className="flex items-center">
-                  <span className="text-lg mr-3">🕒</span>
-                  <span className="text-sm font-medium text-gray-700">
-                    <TranslatedText>Çalışma Saatleri</TranslatedText>
-                  </span>
-                </div>
-                  <span className="text-sm font-bold" style={{ color: 'var(--brand-strong)' }}>
-                    {settings.basicInfo.workingHours || '09:00 - 23:00'}
-                  </span>
-              </div>
-              )}
-              {/* Instagram Button */}
-              {settings.basicInfo.showInstagramInMenu && (
-              <a
-                  href={settings.basicInfo.instagram || "https://instagram.com/restoranadi"}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between p-3 rounded-lg shadow-sm border-l-4 transition group bg-tone3"
-                style={{ textDecoration: 'none' }}
+              ))}
+            </div>
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => setShowDebugLogs(false)}
+                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
               >
-                <div className="flex items-center">
-                  <span className="text-lg mr-3">📱</span>
-                  <span className="text-sm font-medium text-gray-800">
-                    <TranslatedText>Instagram'da Takip Et</TranslatedText>
-                  </span>
-                </div>
-                <button className="text-sm font-bold px-3 py-1 rounded-lg shadow group-hover:scale-105 transition btn-primary">
-                    @{settings.basicInfo.instagram?.replace('https://instagram.com/', '').replace('https://www.instagram.com/', '') || 'restoranadi'}
-                </button>
-              </a>
-              )}
+                Kapat
+              </button>
             </div>
           </div>
         </div>
-
-        {/* Bottom Navigation */}
-        <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-2 shadow-lg">
-          <div className="container mx-auto flex justify-around">
-            <Link href="/menu" className="flex flex-col items-center" style={{ color: primary }}>
-              <FaUtensils className="mb-0.5" size={16} />
-              <span className="text-[10px]"><TranslatedText>Menü</TranslatedText></span>
-            </Link>
-            <Link href="/cart" className="flex flex-col items-center" style={{ color: primary }}>
-              <div className="relative">
-                <FaShoppingCart className="mb-0.5" size={16} />
-                {isClient && cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-600 text-white rounded-full text-[9px] w-4 h-4 flex items-center justify-center">
-                    {cartCount}
-                  </span>
-                )}
-              </div>
-              <span className="text-[10px]"><TranslatedText>Sepet</TranslatedText></span>
-            </Link>
-            <Link href="/waiter" className="flex flex-col items-center" style={{ color: primary }}>
-              <FaBell className="mb-0.5" size={16} />
-              <span className="text-[10px]"><TranslatedText>Garson Çağır</TranslatedText></span>
-            </Link>
-          </div>
-        </nav>
-      </main>
-
-      {/* Menu Item Modal */}
-      {selectedItem && (
-        <MenuItemModal
-          item={selectedItem}
-          isOpen={isModalOpen}
-          onClose={closeModal}
-        />
       )}
     </>
   );
