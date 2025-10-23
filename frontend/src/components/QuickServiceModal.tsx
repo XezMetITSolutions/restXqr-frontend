@@ -28,7 +28,7 @@ export default function QuickServiceModal({ isOpen, onClose }: QuickServiceModal
     const mainDomains = ['localhost', 'www', 'guzellestir'];
     
     if (mainDomains.includes(subdomain)) return null;
-    return restaurants.find((r: any) => r.username === subdomain);
+    return restaurants.find((r: { username: string }) => r.username === subdomain);
   };
 
   const currentRestaurant = getCurrentRestaurant();
@@ -58,9 +58,9 @@ export default function QuickServiceModal({ isOpen, onClose }: QuickServiceModal
       title: currentLanguage === 'Turkish' ? 'Yeni Çatal Bıçak' : 'New Utensils',
       message: currentLanguage === 'Turkish' ? 'Yeni çatal bıçak getirebilir misiniz?' : 'Could you bring new utensils?'
     }
-  ];
+  ] as const;
 
-  const handleQuickService = async (service: any) => {
+  const handleQuickService = async (service: typeof quickServices[number]) => {
     if (!currentRestaurant?.id || !tableNumber) {
       setToastMessage('Masa numarası bulunamadı');
       return;
