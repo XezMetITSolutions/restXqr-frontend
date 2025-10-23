@@ -79,15 +79,15 @@ function MenuPageContent() {
     if (currentLanguage === 'Turkish') {
       setSearchPlaceholder('Menüde ara...');
     } else {
-          setSearchPlaceholder('Search menu...');
-        }
+      setSearchPlaceholder('Search menu...');
+    }
   }, [currentLanguage]);
 
   // Filter menu items based on search and category
   const filteredItems = menuItems.filter((item: any) => {
     const matchesSearch = search === '' || 
       item.name.toLowerCase().includes(search.toLowerCase()) ||
-      item.description?.toLowerCase().includes(search.toLowerCase());
+      item.description.toLowerCase().includes(search.toLowerCase());
     
     const matchesCategory = activeCategory === 'popular' ? 
       item.isPopular : 
@@ -96,33 +96,21 @@ function MenuPageContent() {
     return matchesSearch && matchesCategory;
   });
 
-  // Get unique subcategories
-  const subcategories = Array.from(
-    new Set(
-      filteredItems
-        .map((item: any) => item.subcategory)
-        .filter(Boolean)
-    )
-  );
-
-  // Filter by subcategory if selected
-  const finalFilteredItems = activeSubcategory ? 
-    filteredItems.filter((item: any) => item.subcategory === activeSubcategory) :
-    filteredItems;
+  // Get final filtered items
+  const finalFilteredItems = filteredItems;
 
   // Handle add to cart
   const handleAddToCart = (item: any) => {
-      addItem({
+    addItem({
       id: item.id,
-        name: item.name,
+      name: item.name,
       price: parseFloat(item.price),
       imageUrl: item.imageUrl,
       description: item.description,
       quantity: 1
     });
-    
-      setToastVisible(true);
-    setTimeout(() => setToastVisible(false), 2000);
+    setToastVisible(true);
+    setTimeout(() => setToastVisible(false), 3000);
   };
 
   // Handle item click
@@ -131,28 +119,33 @@ function MenuPageContent() {
     setIsModalOpen(true);
   };
 
+  // Handle quick service
+  const handleQuickService = (serviceType: string, customNote?: string) => {
+    if (!currentRestaurant) return;
+    
+    const serviceData = {
+      restaurantId: currentRestaurant.id,
+      tableNumber: tableNumber || 1,
+      serviceType,
+      customNote: customNote || '',
+      timestamp: new Date().toISOString()
+    };
+
+    apiService.post('/service-call', serviceData)
+      .then(() => {
+        console.log('Service call sent:', serviceData);
+        setIsQuickServiceModalOpen(false);
+      })
+      .catch(error => {
+        console.error('Service call error:', error);
+      });
+  };
+
   if (!isClient) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Yükleniyor...</p>
-              </div>
-              </div>
-    );
-  }
-
-  if (!currentRestaurant) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">Restoran Bulunamadı</h1>
-          <p className="text-gray-600 mb-4">Bu subdomain için restoran bulunamadı.</p>
-          <Link href="/" className="text-blue-600 hover:text-blue-800">
-            Ana sayfaya dön
-          </Link>
-            </div>
-          </div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
     );
   }
 
@@ -162,41 +155,39 @@ function MenuPageContent() {
       
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
-        <div className="bg-white shadow-sm border-b">
-          <div className="max-w-4xl mx-auto px-4 py-4">
+        <div className="bg-white shadow-sm border-b sticky top-0 z-40">
+          <div className="max-w-4xl mx-auto px-4 py-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-3">
                 <Link 
                   href="/" 
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="text-gray-600 hover:text-gray-800 transition-colors"
                 >
-                  <FaArrowLeft className="text-gray-600" size={20} />
-              </Link>
+                  <FaArrowLeft size={20} />
+                </Link>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-800">
-                    {currentRestaurant.name}
-              </h1>
-              {tableNumber && (
-                    <p className="text-sm text-gray-600">
-                <TranslatedText>Masa</TranslatedText> #{tableNumber}
-                    </p>
-                  )}
+                  <h1 className="text-lg font-semibold text-gray-800">
+                    {currentRestaurant?.name || 'Restoran'}
+                  </h1>
+                  <p className="text-sm text-gray-600">
+                    <TranslatedText>Menü</TranslatedText>
+                  </p>
                 </div>
               </div>
               
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-4">
                 <button
                   onClick={() => setIsQuickServiceModalOpen(true)}
-                  className="flex flex-col items-center"
+                  className="flex flex-col items-center text-gray-600 hover:text-gray-800 transition-colors"
                   style={{ color: primary }}
                 >
                   <FaBell className="mb-0.5" size={16} />
                   <span className="text-[10px]"><TranslatedText>Garson Çağır</TranslatedText></span>
                 </button>
                 
-              <Link 
+                <Link 
                   href="/cart" 
-                  className="flex flex-col items-center relative"
+                  className="flex flex-col items-center text-gray-600 hover:text-gray-800 transition-colors relative"
                   style={{ color: primary }}
                 >
                   <FaShoppingCart className="mb-0.5" size={16} />
@@ -221,17 +212,17 @@ function MenuPageContent() {
             placeholder={searchPlaceholder}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-              <FaFilter className="absolute left-3 top-3 text-gray-400" size={16} />
-            </div>
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+          <FaFilter className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+        </div>
           </div>
         </div>
 
         {/* Categories */}
         <div className="bg-white border-b">
           <div className="max-w-4xl mx-auto px-4 py-3">
-            <div className="flex space-x-1 overflow-x-auto">
+            <div className="flex space-x-2 overflow-x-auto pb-2">
               <button
                 onClick={() => {
                   setActiveCategory('popular');
@@ -246,7 +237,6 @@ function MenuPageContent() {
                   backgroundColor: activeCategory === 'popular' ? primary : 'transparent'
                 }}
               >
-                <FaStar className="inline mr-1" size={12} />
                 <TranslatedText>Popüler</TranslatedText>
               </button>
               
@@ -269,49 +259,9 @@ function MenuPageContent() {
                 {category.name}
               </button>
             ))}
-          </div>
-        </div>
-        </div>
-
-        {/* Subcategories */}
-        {subcategories.length > 0 && (
-          <div className="bg-gray-50 border-b">
-            <div className="max-w-4xl mx-auto px-4 py-2">
-              <div className="flex space-x-2 overflow-x-auto">
-                <button
-                  onClick={() => setActiveSubcategory(null)}
-                  className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
-                    !activeSubcategory
-                      ? 'text-white'
-                      : 'text-gray-600 hover:text-gray-800'
-                  }`}
-                  style={{
-                    backgroundColor: !activeSubcategory ? secondary : 'transparent'
-                  }}
-                >
-                  <TranslatedText>Tümü</TranslatedText>
-                </button>
-                
-                {subcategories.map((subcategory: string) => (
-                  <button
-                    key={subcategory}
-                    onClick={() => setActiveSubcategory(subcategory)}
-                    className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
-                      activeSubcategory === subcategory
-                        ? 'text-white'
-                        : 'text-gray-600 hover:text-gray-800'
-                    }`}
-                    style={{
-                      backgroundColor: activeSubcategory === subcategory ? secondary : 'transparent'
-                    }}
-                  >
-                    {subcategory}
-                  </button>
-                ))}
-              </div>
             </div>
           </div>
-        )}
+        </div>
 
         {/* Menu Items */}
         <div className="max-w-4xl mx-auto px-4 py-6">
@@ -319,16 +269,6 @@ function MenuPageContent() {
             <div className="text-center py-12">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
               <p className="text-gray-600"><TranslatedText>Menü yükleniyor...</TranslatedText></p>
-            </div>
-          ) : finalFilteredItems.length === 0 ? (
-            <div className="text-center py-12">
-              <FaUtensils className="mx-auto text-gray-400 mb-4" size={48} />
-              <h3 className="text-lg font-medium text-gray-800 mb-2">
-                <TranslatedText>Ürün bulunamadı</TranslatedText>
-              </h3>
-              <p className="text-gray-600">
-                <TranslatedText>Aradığınız kriterlere uygun ürün bulunamadı.</TranslatedText>
-              </p>
             </div>
           ) : finalFilteredItems.length === 0 && !loading ? (
             <div className="text-center py-12">
@@ -366,218 +306,51 @@ function MenuPageContent() {
                         <h3 className="font-semibold text-gray-800 text-sm">
                           {item.name}
                         </h3>
-                        <span className="font-bold text-lg" style={{ color: primary }}>
-                          {item.price}₺
-                        </span>
-                    </div>
-                      
-                      {item.description && (
-                        <p className="text-gray-600 text-xs mb-3 line-clamp-2">
-                          {item.description}
-                        </p>
-                      )}
-                      
-                      <div className="flex items-center justify-between">
-                    <button
-                          onClick={() => handleItemClick(item)}
-                          className="flex items-center text-xs text-gray-600 hover:text-gray-800"
-                    >
-                      <FaInfo className="mr-1" size={10} />
-                          <TranslatedText>Detay</TranslatedText>
-                    </button>
-                        
-                    <button
-                          onClick={() => handleAddToCart(item)}
-                          className="flex items-center px-3 py-1 rounded-full text-xs font-medium text-white transition-colors"
-                          style={{ backgroundColor: primary }}
-                    >
-                      <FaPlus className="mr-1" size={10} />
-                          <TranslatedText>Ekle</TranslatedText>
-                    </button>
+                        <div className="flex items-center space-x-1">
+                          <FaStar className="text-yellow-400" size={12} />
+                          <span className="text-xs text-gray-600">4.5</span>
+                        </div>
                       </div>
+                      
+                      <p className="text-gray-600 text-xs mb-3 line-clamp-2">
+                        {item.description}
+                      </p>
+                      
+                      <div className="flex justify-between items-center">
+                        <div className="text-lg font-bold" style={{ color: primary }}>
+                          ₺{item.price}
+                        </div>
+                        
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={() => handleItemClick(item)}
+                            className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                          >
+                            <FaInfo size={14} />
+                          </button>
+                          
+                          <button
+                            onClick={() => handleAddToCart(item)}
+                            className="p-2 rounded-full text-white transition-colors"
+                            style={{ backgroundColor: primary }}
+                          >
+                            <FaPlus size={14} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-          )}
-          </div>
-        </div>
-
-      {/* Modals */}
-        <MenuItemModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-          item={selectedItem}
-        onAddToCart={handleAddToCart}
-      />
-
-      <QuickServiceModal
-        isOpen={isQuickServiceModalOpen}
-        onClose={() => setIsQuickServiceModalOpen(false)}
-      />
-
-      {/* Toast */}
-      <Toast
-        visible={toastVisible}
-        message={translate('Ürün sepete eklendi!')}
-        type="success"
-      />
-    </>
-  );
-}
-
-export default function MenuPage() {
-  return (
-    <LanguageProvider>
-      <MenuPageContent />
-    </LanguageProvider>
-  );
-}
-        </div>
-
-
-
-        {/* Anlık Duyurular Slider */}
-
-        <div className="px-3 mb-4">
-
-          <div className="relative overflow-hidden rounded-lg shadow-lg">
-
-            <div className="flex animate-slide">
-
-              <div className="min-w-full text-white p-3 bg-brand-gradient">
-
-                <div className="flex items-center">
-
-                  <span className="text-lg mr-2">🎉</span>
-
-                  <div>
-
-                    <div className="font-semibold text-sm">
-
-                      <TranslatedText>Bugüne Özel!</TranslatedText>
-
-                    </div>
-
-                    <div className="text-xs opacity-90">
-
-                      <TranslatedText>Tüm tatlılarda %20 indirim - Sadece bugün geçerli</TranslatedText>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-              <div className="min-w-full text-white p-3 bg-brand-gradient">
-
-                <div className="flex items-center">
-
-                  <span className="text-lg mr-2">🍲</span>
-
-                  <div>
-
-                    <div className="font-semibold text-sm">
-
-                      <TranslatedText>Günün Çorbası</TranslatedText>
-
-                    </div>
-
-                    <div className="text-xs opacity-90">
-
-                      <TranslatedText>Ezogelin çorbası - Ev yapımı lezzet</TranslatedText>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-              </div>
-
+              ))}
             </div>
-
-          </div>
-
+          )}
         </div>
 
-
-
-        <style jsx>{`
-
-          @keyframes slide {
-
-            0%, 45% { transform: translateX(0); }
-
-            50%, 95% { transform: translateX(-100%); }
-
-            100% { transform: translateX(0); }
-
-          }
-
-          .animate-slide {
-
-            animation: slide 8s infinite;
-
-          }
-
-        `}</style>
-
-
-
-        {/* Categories */}
-
-        <div className="pb-2 overflow-x-auto">
-
-          <div className="flex px-3 space-x-2 min-w-max">
-
-            {menuCategories.map((category) => (
-
-              <button
-
-                key={category.id}
-
-                className={`px-3 py-1.5 rounded-full whitespace-nowrap text-dynamic-sm ${
-
-                  activeCategory === category.id
-
-                    ? 'btn-gradient'
-
-                    : 'bg-brand-surface text-gray-700'
-
-                }`}
-
-                onClick={() => handleCategoryChange(category.id)}
-
-              >
-
-                {category.name}
-
-              </button>
-
-            ))}
-
-          </div>
-
-        </div>
-
-
-
-        {/* Subcategories - Backend'de subcategory yok, bu kısım kaldırıldı */}
-
-
-
-        {/* Menu Items */}
-
-        <div className="container mx-auto px-3 py-2">
-
-          <div className="grid grid-cols-1 gap-3">
-
-            {filteredItems.map((item: any) => (
-
+        {/* Mobile Grid View */}
+        <div className="md:hidden">
+          <div className="px-4 py-6">
+            <div className="grid grid-cols-1 gap-3">
+              {finalFilteredItems.map((item: any) => (
               <div key={item.id} className="bg-white rounded-lg shadow-sm border p-3 flex">
 
                 <div className="relative h-20 w-20 rounded-lg overflow-hidden bg-gray-200 flex-shrink-0">
@@ -601,8 +374,6 @@ export default function MenuPage() {
 
                     <div className="absolute top-0 left-0 text-white text-xs px-1 py-0.5 rounded" style={{ backgroundColor: 'var(--brand-strong)' }}>
 
-                      <FaStar className="inline-block mr-1" size={8} />
-
                       <TranslatedText>Popüler</TranslatedText>
 
                     </div>
@@ -611,91 +382,61 @@ export default function MenuPage() {
 
                 </div>
 
-                <div className="ml-3 flex-grow">
+                <div className="flex-1 ml-3 flex flex-col justify-between">
 
-                  <div className="flex justify-between items-start">
+                  <div>
 
-                    <h3 className="font-semibold text-dynamic-sm">{typeof item.name === 'string' ? item.name : (item.name?.tr || item.name?.en || 'Ürün')}</h3>
+                    <h3 className="font-semibold text-gray-800 text-sm mb-1">
 
-                    <span className="font-semibold text-dynamic-sm" style={{ color: primary }}>{item.price} ₺</span>
+                      {typeof item.name === 'string' ? item.name : (item.name?.tr || item.name?.en || 'Menu item')}
+
+                    </h3>
+
+                    <p className="text-gray-600 text-xs mb-2 line-clamp-2">
+
+                      {typeof item.description === 'string' ? item.description : (item.description?.tr || item.description?.en || '')}
+
+                    </p>
 
                   </div>
 
-                  <p className="text-xs text-gray-600 line-clamp-2 mb-2">
-
-                    {typeof item.description === 'string' ? item.description : (item.description?.tr || item.description?.en || '')}
-
-                  </p>
-
-
-
-                  {/* Allergens */}
-
-                  {item.allergens && item.allergens.length > 0 && (
-
-                    <div className="flex flex-wrap gap-1 mb-2">
-
-                      {item.allergens.slice(0, 3).map((allergen: any, i: number) => (
-
-                        <span key={i} className="bg-red-100 text-red-700 text-[10px] px-2 py-0.5 rounded-full">
-
-                          {typeof allergen === 'string' ? allergen : (allergen[language as keyof typeof allergen] || allergen.tr || allergen.en)}
-
-                        </span>
-
-                      ))}
-
-                    </div>
-
-                  )}
-
-                  
-                  
-                  {/* Debug: Allergens */}
-
-                  {process.env.NODE_ENV === 'development' && item.allergens && (
-
-                    <div className="text-xs text-gray-400">
-
-                      Debug: {JSON.stringify(item.allergens)}
-
-                    </div>
-
-                  )}
-
-
-
                   <div className="flex justify-between items-center">
 
-                    <button
+                    <div className="text-lg font-bold" style={{ color: primary }}>
 
-                      onClick={() => openModal(item)}
+                      ₺{item.price}
 
-                      className="text-xs flex items-center"
+                    </div>
 
-                      style={{ color: primary }}
+                    <div className="flex items-center space-x-2">
 
-                    >
+                      <button
 
-                      <FaInfo className="mr-1" size={10} />
+                        onClick={() => handleItemClick(item)}
 
-                      <TranslatedText>Detayları Gör</TranslatedText>
+                        className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
 
-                    </button>
+                      >
 
-                    <button
+                        <FaInfo size={12} />
 
-                      className="btn btn-secondary py-1 px-3 text-xs rounded flex items-center"
+                      </button>
 
-                      onClick={() => addToCart(item)}
+                      <button
 
-                    >
+                        onClick={() => handleAddToCart(item)}
 
-                      <FaPlus className="mr-1" size={10} />
+                        className="p-2 rounded-full text-white transition-colors"
 
-                      <TranslatedText>Sepete Ekle</TranslatedText>
+                        style={{ backgroundColor: primary }}
 
-                    </button>
+                      >
+
+                        <FaPlus size={12} />
+
+                      </button>
+
+                    </div>
 
                   </div>
 
@@ -705,246 +446,42 @@ export default function MenuPage() {
 
             ))}
 
-          </div>
-
-        </div>
-
-
-
-        {/* Sabit Duyurular */}
-
-        <div className="container mx-auto px-3 py-4 mb-20">
-
-          <div className="rounded-xl p-5 shadow-lg border bg-tone1">
-
-            <div className="grid grid-cols-1 gap-3">
-
-              {/* WiFi Info */}
-
-              {settings.basicInfo.showWifiInMenu && (
-
-              <div className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm border-l-4" style={{ borderLeftColor: 'var(--brand-subtle)' }}>
-
-                <div className="flex items-center">
-
-                  <span className="text-lg mr-3">📶</span>
-
-                  <span className="text-sm font-medium text-gray-700">
-
-                    <TranslatedText>WiFi Şifresi</TranslatedText>
-
-                  </span>
-
-                </div>
-
-                  <span className="text-sm font-bold px-2 py-1 rounded" style={{ color: 'var(--brand-strong)', backgroundColor: 'var(--brand-surface)' }}>
-
-                    {settings.basicInfo.wifiPassword || 'restoran2024'}
-
-                  </span>
-
-              </div>
-
-              )}
-
-              {/* Google Review Button */}
-
-              <a
-
-                href="https://www.google.com/maps/place/restoranadi/reviews" // Change to actual Google review URL
-
-                target="_blank"
-
-                rel="noopener noreferrer"
-
-                className="flex items-center justify-between p-3 rounded-lg shadow-sm border-l-4 transition group bg-tone2"
-
-                style={{ textDecoration: 'none' }}
-
-              >
-
-                <div className="flex items-center">
-
-                  <span className="text-lg mr-3">⭐</span>
-
-                  <span className="text-sm font-medium text-gray-800">
-
-                    <TranslatedText>Google'da Değerlendir</TranslatedText>
-
-                  </span>
-
-                </div>
-
-                <button className="text-xs font-semibold px-3 py-1 rounded-lg shadow group-hover:scale-105 transition btn-secondary">
-
-                  <TranslatedText>Yorum Yap</TranslatedText>
-
-                </button>
-
-              </a>
-
-              {/* Working Hours */}
-
-              {settings.basicInfo.showHoursInMenu && (
-
-              <div className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm border-l-4" style={{ borderLeftColor: 'var(--brand-subtle)' }}>
-
-                <div className="flex items-center">
-
-                  <span className="text-lg mr-3">🕒</span>
-
-                  <span className="text-sm font-medium text-gray-700">
-
-                    <TranslatedText>Çalışma Saatleri</TranslatedText>
-
-                  </span>
-
-                </div>
-
-                  <span className="text-sm font-bold" style={{ color: 'var(--brand-strong)' }}>
-
-                    {settings.basicInfo.workingHours || '09:00 - 23:00'}
-
-                  </span>
-
-              </div>
-
-              )}
-
-              {/* Instagram Button */}
-
-              {settings.basicInfo.showInstagramInMenu && (
-
-              <a
-
-                  href={settings.basicInfo.instagram || "https://instagram.com/restoranadi"}
-
-                target="_blank"
-
-                rel="noopener noreferrer"
-
-                className="flex items-center justify-between p-3 rounded-lg shadow-sm border-l-4 transition group bg-tone3"
-
-                style={{ textDecoration: 'none' }}
-
-              >
-
-                <div className="flex items-center">
-
-                  <span className="text-lg mr-3">📱</span>
-
-                  <span className="text-sm font-medium text-gray-800">
-
-                    <TranslatedText>Instagram'da Takip Et</TranslatedText>
-
-                  </span>
-
-                </div>
-
-                <button className="text-sm font-bold px-3 py-1 rounded-lg shadow group-hover:scale-105 transition btn-primary">
-
-                    @{settings.basicInfo.instagram?.replace('https://instagram.com/', '').replace('https://www.instagram.com/', '') || 'restoranadi'}
-
-                </button>
-
-              </a>
-
-              )}
-
             </div>
 
           </div>
 
         </div>
 
+      </div>
 
+      {/* Modals */}
+      <MenuItemModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        item={selectedItem}
+        onAddToCart={handleAddToCart}
+      />
 
-        {/* Bottom Navigation */}
+      <QuickServiceModal
+        isOpen={isQuickServiceModalOpen}
+        onClose={() => setIsQuickServiceModalOpen(false)}
+        onServiceCall={handleQuickService}
+      />
 
-        <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-2 shadow-lg">
-
-          <div className="container mx-auto flex justify-around">
-
-            <Link href="/menu" className="flex flex-col items-center" style={{ color: primary }}>
-
-              <FaUtensils className="mb-0.5" size={16} />
-
-              <span className="text-[10px]"><TranslatedText>Menü</TranslatedText></span>
-
-            </Link>
-
-            <Link href="/cart" className="flex flex-col items-center" style={{ color: primary }}>
-
-              <div className="relative">
-
-                <FaShoppingCart className="mb-0.5" size={16} />
-
-                {isClient && cartCount > 0 && (
-
-                  <span className="absolute -top-1 -right-1 bg-red-600 text-white rounded-full text-[9px] w-4 h-4 flex items-center justify-center">
-
-                    {cartCount}
-
-                  </span>
-
-                )}
-
-              </div>
-
-              <span className="text-[10px]"><TranslatedText>Sepet</TranslatedText></span>
-
-            </Link>
-
-            <Link href="/waiter" className="flex flex-col items-center" style={{ color: primary }}>
-
-              <FaBell className="mb-0.5" size={16} />
-
-              <span className="text-[10px]"><TranslatedText>Garson Çağır</TranslatedText></span>
-
-            </Link>
-
-          </div>
-
-        </nav>
-
-      </main>
-
-
-
-      {/* Menu Item Modal */}
-
-      {selectedItem && (
-
-        <MenuItemModal
-
-          item={selectedItem}
-
-          isOpen={isModalOpen}
-
-          onClose={closeModal}
-
-        />
-
-      )}
-
+      {/* Toast */}
+      <Toast
+        visible={toastVisible}
+        message={translate('Ürün sepete eklendi!')}
+        type="success"
+      />
     </>
-
   );
-
 }
 
-
-
 export default function MenuPage() {
-
   return (
-
     <LanguageProvider>
-
       <MenuPageContent />
-
     </LanguageProvider>
-
   );
-
 }
