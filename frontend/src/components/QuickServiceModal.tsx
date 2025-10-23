@@ -39,26 +39,26 @@ export default function QuickServiceModal({ isOpen, onClose, onServiceCall }: Qu
     {
       id: 'water',
       icon: FaTint,
-      title: isTurkish ? 'Su Getir' : 'Bring Water',
-      message: isTurkish ? 'Su getirebilir misiniz?' : 'Could you bring water?'
+      title: 'Su Getir',
+      message: 'Su getirebilir misiniz?'
     },
     {
       id: 'bill',
       icon: FaReceipt,
-      title: isTurkish ? 'Hesap Lütfen' : 'Bill Please',
-      message: isTurkish ? 'Hesabı getirebilir misiniz?' : 'Could you bring the bill?'
+      title: 'Hesap Lütfen',
+      message: 'Hesabı getirebilir misiniz?'
     },
     {
       id: 'utensils',
       icon: FaUtensils,
-      title: isTurkish ? 'Yeni Çatal Bıçak' : 'New Utensils',
-      message: isTurkish ? 'Yeni çatal bıçak getirebilir misiniz?' : 'Could you bring new utensils?'
+      title: 'Yeni Çatal Bıçak',
+      message: 'Yeni çatal bıçak getirebilir misiniz?'
     },
     {
       id: 'come_here',
       icon: FaBell,
-      title: isTurkish ? 'Buraya Gelir misiniz?' : 'Could You Come Here?',
-      message: isTurkish ? 'Buraya gelir misiniz?' : 'Could you come here please?'
+      title: 'Buraya Gelir misiniz?',
+      message: 'Buraya gelir misiniz?'
     }
   ] as const;
 
@@ -220,7 +220,7 @@ export default function QuickServiceModal({ isOpen, onClose, onServiceCall }: Qu
               id="custom-note"
               value={customNote}
               onChange={(e) => setCustomNote(e.target.value)}
-              placeholder={isTurkish ? 'Özel isteğinizi yazın...' : 'Write your special request...'}
+              placeholder="Özel isteğinizi yazın..."
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
               rows={3}
               disabled={isLoading}
