@@ -86,9 +86,9 @@ function MenuPageContent() {
     if (currentLanguage === 'Turkish') {
       setSearchPlaceholder('Menüde ara...');
     } else {
-          setSearchPlaceholder('Search menu...');
-        }
-  }, [currentLanguage]);
+      setSearchPlaceholder('Search menu...');
+    }
+  }, []); // Remove currentLanguage dependency to prevent re-runs
 
   // Filter menu items based on search and category
   const filteredItems = menuItems.filter((item: any) => {
