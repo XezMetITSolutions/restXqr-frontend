@@ -390,7 +390,7 @@ function MenuPageContent() {
       )}
       <Toast message="Ürün sepete eklendi!" visible={toastVisible} onClose={() => setToastVisible(false)} />
       <AnnouncementPopup />
-      <main className="min-h-screen pb-20">
+      <main className="min-h-screen pb-20 overflow-x-hidden">
         {/* Header */}
         <header className="bg-white shadow-sm fixed top-0 left-0 right-0 z-20">
           <div className="container mx-auto px-3 py-3 flex justify-between items-center">
@@ -408,10 +408,10 @@ function MenuPageContent() {
         </header>
 
         {/* Search */}
-        <div className="pt-16 px-3 flex items-center mb-4">
+        <div className="pt-16 px-3 flex items-center mb-4 max-w-full">
           <input
             type="text"
-            className="border rounded p-2 w-full mr-2"
+            className="border rounded p-2 w-full mr-2 max-w-full"
             placeholder={searchPlaceholder}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -464,8 +464,8 @@ function MenuPageContent() {
         `}</style>
 
         {/* Categories */}
-        <div className="pb-2 overflow-x-auto">
-          <div className="flex px-3 space-x-2 min-w-max">
+        <div className="pb-2 overflow-x-auto max-w-full">
+          <div className="flex px-3 space-x-2 min-w-max max-w-full">
             {menuCategories.map((category) => (
               <button
                 key={category.id}
@@ -485,10 +485,10 @@ function MenuPageContent() {
         {/* Subcategories - Backend'de subcategory yok, bu kısım kaldırıldı */}
 
         {/* Menu Items */}
-        <div className="container mx-auto px-3 py-2">
-          <div className="grid grid-cols-1 gap-3">
+        <div className="container mx-auto px-3 py-2 max-w-full">
+          <div className="grid grid-cols-1 gap-3 max-w-full">
             {filteredItems.map((item: any) => (
-              <div key={item.id} className="bg-white rounded-lg shadow-sm border p-3 flex">
+              <div key={item.id} className="bg-white rounded-lg shadow-sm border p-3 flex max-w-full">
                 <div className="relative h-20 w-20 rounded-lg overflow-hidden bg-gray-200 flex-shrink-0">
                   <Image
                     src={item.imageUrl ? 
@@ -508,12 +508,12 @@ function MenuPageContent() {
                     </div>
                   )}
                 </div>
-                <div className="ml-3 flex-grow">
+                <div className="ml-3 flex-grow min-w-0">
                   <div className="flex justify-between items-start">
-                    <h3 className="font-semibold text-dynamic-sm">{typeof item.name === 'string' ? item.name : (item.name?.tr || item.name?.en || 'Ürün')}</h3>
-                    <span className="font-semibold text-dynamic-sm" style={{ color: primary }}>{item.price} ₺</span>
+                    <h3 className="font-semibold text-dynamic-sm truncate">{typeof item.name === 'string' ? item.name : (item.name?.tr || item.name?.en || 'Ürün')}</h3>
+                    <span className="font-semibold text-dynamic-sm flex-shrink-0 ml-2" style={{ color: primary }}>{item.price} ₺</span>
                   </div>
-                  <p className="text-xs text-gray-600 line-clamp-2 mb-2">
+                  <p className="text-xs text-gray-600 line-clamp-2 mb-2 break-words">
                     {typeof item.description === 'string' ? item.description : (item.description?.tr || item.description?.en || '')}
                   </p>
 
@@ -633,8 +633,8 @@ function MenuPageContent() {
         </div>
 
       {/* Bottom Navigation */}
-        <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-2 shadow-lg">
-        <div className="container mx-auto flex justify-around">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-2 shadow-lg z-30">
+        <div className="container mx-auto flex justify-around max-w-full px-2">
             <Link href="/menu" className="flex flex-col items-center" style={{ color: primary }}>
             <FaUtensils className="mb-0.5" size={16} />
             <span className="text-[10px]"><TranslatedText>Menü</TranslatedText></span>
