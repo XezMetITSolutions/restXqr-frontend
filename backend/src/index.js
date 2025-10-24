@@ -86,6 +86,7 @@ app.use('/api/restaurants', require('./routes/menu')); // Menu routes nested und
 app.use('/api/orders', require('./routes/orders'));
 app.use('/api/qr', require('./routes/qr')); // QR code management
 app.use('/api/staff', require('./routes/staff')); // Staff management
+app.use('/api/waiter', require('./routes/waiter')); // Waiter calls
 // File upload routes - Gerçek dosya yükleme sistemi
 const multer = require('multer');
 const sharp = require('sharp');
