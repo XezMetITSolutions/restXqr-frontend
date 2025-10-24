@@ -23,7 +23,7 @@ export default function DebugImagesPage() {
     // Ana Yemekler (Main Dishes) - Authentic Turkish main dishes
     'Karnıyarık': 'https://images.unsplash.com/photo-1599043513900-ed6fe01d3833?w=400&h=300&fit=crop&q=80', // Stuffed eggplant
     'Mantı': 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&q=80', // Turkish ravioli/dumplings
-    'Etli Pilav': 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=400&h=300&fit=crop&q=80', // Rice with meat
+    'Etli Pilav': 'https://images.unsplash.com/photo-1551782450-17144efb9c50?w=400&h=300&fit=crop&q=80', // Turkish rice with meat - CORRECTED
 
     // Izgara (Grilled) - Proper kebab images
     'Adana Kebap': 'https://images.unsplash.com/photo-1529042410759-befb1204b468?w=400&h=300&fit=crop&q=80', // Spicy minced meat kebab
@@ -291,6 +291,13 @@ export default function DebugImagesPage() {
           {/* New Images Preview */}
           <div className="bg-green-50 border border-green-200 rounded p-3">
             <h3 className="font-semibold text-green-800 mb-2">🖼️ Yeni Resimler Önizleme</h3>
+            <div className="bg-yellow-100 border border-yellow-300 rounded p-2 mb-3">
+              <p className="text-sm text-yellow-800">
+                <strong>⚠️ Önemli:</strong> Resimler Unsplash'ten otomatik olarak seçilmiştir. 
+                Lütfen her resmi kontrol edin ve yanlış olanları manuel olarak düzeltin.
+                Özellikle "Etli Pilav" için burger fotoğrafı kullanılmıştı - düzeltildi.
+              </p>
+            </div>
             <p className="text-sm text-green-700 mb-3">
               Aşağıda atanacak yeni resimlerin önizlemesi görünüyor. 
               Her ürün için uygun resim seçilmiştir.
@@ -309,6 +316,18 @@ export default function DebugImagesPage() {
                   <p className="text-xs text-gray-600 truncate" title={productName}>
                     {productName}
                   </p>
+                  <button
+                    onClick={() => {
+                      const newUrl = prompt(`"${productName}" için yeni resim URL'si girin:`, imageUrl);
+                      if (newUrl && newUrl !== imageUrl) {
+                        productImageMap[productName] = newUrl;
+                        alert('Resim URL\'si güncellendi! Sayfayı yenileyin.');
+                      }
+                    }}
+                    className="text-xs text-blue-600 hover:text-blue-800 mt-1"
+                  >
+                    ✏️ Düzenle
+                  </button>
                 </div>
               ))}
             </div>
