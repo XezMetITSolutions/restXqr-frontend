@@ -23,7 +23,8 @@ import {
   FaMoneyBillWave,
   FaPlus,
   FaEye,
-  FaEdit
+  FaEdit,
+  FaRocket
 } from 'react-icons/fa';
 import { useAuthStore } from '@/store/useAuthStore';
 import useRestaurantStore from '@/store/useRestaurantStore';
@@ -298,7 +299,12 @@ export default function BusinessDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-40" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+      }}></div>
+      
       <BusinessSidebar 
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
@@ -306,28 +312,32 @@ export default function BusinessDashboard() {
       />
 
       {/* Main Content */}
-      <div className="ml-0 lg:ml-64">
+      <div className="ml-0 lg:ml-72 relative z-10">
         {/* Header */}
-        <header className="bg-white/80 backdrop-blur-lg shadow-lg border-b border-white/20 sticky top-0 z-30">
-          <div className="px-3 sm:px-6 lg:px-8 py-4 sm:py-6 flex justify-between items-center">
-            <div className="flex items-center gap-4">
+        <header className="bg-white/90 backdrop-blur-xl shadow-2xl border-b border-white/20 sticky top-0 z-30">
+          <div className="px-6 lg:px-8 py-6 flex justify-between items-center">
+            <div className="flex items-center gap-6">
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden p-3 hover:bg-gray-100 rounded-xl transition-all"
+                className="lg:hidden p-4 hover:bg-gray-100 rounded-2xl transition-all duration-300 hover:scale-110"
               >
-                <FaBars className="text-lg text-gray-600" />
+                <FaBars className="text-xl text-gray-600" />
               </button>
               <div>
-                <h2 className="text-xl sm:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Kontrol Paneli</h2>
-                <p className="text-sm sm:text-base text-gray-600 mt-1 hidden sm:block">Hoş geldiniz, {displayName} 👋</p>
+                <h2 className="text-2xl lg:text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-indigo-900 bg-clip-text text-transparent">
+                  Kontrol Paneli
+                </h2>
+                <p className="text-gray-600 text-lg font-medium mt-2 hidden sm:block">
+                  Hoş geldiniz, {displayName} 👋
+                </p>
               </div>
             </div>
-            <div className="flex items-center gap-2 sm:gap-4">
+            <div className="flex items-center gap-4">
               <button 
                 onClick={() => setShowUpgradeModal(true)}
-                className={`px-4 sm:px-6 py-3 rounded-xl text-sm sm:text-base font-bold transition-all hover:scale-105 shadow-lg ${
+                className={`px-6 py-4 rounded-2xl text-base font-bold transition-all duration-300 hover:scale-105 shadow-xl ${
                   (authenticatedRestaurant?.subscription?.plan || 'premium') === 'premium' 
-                    ? 'bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white'
+                    ? 'bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white hover:shadow-2xl'
                     : 'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800 hover:from-gray-200 hover:to-gray-300'
                 }`}
               >
@@ -343,134 +353,195 @@ export default function BusinessDashboard() {
         </header>
 
         {/* Content */}
-        <div className="p-3 sm:p-6 lg:p-8">
-
-          {/* Support Modal */}
-          {showSupportModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={()=>setShowSupportModal(false)}>
-              <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[85vh] overflow-hidden" onClick={(e)=>e.stopPropagation()}>
-                <div className="flex items-center justify-between p-4 border-b">
-                  <h3 className="text-lg font-semibold">Destek</h3>
-                  <button onClick={() => setShowSupportModal(false)} className="text-gray-500 hover:text-gray-700">
-                    <FaTimes />
-                  </button>
-                </div>
-                <div className="h-[70vh]">
-                  <iframe src="/business/support" className="w-full h-full" />
-                </div>
-              </div>
-            </div>
-          )}
+        <div className="p-6 lg:p-12">
           {/* İstatistik Kartları */}
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-12">
-            <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-4 sm:p-6 hover:shadow-2xl hover:scale-105 transition-all duration-300">
-              <div className="flex items-center justify-between mb-4">
-                <div className="h-12 w-12 sm:h-16 sm:w-16 bg-gradient-to-r from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center">
-                  <FaShoppingCart className="text-lg sm:text-2xl text-blue-600" />
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 mb-16">
+            <div className="group bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 hover:shadow-3xl hover:scale-105 transition-all duration-500 relative overflow-hidden">
+              {/* Background Gradient */}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="h-16 w-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl group-hover:shadow-2xl transition-all duration-300">
+                    <FaShoppingCart className="text-2xl text-white" />
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-bold text-blue-600 bg-blue-100 px-3 py-1 rounded-full">Bugün</div>
+                  </div>
+                </div>
+                <h3 className="text-4xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+                  {stats.todayOrders}
+                </h3>
+                <p className="text-gray-600 text-lg font-bold">Bugünkü Siparişler</p>
+                <div className="mt-4 flex items-center text-sm text-green-600 font-bold">
+                  <span className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
+                  Aktif durumda
                 </div>
               </div>
-              <h3 className="text-xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">{stats.todayOrders}</h3>
-              <p className="text-sm sm:text-base text-gray-600 mt-2 font-medium">Bugünkü Siparişler</p>
             </div>
 
-            <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-4 sm:p-6 hover:shadow-2xl hover:scale-105 transition-all duration-300">
-              <div className="flex items-center justify-between mb-4">
-                <div className="h-12 w-12 sm:h-16 sm:w-16 bg-gradient-to-r from-green-100 to-green-200 rounded-2xl flex items-center justify-center">
-                  <FaChartLine className="text-lg sm:text-2xl text-green-600" />
+            <div className="group bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 hover:shadow-3xl hover:scale-105 transition-all duration-500 relative overflow-hidden">
+              {/* Background Gradient */}
+              <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="h-16 w-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-xl group-hover:shadow-2xl transition-all duration-300">
+                    <FaChartLine className="text-2xl text-white" />
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-bold text-green-600 bg-green-100 px-3 py-1 rounded-full">₺</div>
+                  </div>
+                </div>
+                <h3 className="text-4xl font-black bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 bg-clip-text text-transparent mb-2">
+                  ₺{stats.todayRevenue.toLocaleString('tr-TR')}
+                </h3>
+                <p className="text-gray-600 text-lg font-bold">Bugünkü Ciro</p>
+                <div className="mt-4 flex items-center text-sm text-green-600 font-bold">
+                  <span className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
+                  Artış trendi
                 </div>
               </div>
-              <h3 className="text-xl sm:text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">₺{stats.todayRevenue.toLocaleString('tr-TR')}</h3>
-              <p className="text-sm sm:text-base text-gray-600 mt-2 font-medium">Bugünkü Ciro</p>
             </div>
 
-            <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-4 sm:p-6 hover:shadow-2xl hover:scale-105 transition-all duration-300">
-              <div className="flex items-center justify-between mb-4">
-                <div className="h-12 w-12 sm:h-16 sm:w-16 bg-gradient-to-r from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center">
-                  <FaUtensils className="text-lg sm:text-2xl text-purple-600" />
+            <div className="group bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 hover:shadow-3xl hover:scale-105 transition-all duration-500 relative overflow-hidden">
+              {/* Background Gradient */}
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-pink-500/5 to-rose-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="h-16 w-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-xl group-hover:shadow-2xl transition-all duration-300">
+                    <FaUtensils className="text-2xl text-white" />
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-bold text-purple-600 bg-purple-100 px-3 py-1 rounded-full">{stats.activeCategories} kategori</div>
+                  </div>
                 </div>
-                <span className="text-xs sm:text-sm text-purple-600 font-bold bg-purple-100 px-2 py-1 rounded-full">{stats.activeCategories} kategori</span>
+                <h3 className="text-4xl font-black bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 bg-clip-text text-transparent mb-2">
+                  {stats.totalMenuItems}
+                </h3>
+                <p className="text-gray-600 text-lg font-bold">Menü Ürünleri</p>
+                <div className="mt-4 flex items-center text-sm text-purple-600 font-bold">
+                  <span className="w-2 h-2 bg-purple-500 rounded-full mr-2 animate-pulse"></span>
+                  {stats.activeCategories} aktif kategori
+                </div>
               </div>
-              <h3 className="text-xl sm:text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">{stats.totalMenuItems}</h3>
-              <p className="text-sm sm:text-base text-gray-600 mt-2 font-medium">Menü Ürünleri</p>
             </div>
 
-            <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-4 sm:p-6 hover:shadow-2xl hover:scale-105 transition-all duration-300">
-              <div className="flex items-center justify-between mb-4">
-                <div className="h-12 w-12 sm:h-16 sm:w-16 bg-gradient-to-r from-orange-100 to-orange-200 rounded-2xl flex items-center justify-center">
-                  <FaUsers className="text-lg sm:text-2xl text-orange-600" />
+            <div className="group bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 hover:shadow-3xl hover:scale-105 transition-all duration-500 relative overflow-hidden">
+              {/* Background Gradient */}
+              <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-red-500/5 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="h-16 w-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center shadow-xl group-hover:shadow-2xl transition-all duration-300">
+                    <FaUsers className="text-2xl text-white" />
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-bold text-orange-600 bg-orange-100 px-3 py-1 rounded-full">{stats.activeTables} aktif</div>
+                  </div>
                 </div>
-                <span className="text-xs sm:text-sm text-orange-600 font-bold bg-orange-100 px-2 py-1 rounded-full">{stats.activeTables} aktif</span>
+                <h3 className="text-4xl font-black bg-gradient-to-r from-orange-600 via-red-600 to-pink-600 bg-clip-text text-transparent mb-2">
+                  {authenticatedRestaurant?.tableCount || 0}
+                </h3>
+                <p className="text-gray-600 text-lg font-bold">Toplam Masa</p>
+                <div className="mt-4 flex items-center text-sm text-orange-600 font-bold">
+                  <span className="w-2 h-2 bg-orange-500 rounded-full mr-2 animate-pulse"></span>
+                  Masa yönetimi aktif
+                </div>
               </div>
-              <h3 className="text-xl sm:text-3xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">{authenticatedRestaurant?.tableCount || 0}</h3>
-              <p className="text-sm sm:text-base text-gray-600 mt-2 font-medium">Toplam Masa</p>
             </div>
           </div>
 
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-12">
             {/* Aktif Siparişler */}
-            <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-6 hover:shadow-2xl transition-all duration-300">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Aktif Siparişler</h3>
-                <Link href="/business/orders" className="text-purple-600 hover:text-purple-700 text-sm font-bold bg-purple-100 px-3 py-1 rounded-full hover:bg-purple-200 transition-all">
-                  Tümünü Gör →
-                </Link>
-              </div>
-              <div className="space-y-4">
-                {activeOrders.map(order => (
-                  <div key={order.id} className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl hover:from-gray-100 hover:to-gray-200 transition-all duration-300 border border-gray-200/50">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-gradient-to-r from-purple-100 to-purple-200 rounded-xl flex items-center justify-center shadow-lg">
-                        <span className="font-bold text-purple-600 text-lg">{order.tableNumber || 'N/A'}</span>
-                      </div>
-                      <div>
-                        <p className="font-bold text-gray-800 text-lg">Masa {order.tableNumber || 'N/A'}</p>
-                        <p className="text-sm text-gray-600 font-medium">{order.items?.length || 0} ürün • ₺{order.totalAmount || 0}</p>
-                      </div>
+            <div className="group bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 hover:shadow-3xl transition-all duration-500 relative overflow-hidden">
+              {/* Background Gradient */}
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-pink-500/3 to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              
+              <div className="relative z-10">
+                <div className="flex justify-between items-center mb-8">
+                  <div className="flex items-center gap-4">
+                    <div className="h-12 w-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-xl">
+                      <FaShoppingCart className="text-xl text-white" />
                     </div>
-                    <div className="flex items-center gap-3">
-                      <span className={`px-3 py-2 rounded-full text-xs font-bold shadow-lg ${
-                        order.status === 'ready' 
-                          ? 'bg-gradient-to-r from-green-100 to-green-200 text-green-800'
-                          : 'bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800'
-                      }`}>
-                        {order.status === 'ready' ? 'Hazır' : 'Hazırlanıyor'}
-                      </span>
-                      <span className="text-xs text-gray-500 font-medium">{new Date(order.createdAt).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}</span>
-                    </div>
+                    <h3 className="text-2xl font-black bg-gradient-to-r from-gray-900 via-purple-800 to-pink-800 bg-clip-text text-transparent">
+                      Aktif Siparişler
+                    </h3>
                   </div>
-                ))}
+                  <Link href="/business/orders" className="text-purple-600 hover:text-purple-700 text-sm font-bold bg-gradient-to-r from-purple-100 to-pink-100 px-4 py-2 rounded-full hover:from-purple-200 hover:to-pink-200 transition-all duration-300 hover:scale-105">
+                    Tümünü Gör →
+                  </Link>
+                </div>
+                <div className="space-y-6">
+                  {activeOrders.map(order => (
+                    <div key={order.id} className="group/item flex items-center justify-between p-6 bg-gradient-to-r from-gray-50/80 to-gray-100/80 rounded-2xl hover:from-gray-100 hover:to-gray-200 transition-all duration-300 border border-gray-200/50 hover:shadow-xl hover:scale-[1.02] backdrop-blur-sm">
+                      <div className="flex items-center gap-6">
+                        <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-200 rounded-2xl flex items-center justify-center shadow-lg group-hover/item:shadow-xl transition-all duration-300">
+                          <span className="font-black text-purple-600 text-xl">{order.tableNumber || 'N/A'}</span>
+                        </div>
+                        <div>
+                          <p className="font-black text-gray-800 text-xl">Masa {order.tableNumber || 'N/A'}</p>
+                          <p className="text-gray-600 font-bold">{order.items?.length || 0} ürün • ₺{order.totalAmount || 0}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <span className={`px-4 py-2 rounded-full text-sm font-black shadow-lg ${
+                          order.status === 'ready' 
+                            ? 'bg-gradient-to-r from-green-100 to-emerald-200 text-green-800'
+                            : 'bg-gradient-to-r from-yellow-100 to-orange-200 text-yellow-800'
+                        }`}>
+                          {order.status === 'ready' ? 'Hazır' : 'Hazırlanıyor'}
+                        </span>
+                        <span className="text-sm text-gray-500 font-bold">{new Date(order.createdAt).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
             {/* Hızlı İşlemler */}
-            <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-6 hover:shadow-2xl transition-all duration-300">
-              <h3 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-6">Hızlı İşlemler</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <Link href="/business/menu" className="p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl hover:from-purple-100 hover:to-purple-200 transition-all duration-300 flex flex-col items-center justify-center gap-3 border border-purple-200/50 hover:shadow-lg hover:scale-105">
-                  <div className="h-12 w-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                    <FaPlus className="text-xl text-white" />
+            <div className="group bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 hover:shadow-3xl transition-all duration-500 relative overflow-hidden">
+              {/* Background Gradient */}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-green-500/3 to-yellow-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              
+              <div className="relative z-10">
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="h-12 w-12 bg-gradient-to-br from-blue-500 to-green-600 rounded-2xl flex items-center justify-center shadow-xl">
+                    <FaRocket className="text-xl text-white" />
                   </div>
-                  <span className="text-sm font-bold text-purple-800">Yeni Ürün</span>
-                </Link>
-                <Link href="/business/orders" className="p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl hover:from-blue-100 hover:to-blue-200 transition-all duration-300 flex flex-col items-center justify-center gap-3 border border-blue-200/50 hover:shadow-lg hover:scale-105">
-                  <div className="h-12 w-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-                    <FaEye className="text-xl text-white" />
-                  </div>
-                  <span className="text-sm font-bold text-blue-800">Siparişleri Gör</span>
-                </Link>
-                <Link href="/business/menu" className="p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-xl hover:from-green-100 hover:to-green-200 transition-all duration-300 flex flex-col items-center justify-center gap-3 border border-green-200/50 hover:shadow-lg hover:scale-105">
-                  <div className="h-12 w-12 bg-gradient-to-r from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
-                    <FaEdit className="text-xl text-white" />
-                  </div>
-                  <span className="text-sm font-bold text-green-800">Menüyü Düzenle</span>
-                </Link>
-                <button data-open-announcements onClick={() => setShowAnnModal(true)} className="p-6 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl hover:from-yellow-100 hover:to-yellow-200 transition-all duration-300 flex flex-col items-center justify-center gap-3 border border-yellow-200/50 hover:shadow-lg hover:scale-105">
-                  <div className="h-12 w-12 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-lg">
-                    <FaBullhorn className="text-xl text-white" />
-                  </div>
-                  <span className="text-sm font-bold text-yellow-800">Duyurular (Aktif)</span>
-                </button>
+                  <h3 className="text-2xl font-black bg-gradient-to-r from-gray-900 via-blue-800 to-green-800 bg-clip-text text-transparent">
+                    Hızlı İşlemler
+                  </h3>
+                </div>
+                <div className="grid grid-cols-2 gap-6">
+                  <Link href="/business/menu" className="group/btn p-8 bg-gradient-to-br from-purple-50/80 to-purple-100/80 rounded-2xl hover:from-purple-100 hover:to-purple-200 transition-all duration-300 flex flex-col items-center justify-center gap-4 border border-purple-200/50 hover:shadow-xl hover:scale-105 backdrop-blur-sm">
+                    <div className="h-16 w-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl group-hover/btn:shadow-2xl transition-all duration-300">
+                      <FaPlus className="text-2xl text-white" />
+                    </div>
+                    <span className="text-base font-black text-purple-800">Yeni Ürün</span>
+                  </Link>
+                  <Link href="/business/orders" className="group/btn p-8 bg-gradient-to-br from-blue-50/80 to-blue-100/80 rounded-2xl hover:from-blue-100 hover:to-blue-200 transition-all duration-300 flex flex-col items-center justify-center gap-4 border border-blue-200/50 hover:shadow-xl hover:scale-105 backdrop-blur-sm">
+                    <div className="h-16 w-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-xl group-hover/btn:shadow-2xl transition-all duration-300">
+                      <FaEye className="text-2xl text-white" />
+                    </div>
+                    <span className="text-base font-black text-blue-800">Siparişleri Gör</span>
+                  </Link>
+                  <Link href="/business/menu" className="group/btn p-8 bg-gradient-to-br from-green-50/80 to-green-100/80 rounded-2xl hover:from-green-100 hover:to-green-200 transition-all duration-300 flex flex-col items-center justify-center gap-4 border border-green-200/50 hover:shadow-xl hover:scale-105 backdrop-blur-sm">
+                    <div className="h-16 w-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-xl group-hover/btn:shadow-2xl transition-all duration-300">
+                      <FaEdit className="text-2xl text-white" />
+                    </div>
+                    <span className="text-base font-black text-green-800">Menüyü Düzenle</span>
+                  </Link>
+                  <button data-open-announcements onClick={() => setShowAnnModal(true)} className="group/btn p-8 bg-gradient-to-br from-yellow-50/80 to-yellow-100/80 rounded-2xl hover:from-yellow-100 hover:to-yellow-200 transition-all duration-300 flex flex-col items-center justify-center gap-4 border border-yellow-200/50 hover:shadow-xl hover:scale-105 backdrop-blur-sm">
+                    <div className="h-16 w-16 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-2xl flex items-center justify-center shadow-xl group-hover/btn:shadow-2xl transition-all duration-300">
+                      <FaBullhorn className="text-2xl text-white" />
+                    </div>
+                    <span className="text-base font-black text-yellow-800">Duyurular (Aktif)</span>
+                  </button>
+                </div>
               </div>
             </div>
             <AnnouncementQuickModal isOpen={showAnnModal} onClose={() => setShowAnnModal(false)} />
@@ -485,30 +556,66 @@ export default function BusinessDashboard() {
           </div>
 
           {/* Aylık Özet */}
-          <div className="mt-8 bg-gradient-to-r from-purple-600 via-purple-700 to-purple-800 rounded-2xl shadow-2xl p-8 text-white hover:shadow-3xl transition-all duration-300">
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="text-2xl font-bold mb-3">Aylık Performans</h3>
-                <p className="text-purple-200 mb-6 text-lg">
-                  {stats.monthlyOrders > 0 ? 'Bu ay harika gidiyorsunuz! 🚀' : 'Henüz veri bulunmuyor 📊'}
-                </p>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 hover:bg-white/20 transition-all duration-300">
-                    <p className="text-4xl font-bold mb-2">₺{stats.monthlyRevenue.toLocaleString('tr-TR')}</p>
-                    <p className="text-purple-200 text-sm font-medium">Aylık Ciro</p>
+          <div className="mt-16 group bg-gradient-to-br from-purple-600 via-purple-700 to-purple-800 rounded-3xl shadow-3xl p-12 text-white hover:shadow-4xl transition-all duration-500 relative overflow-hidden">
+            {/* Background Pattern */}
+            <div className="absolute inset-0 opacity-50" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='20' cy='20' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+            }}></div>
+            
+            <div className="relative z-10">
+              <div className="flex justify-between items-start mb-8">
+                <div className="flex items-center gap-6">
+                  <div className="h-16 w-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-xl">
+                    <FaChartLine className="text-3xl text-white" />
                   </div>
-                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 hover:bg-white/20 transition-all duration-300">
-                    <p className="text-4xl font-bold mb-2">{stats.monthlyOrders}</p>
-                    <p className="text-purple-200 text-sm font-medium">Toplam Sipariş</p>
+                  <div>
+                    <h3 className="text-4xl font-black mb-4">Aylık Performans</h3>
+                    <p className="text-purple-200 text-xl font-bold">
+                      {stats.monthlyOrders > 0 ? 'Bu ay harika gidiyorsunuz! 🚀' : 'Henüz veri bulunmuyor 📊'}
+                    </p>
                   </div>
-                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 hover:bg-white/20 transition-all duration-300">
-                    <p className="text-4xl font-bold mb-2">{stats.averageRating > 0 ? stats.averageRating.toFixed(1) : '-'}</p>
-                    <p className="text-purple-200 text-sm font-medium">Ortalama Puan</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+                <div className="group/metric bg-white/15 backdrop-blur-xl rounded-2xl p-8 hover:bg-white/25 transition-all duration-500 hover:scale-105 hover:shadow-2xl border border-white/20">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="h-12 w-12 bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
+                      <FaMoneyBillWave className="text-xl text-white" />
+                    </div>
+                    <div className="text-green-200 text-sm font-bold bg-green-500/20 px-3 py-1 rounded-full">Ciro</div>
                   </div>
-                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 hover:bg-white/20 transition-all duration-300">
-                    <p className="text-4xl font-bold mb-2">{stats.customerSatisfaction > 0 ? `${stats.customerSatisfaction}%` : '-'}</p>
-                    <p className="text-purple-200 text-sm font-medium">Müşteri Memnuniyeti</p>
+                  <p className="text-5xl font-black mb-2">₺{stats.monthlyRevenue.toLocaleString('tr-TR')}</p>
+                  <p className="text-purple-200 text-lg font-bold">Aylık Ciro</p>
+                </div>
+                <div className="group/metric bg-white/15 backdrop-blur-xl rounded-2xl p-8 hover:bg-white/25 transition-all duration-500 hover:scale-105 hover:shadow-2xl border border-white/20">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="h-12 w-12 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
+                      <FaShoppingCart className="text-xl text-white" />
+                    </div>
+                    <div className="text-blue-200 text-sm font-bold bg-blue-500/20 px-3 py-1 rounded-full">Sipariş</div>
                   </div>
+                  <p className="text-5xl font-black mb-2">{stats.monthlyOrders}</p>
+                  <p className="text-purple-200 text-lg font-bold">Toplam Sipariş</p>
+                </div>
+                <div className="group/metric bg-white/15 backdrop-blur-xl rounded-2xl p-8 hover:bg-white/25 transition-all duration-500 hover:scale-105 hover:shadow-2xl border border-white/20">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="h-12 w-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center shadow-lg">
+                      <FaChartBar className="text-xl text-white" />
+                    </div>
+                    <div className="text-yellow-200 text-sm font-bold bg-yellow-500/20 px-3 py-1 rounded-full">Puan</div>
+                  </div>
+                  <p className="text-5xl font-black mb-2">{stats.averageRating > 0 ? stats.averageRating.toFixed(1) : '-'}</p>
+                  <p className="text-purple-200 text-lg font-bold">Ortalama Puan</p>
+                </div>
+                <div className="group/metric bg-white/15 backdrop-blur-xl rounded-2xl p-8 hover:bg-white/25 transition-all duration-500 hover:scale-105 hover:shadow-2xl border border-white/20">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="h-12 w-12 bg-gradient-to-br from-pink-400 to-rose-500 rounded-xl flex items-center justify-center shadow-lg">
+                      <FaUsers className="text-xl text-white" />
+                    </div>
+                    <div className="text-pink-200 text-sm font-bold bg-pink-500/20 px-3 py-1 rounded-full">Memnuniyet</div>
+                  </div>
+                  <p className="text-5xl font-black mb-2">{stats.customerSatisfaction > 0 ? `${stats.customerSatisfaction}%` : '-'}</p>
+                  <p className="text-purple-200 text-lg font-bold">Müşteri Memnuniyeti</p>
                 </div>
               </div>
             </div>

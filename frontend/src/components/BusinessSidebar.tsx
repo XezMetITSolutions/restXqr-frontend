@@ -11,10 +11,14 @@ import {
   FaHeadset,
   FaCog,
   FaSignOutAlt,
-  FaBars
+  FaBars,
+  FaRocket,
+  FaSparkles
 } from 'react-icons/fa';
 import { useFeature } from '@/hooks/useFeature';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useBusinessSettingsStore } from '@/store/useBusinessSettingsStore';
+import { useEffect, useState } from 'react';
 
 interface BusinessSidebarProps {
   sidebarOpen: boolean;
@@ -25,12 +29,36 @@ interface BusinessSidebarProps {
 export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout }: BusinessSidebarProps) {
   const pathname = usePathname();
   const { authenticatedRestaurant, authenticatedStaff } = useAuthStore();
+  const { settings, fetchSettings } = useBusinessSettingsStore();
+  const [brandColors, setBrandColors] = useState({
+    primary: '#8B5CF6',
+    secondary: '#A855F7',
+    accent: '#EC4899'
+  });
   
   // Feature kontrolü
   const hasQrMenu = useFeature('qr_menu');
   const hasTableManagement = useFeature('table_management');
   const hasBasicReports = useFeature('basic_reports');
   const hasAdvancedAnalytics = useFeature('advanced_analytics');
+
+  // Görsel kimlik ayarlarını yükle
+  useEffect(() => {
+    if (authenticatedRestaurant?.id) {
+      fetchSettings(authenticatedRestaurant.id);
+    }
+  }, [authenticatedRestaurant?.id, fetchSettings]);
+
+  // Brand renklerini ayarla
+  useEffect(() => {
+    if (settings?.branding) {
+      setBrandColors({
+        primary: settings.branding.primaryColor || '#8B5CF6',
+        secondary: settings.branding.secondaryColor || '#A855F7',
+        accent: settings.branding.accentColor || '#EC4899'
+      });
+    }
+  }, [settings?.branding]);
 
   // Restoran bilgileri - subdomain'e göre kişiselleştir
   const getRestaurantInfo = () => {
@@ -132,71 +160,120 @@ export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout 
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 w-64 bg-gradient-to-b from-purple-900 to-purple-800 text-white transform transition-transform duration-300 ease-in-out z-50 ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      } lg:translate-x-0`}>
-        <div className="p-4 sm:p-6">
+      <div 
+        className={`fixed inset-y-0 left-0 w-72 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white transform transition-all duration-500 ease-in-out z-50 shadow-2xl ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        } lg:translate-x-0`}
+        style={{
+          background: `linear-gradient(135deg, ${brandColors.primary}20, ${brandColors.secondary}30, ${brandColors.accent}20)`
+        }}
+      >
+        {/* Header */}
+        <div className="p-6 border-b border-white/10 backdrop-blur-sm">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-xl sm:text-2xl font-bold">{restaurantName}</h1>
-              <p className="text-purple-200 text-xs sm:text-sm mt-1">Yönetim Paneli</p>
+            <div className="flex items-center gap-4">
+              <div 
+                className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg"
+                style={{ background: `linear-gradient(135deg, ${brandColors.primary}, ${brandColors.secondary})` }}
+              >
+                <FaRocket className="text-white text-xl" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
+                  {restaurantName}
+                </h1>
+                <p className="text-white/70 text-sm font-medium">Yönetim Paneli</p>
+              </div>
             </div>
             <button
               onClick={() => setSidebarOpen(false)}
-              className="lg:hidden p-2 hover:bg-purple-700 rounded-lg transition-colors"
+              className="lg:hidden p-3 hover:bg-white/10 rounded-xl transition-all duration-300 hover:scale-110"
             >
               <FaBars className="text-lg" />
             </button>
           </div>
+        </div>
 
-          <nav className="mt-4 sm:mt-6">
-            {menuItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`flex items-center justify-center sm:justify-start px-4 sm:px-6 py-3 sm:py-3 transition-colors rounded-r-lg mx-2 sm:mx-0 ${
-                    item.active
-                      ? 'bg-purple-700 bg-opacity-50 border-l-4 border-white'
-                      : 'hover:bg-purple-700 hover:bg-opacity-50'
+        {/* Navigation */}
+        <div className="p-4 space-y-2">
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`group flex items-center gap-4 px-4 py-4 rounded-2xl transition-all duration-300 hover:scale-105 ${
+                  item.active
+                    ? 'shadow-lg'
+                    : 'hover:shadow-md'
+                }`}
+                style={{
+                  background: item.active 
+                    ? `linear-gradient(135deg, ${brandColors.primary}40, ${brandColors.secondary}30)` 
+                    : 'transparent',
+                  borderLeft: item.active ? `4px solid ${brandColors.accent}` : '4px solid transparent'
+                }}
+              >
+                <div 
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 ${
+                    item.active ? 'shadow-lg' : 'group-hover:shadow-md'
                   }`}
+                  style={{
+                    background: item.active 
+                      ? `linear-gradient(135deg, ${brandColors.primary}, ${brandColors.secondary})`
+                      : 'rgba(255, 255, 255, 0.1)'
+                  }}
                 >
-                  <Icon className="mr-2 sm:mr-3 text-sm sm:text-base" />
-                  <span className="text-sm sm:text-base font-medium">{item.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
+                  <Icon className={`text-lg transition-all duration-300 ${
+                    item.active ? 'text-white' : 'text-white/70 group-hover:text-white'
+                  }`} />
+                </div>
+                <span className={`font-medium transition-all duration-300 ${
+                  item.active ? 'text-white font-bold' : 'text-white/80 group-hover:text-white'
+                }`}>
+                  {item.label}
+                </span>
+                {item.active && (
+                  <div 
+                    className="ml-auto w-2 h-2 rounded-full animate-pulse"
+                    style={{ backgroundColor: brandColors.accent }}
+                  />
+                )}
+              </Link>
+            );
+          })}
         </div>
 
         {/* Bottom Section */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
-          <div className="border-t border-purple-700 pt-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
-                  <span className="text-sm font-bold">{restaurantName.charAt(0).toUpperCase()}</span>
-                </div>
-                <div>
-                  <p className="text-sm font-medium">{restaurantName}</p>
-                  <p className="text-xs text-purple-300">{restaurantEmail}</p>
-                </div>
-              </div>
-              <button
-                onClick={onLogout}
-                className="p-2 hover:bg-purple-700 rounded-lg transition-colors"
-                title="Çıkış Yap"
+        <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-white/10 backdrop-blur-sm">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div 
+                className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg"
+                style={{ background: `linear-gradient(135deg, ${brandColors.secondary}, ${brandColors.accent})` }}
               >
-                <FaSignOutAlt className="text-lg" />
-              </button>
+                <span className="text-white font-bold text-lg">
+                  {restaurantName.charAt(0).toUpperCase()}
+                </span>
+              </div>
+              <div>
+                <p className="text-white font-bold">{restaurantName}</p>
+                <p className="text-white/60 text-sm">{restaurantEmail}</p>
+              </div>
             </div>
+            <button
+              onClick={onLogout}
+              className="p-3 hover:bg-red-500/20 rounded-xl transition-all duration-300 hover:scale-110 group"
+              title="Çıkış Yap"
+            >
+              <FaSignOutAlt className="text-lg text-white/70 group-hover:text-red-400 transition-colors duration-300" />
+            </button>
           </div>
         </div>
       </div>
