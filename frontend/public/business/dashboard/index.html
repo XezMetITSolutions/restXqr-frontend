@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İşletme Paneli</title>
+    <link rel="stylesheet" href="../../styles.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background-color: #673ab7;
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        .container {
+            padding: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .dashboard-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+        }
+        .dashboard-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .dashboard-card-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #673ab7;
+        }
+        .dashboard-card-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #ede7f6;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #673ab7;
+            font-size: 1.5rem;
+        }
+        .dashboard-card-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .dashboard-card-subtitle {
+            color: #757575;
+            font-size: 0.9rem;
+        }
+        .dashboard-card-footer {
+            display: flex;
+            align-items: center;
+            margin-top: 1rem;
+            color: #4caf50;
+            font-size: 0.9rem;
+        }
+        .dashboard-card-footer.negative {
+            color: #f44336;
+        }
+        .chart-container {
+            height: 200px;
+            margin-top: 1rem;
+        }
+        .table-container {
+            margin-top: 2rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow-x: auto;
+            display: block;
+            white-space: nowrap;
+        }
+        thead, tbody, tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+        }
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        .table-container {
+            overflow-x: auto;
+            margin-top: 2rem;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+        .status-active {
+            background-color: #e8f5e9;
+            color: #4caf50;
+        }
+        .status-completed {
+            background-color: #e3f2fd;
+            color: #2196f3;
+        }
+        .status-cancelled {
+            background-color: #ffebee;
+            color: #f44336;
+        }
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #673ab7;
+            color: white;
+        }
+        .btn-secondary {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+        .nav-links {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Mobile responsive styles */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .header h1 {
+                font-size: 1.2rem;
+            }
+            .nav-links {
+                justify-content: center;
+                width: 100%;
+            }
+            .nav-link {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 0.8rem;
+            }
+            .dashboard-card {
+                padding: 1rem;
+            }
+            .dashboard-card-value {
+                font-size: 1.5rem;
+            }
+            .container {
+                padding: 0.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header {
+                padding: 0.8rem;
+            }
+            .header h1 {
+                font-size: 1.1rem;
+            }
+            .nav-link {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.75rem;
+            }
+            .dashboard-card {
+                padding: 0.8rem;
+            }
+            .dashboard-card-title {
+                font-size: 1rem;
+            }
+            .dashboard-card-value {
+                font-size: 1.3rem;
+            }
+            .dashboard-card-subtitle {
+                font-size: 0.8rem;
+            }
+            .dashboard-card-footer {
+                font-size: 0.8rem;
+            }
+            .table-container {
+                overflow-x: auto;
+            }
+            table {
+                min-width: 600px;
+            }
+            th, td {
+                padding: 0.5rem;
+                font-size: 0.8rem;
+            }
+            .chart-container {
+                height: 150px;
+            }
+            .dashboard-card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            .dashboard-card-header .btn {
+                font-size: 0.7rem;
+                padding: 0.3rem 0.6rem;
+            }
+        }
+        
+        /* Tablet responsive styles */
+        @media (min-width: 481px) and (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+            .container {
+                padding: 0.8rem;
+            }
+            .nav-link {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>İşletme Paneli</h1>
+        <div class="nav-links">
+            <a href="../waiter/" class="nav-link">Garson</a>
+            <a href="../kitchen/" class="nav-link">Mutfak</a>
+            <a href="../menu/" class="nav-link">Menü</a>
+            <button class="btn">Çıkış</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="dashboard-grid">
+            <!-- Günlük Satış Kartı -->
+            <div class="dashboard-card">
+                <div class="dashboard-card-header">
+                    <div class="dashboard-card-title">Günlük Satış</div>
+                    <div class="dashboard-card-icon">₺</div>
+                </div>
+                <div class="dashboard-card-value">4,250 TL</div>
+                <div class="dashboard-card-subtitle">Son güncelleme: Bugün 15:00</div>
+                <div class="dashboard-card-footer">
+                    <span>↑ %12 geçen güne göre</span>
+                </div>
+            </div>
+            
+            <!-- Aktif Siparişler Kartı -->
+            <div class="dashboard-card">
+                <div class="dashboard-card-header">
+                    <div class="dashboard-card-title">Aktif Siparişler</div>
+                    <div class="dashboard-card-icon">🔄</div>
+                </div>
+                <div class="dashboard-card-value">8</div>
+                <div class="dashboard-card-subtitle">5 hazırlanıyor, 3 servis bekliyor</div>
+                <div class="dashboard-card-footer">
+                    <span>↓ %5 son saate göre</span>
+                </div>
+            </div>
+            
+            <!-- Dolu Masalar Kartı -->
+            <div class="dashboard-card">
+                <div class="dashboard-card-header">
+                    <div class="dashboard-card-title">Dolu Masalar</div>
+                    <div class="dashboard-card-icon">🪑</div>
+                </div>
+                <div class="dashboard-card-value">12/20</div>
+                <div class="dashboard-card-subtitle">%60 doluluk oranı</div>
+                <div class="dashboard-card-footer">
+                    <span>↑ %15 geçen saate göre</span>
+                </div>
+            </div>
+            
+            <!-- Ortalama Servis Süresi Kartı -->
+            <div class="dashboard-card">
+                <div class="dashboard-card-header">
+                    <div class="dashboard-card-title">Ort. Servis Süresi</div>
+                    <div class="dashboard-card-icon">⏱️</div>
+                </div>
+                <div class="dashboard-card-value">18 dk</div>
+                <div class="dashboard-card-subtitle">Siparişten servise kadar</div>
+                <div class="dashboard-card-footer negative">
+                    <span>↑ %8 hedef süreye göre</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Grafik Bölümü -->
+        <div class="dashboard-card">
+            <div class="dashboard-card-header">
+                <div class="dashboard-card-title">Günlük Satış Grafiği</div>
+                <div>
+                    <button class="btn btn-secondary">Bugün</button>
+                    <button class="btn btn-secondary">Bu Hafta</button>
+                    <button class="btn btn-secondary">Bu Ay</button>
+                </div>
+            </div>
+            <div class="chart-container">
+                <!-- Grafik yerine basit bir görsel -->
+                <svg width="100%" height="100%" viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg">
+                    <polyline
+                        fill="none"
+                        stroke="#673ab7"
+                        stroke-width="3"
+                        points="
+                        0,180
+                        100,150
+                        200,160
+                        300,120
+                        400,140
+                        500,80
+                        600,90
+                        700,50
+                        800,70
+                        "
+                    />
+                    <polyline
+                        fill="rgba(103, 58, 183, 0.1)"
+                        stroke="none"
+                        points="
+                        0,180
+                        100,150
+                        200,160
+                        300,120
+                        400,140
+                        500,80
+                        600,90
+                        700,50
+                        800,70
+                        800,200
+                        0,200
+                        "
+                    />
+                </svg>
+            </div>
+        </div>
+        
+        <!-- Son Siparişler Tablosu -->
+        <div class="table-container">
+            <h2>Son Siparişler</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sipariş No</th>
+                        <th>Masa</th>
+                        <th>Garson</th>
+                        <th>Tutar</th>
+                        <th>Zaman</th>
+                        <th>Durum</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>#1234</td>
+                        <td>Masa 5</td>
+                        <td>Ahmet</td>
+                        <td>320 TL</td>
+                        <td>14:45</td>
+                        <td><span class="status-badge status-active">Aktif</span></td>
+                    </tr>
+                    <tr>
+                        <td>#1233</td>
+                        <td>Masa 3</td>
+                        <td>Mehmet</td>
+                        <td>180 TL</td>
+                        <td>14:30</td>
+                        <td><span class="status-badge status-active">Aktif</span></td>
+                    </tr>
+                    <tr>
+                        <td>#1232</td>
+                        <td>Masa 8</td>
+                        <td>Ayşe</td>
+                        <td>450 TL</td>
+                        <td>14:15</td>
+                        <td><span class="status-badge status-completed">Tamamlandı</span></td>
+                    </tr>
+                    <tr>
+                        <td>#1231</td>
+                        <td>Masa 2</td>
+                        <td>Fatma</td>
+                        <td>275 TL</td>
+                        <td>13:50</td>
+                        <td><span class="status-badge status-completed">Tamamlandı</span></td>
+                    </tr>
+                    <tr>
+                        <td>#1230</td>
+                        <td>Masa 10</td>
+                        <td>Ali</td>
+                        <td>150 TL</td>
+                        <td>13:30</td>
+                        <td><span class="status-badge status-cancelled">İptal</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Burada gerçek bir uygulamada veri çekme ve grafik oluşturma işlemleri yapılır
+            console.log('Dashboard yüklendi');
+            
+            // Örnek olarak butonlara tıklama olayları ekleyelim
+            const buttons = document.querySelectorAll('.btn-secondary');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    buttons.forEach(btn => btn.classList.remove('btn-primary'));
+                    buttons.forEach(btn => btn.classList.add('btn-secondary'));
+                    this.classList.remove('btn-secondary');
+                    this.classList.add('btn-primary');
+                    // Gerçek uygulamada burada grafik verisi güncellenir
+                });
+            });
+        });
+    </script>
+</body>
+</html>
