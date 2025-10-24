@@ -29,7 +29,7 @@ interface BusinessSidebarProps {
 export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout }: BusinessSidebarProps) {
   const pathname = usePathname();
   const { authenticatedRestaurant, authenticatedStaff } = useAuthStore();
-  const { settings, fetchSettings } = useBusinessSettingsStore();
+  const { settings } = useBusinessSettingsStore();
   const [brandColors, setBrandColors] = useState({
     primary: '#8B5CF6',
     secondary: '#A855F7',
@@ -41,13 +41,6 @@ export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout 
   const hasTableManagement = useFeature('table_management');
   const hasBasicReports = useFeature('basic_reports');
   const hasAdvancedAnalytics = useFeature('advanced_analytics');
-
-  // Görsel kimlik ayarlarını yükle
-  useEffect(() => {
-    if (authenticatedRestaurant?.id) {
-      fetchSettings(authenticatedRestaurant.id);
-    }
-  }, [authenticatedRestaurant?.id, fetchSettings]);
 
   // Brand renklerini ayarla
   useEffect(() => {
