@@ -24,8 +24,7 @@ import {
   FaDatabase,
   FaFileAlt,
   FaCrown,
-  FaRocket,
-  FaSparkles
+  FaRocket
 } from 'react-icons/fa';
 
 interface AdminLayoutProps {
@@ -79,7 +78,7 @@ export default function AdminLayout({
             {/* Ana Menü */}
             <div className="mb-8">
               <h3 className="text-xs font-bold text-blue-300 uppercase tracking-wider mb-4 flex items-center">
-                <FaSparkles className="mr-2" />
+                <FaRocket className="mr-2" />
                 Ana Menü
               </h3>
               <ul className="space-y-2">
