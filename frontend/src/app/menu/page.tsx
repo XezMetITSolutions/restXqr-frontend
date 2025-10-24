@@ -49,19 +49,18 @@ function MenuPageContent() {
   const primary = settings.branding.primaryColor;
   const secondary = settings.branding.secondaryColor || settings.branding.primaryColor;
   
-  // Subdomain'den restaurant bulma - Aksaray için özel kontrol
+  // Subdomain'den restaurant bulma - Demo için Aksaray restoranını kullan
   const getCurrentRestaurant = () => {
     if (typeof window === 'undefined') return null;
     const hostname = window.location.hostname;
     const subdomain = hostname.split('.')[0];
     const mainDomains = ['localhost', 'www', 'guzellestir'];
     
-    // Aksaray subdomain'i için özel kontrol
-    if (subdomain === 'aksaray') {
+    // Demo sayfası için Aksaray restoranını kullan
+    if (mainDomains.includes(subdomain) || hostname.includes('restxqr.com')) {
       return restaurants.find((r: any) => r.username === 'aksaray');
     }
     
-    if (mainDomains.includes(subdomain)) return null;
     return restaurants.find((r: any) => r.username === subdomain);
   };
 
