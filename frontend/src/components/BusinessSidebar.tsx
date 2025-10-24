@@ -31,9 +31,9 @@ export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout 
   const { authenticatedRestaurant, authenticatedStaff } = useAuthStore();
   const { settings } = useBusinessSettingsStore();
   const [brandColors, setBrandColors] = useState({
-    primary: '#8B5CF6',
-    secondary: '#A855F7',
-    accent: '#EC4899'
+    primary: '#3B82F6',
+    secondary: '#1D4ED8',
+    accent: '#F59E0B'
   });
   
   // Feature kontrolü
@@ -46,9 +46,9 @@ export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout 
   useEffect(() => {
     if (settings?.branding) {
       setBrandColors({
-        primary: settings.branding.primaryColor || '#8B5CF6',
-        secondary: settings.branding.secondaryColor || '#A855F7',
-        accent: settings.branding.accentColor || '#EC4899'
+        primary: settings.branding.primaryColor || '#3B82F6',
+        secondary: settings.branding.secondaryColor || '#1D4ED8',
+        accent: settings.branding.accentColor || '#F59E0B'
       });
     }
   }, [settings?.branding]);
@@ -160,12 +160,9 @@ export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout 
 
       {/* Sidebar */}
       <div 
-        className={`fixed inset-y-0 left-0 w-72 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white transform transition-all duration-500 ease-in-out z-50 shadow-2xl ${
+        className={`fixed inset-y-0 left-0 w-72 bg-gradient-to-br from-slate-800 to-slate-900 text-white transform transition-all duration-500 ease-in-out z-50 shadow-2xl flex flex-col ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0`}
-        style={{
-          background: `linear-gradient(135deg, ${brandColors.primary}20, ${brandColors.secondary}30, ${brandColors.accent}20)`
-        }}
       >
         {/* Header */}
         <div className="p-6 border-b border-white/10 backdrop-blur-sm">
@@ -194,7 +191,7 @@ export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout 
         </div>
 
         {/* Navigation */}
-        <div className="p-4 space-y-2">
+        <div className="flex-1 overflow-y-auto p-4 space-y-2">
           {menuItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -208,7 +205,7 @@ export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout 
                 }`}
                 style={{
                   background: item.active 
-                    ? `linear-gradient(135deg, ${brandColors.primary}40, ${brandColors.secondary}30)` 
+                    ? `linear-gradient(135deg, ${brandColors.primary}20, ${brandColors.secondary}20)` 
                     : 'transparent',
                   borderLeft: item.active ? `4px solid ${brandColors.accent}` : '4px solid transparent'
                 }}
@@ -244,7 +241,7 @@ export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout 
         </div>
 
         {/* Bottom Section */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-white/10 backdrop-blur-sm">
+        <div className="p-6 border-t border-white/10 backdrop-blur-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div 
