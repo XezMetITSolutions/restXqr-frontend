@@ -90,44 +90,19 @@ export default function WaiterDashboard() {
   const hasChangeForTable = (tableNumber: number) =>
     changeNotifs.some(n => n.tableNumber === tableNumber);
 
-  // Realtime waiter requests
-  useEffect(() => {
-    const un = subscribe((evt) => {
-      if (evt.type === 'waiter_request') {
-        setIncomingRequests((prev) => [evt.payload, ...prev].slice(0, 20));
-
-        // 1) Garson aktif çağrı listesine ekle (localStorage + state)
-        const typeMap: any = {
-          help: 'waiter_call',
-          water: 'water_request',
-          clean: 'clean_request',
-          bill: 'bill_request',
-          custom: 'waiter_call'
-        };
-        const calls = JSON.parse(localStorage.getItem('waiter_calls') || '[]');
-        const newCall = {
-          id: 'call_' + Date.now(),
-          tableNumber: evt.payload.tableNumber,
-          type: typeMap[evt.payload.type] || 'waiter_call',
-          message: evt.payload.message || '',
-          timestamp: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
-          status: 'active',
-          createdAt: new Date().toISOString()
-        };
-        const updated = [newCall, ...calls];
-        localStorage.setItem('waiter_calls', JSON.stringify(updated));
-        setActiveCalls(prev => [newCall, ...prev]);
-
-        // 2) Bill request bridge -> faturalandırma akışı
-        if (evt.payload.type === 'bill') {
-          // create bill request in store (demo)
-          const orderId = `order_${Date.now()}`;
-          createBillRequest(orderId, evt.payload.tableNumber, 0, 'customer');
-        }
+  // Fetch calls from backend
+  const fetchCalls = async () => {
+    if (!authenticatedRestaurant?.id) return;
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/waiter/calls?restaurantId=${authenticatedRestaurant.id}`);
+      const data = await response.json();
+      if (data.success && Array.isArray(data.data)) {
+        setActiveCalls(data.data);
       }
-    });
-    return un;
-  }, []);
+    } catch (error) {
+      console.error('Fetch calls error:', error);
+    }
+  };
 
   // Masa değiştirme fonksiyonu
   const handleTableTransfer = (orderId: string) => {
@@ -248,10 +223,14 @@ export default function WaiterDashboard() {
   const [callHistory, setCallHistory] = useState<any[]>([]);
   const [activeCalls, setActiveCalls] = useState<any[]>([]);
   
-  // Demo verilerini başlat (sadece bir kez)
+  // Periyodik çağrı çekme (5 saniye)
   useEffect(() => {
-    initializeDemoData();
-  }, []);
+    if (!authenticatedRestaurant?.id) return;
+    
+    fetchCalls(); // İlk çekim
+    const interval = setInterval(fetchCalls, 5000);
+    return () => clearInterval(interval);
+  }, [authenticatedRestaurant?.id]);
   
   const orders = getActiveOrders();
   console.log('🍽️ Garson paneli sipariş sayısı:', orders.length);
@@ -537,126 +516,24 @@ export default function WaiterDashboard() {
     return 'text-gray-600';
   };
 
-  const handleOrderAction = (orderId: string, action: string) => {
-    console.log(`🚀 Buton tıklandı: ${action} - Sipariş ID: ${orderId}`);
-    const order = orders.find(o => o.id === orderId);
-    if (!order) {
-      console.log('❌ Sipariş bulunamadı');
-      return;
+  // Çağrıyı çözme fonksiyonu
+  const resolveCall = async (callId: string) => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/waiter/calls/${callId}/resolve`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (response.ok) {
+        // Çağrıyı local state'den kaldır
+        setActiveCalls(prev => prev.filter(call => call.id !== callId));
+        console.log('✅ Çağrı çözüldü:', callId);
+      }
+    } catch (error) {
+      console.error('Çağrı çözme hatası:', error);
     }
-
-    console.log('✅ Sipariş bulundu:', order);
-
-    switch (action) {
-      case 'serve':
-        console.log('🍽️ Servis Et butonu çalışıyor...');
-        // Servis et - tüm ürünleri 'served' yap
-        order.items.forEach((item, index) => {
-          if (item.status === 'ready') {
-            updateItemStatus(orderId, index, 'served');
-            console.log(`✅ ${item.name} servis edildi`);
-          }
-        });
-        // Eğer tüm ürünler servis edildiyse siparişi 'completed' yap
-        if (order.items.every(item => item.status === 'served')) {
-          updateOrderStatus(orderId, 'completed');
-          console.log('🎉 Sipariş tamamlandı!');
-        }
-        break;
-        
-      case 'bill':
-        console.log('🧾 Hesap Çıkar butonu çalışıyor...');
-        // Garson direkt kasadan hesabı çıkarır
-        // Bildirim zaten müşteriden geliyor
-        console.log('✅ Garson kasadan hesabı çıkaracak');
-        break;
-        
-      case 'mark_ready':
-        // Ürünü hazır olarak işaretle
-        order.items.forEach(item => {
-          if (item.status === 'preparing') {
-            item.status = 'ready';
-          }
-        });
-        // Eğer tüm ürünler hazırsa siparişi 'ready' yap
-        if (order.items.every(item => item.status === 'ready' || item.status === 'served')) {
-          order.status = 'ready';
-        }
-        break;
-        
-      case 'call_waiter':
-        console.log('🔔 Garson çağrısı çözülüyor...');
-        // Garson çağrısını kaldır
-        // order.calls = order.calls.filter(call => call !== 'waiter'); // Merkezi store'da calls property'si yok
-        // LocalStorage'dan da kaldır
-        const calls = JSON.parse(localStorage.getItem('waiter_calls') || '[]');
-        const filteredCalls = calls.filter((call: any) => !(call.tableNumber === order.tableNumber && call.type === 'waiter_call'));
-        localStorage.setItem('waiter_calls', JSON.stringify(filteredCalls));
-        // Çağrıyı geçmişe ekle
-        const waiterCall = calls.find((call: any) => call.tableNumber === order.tableNumber && call.type === 'waiter_call');
-        if (waiterCall) {
-          setCallHistory(prev => [...prev, { ...waiterCall, status: 'resolved' }]);
-        }
-        console.log('✅ Garson çağrısı çözüldü');
-        break;
-        
-      case 'call_water':
-        console.log('💧 Su isteği çözülüyor...');
-        // Su isteğini kaldır
-        // order.calls = order.calls.filter(call => call !== 'water'); // Merkezi store'da calls property'si yok
-        // LocalStorage'dan da kaldır
-        const waterCalls = JSON.parse(localStorage.getItem('waiter_calls') || '[]');
-        const filteredWaterCalls = waterCalls.filter((call: any) => !(call.tableNumber === order.tableNumber && call.type === 'water_request'));
-        localStorage.setItem('waiter_calls', JSON.stringify(filteredWaterCalls));
-        // Çağrıyı geçmişe ekle
-        const waterCall = waterCalls.find((call: any) => call.tableNumber === order.tableNumber && call.type === 'water_request');
-        if (waterCall) {
-          setCallHistory(prev => [...prev, { ...waterCall, status: 'resolved' }]);
-        }
-        console.log('✅ Su isteği çözüldü');
-        break;
-        
-      case 'call_bill':
-        console.log('🧾 Hesap isteği çözülüyor...');
-        // Hesap isteğini kaldır
-        // order.calls = order.calls.filter(call => call !== 'bill'); // Merkezi store'da calls property'si yok
-        // LocalStorage'dan da kaldır
-        const billCalls = JSON.parse(localStorage.getItem('waiter_calls') || '[]');
-        const filteredBillCalls = billCalls.filter((call: any) => !(call.tableNumber === order.tableNumber && call.type === 'bill_request'));
-        localStorage.setItem('waiter_calls', JSON.stringify(filteredBillCalls));
-        // Çağrıyı geçmişe ekle
-        const billCall = billCalls.find((call: any) => call.tableNumber === order.tableNumber && call.type === 'bill_request');
-        if (billCall) {
-          setCallHistory(prev => [...prev, { ...billCall, status: 'resolved' }]);
-        }
-        console.log('✅ Hesap isteği çözüldü');
-        break;
-        
-      case 'call_clean':
-        console.log('🧹 Masa temizleme isteği çözülüyor...');
-        // Masa temizleme isteğini kaldır
-        // order.calls = order.calls.filter(call => call !== 'clean'); // Merkezi store'da calls property'si yok
-        // LocalStorage'dan da kaldır
-        const cleanCalls = JSON.parse(localStorage.getItem('waiter_calls') || '[]');
-        const filteredCleanCalls = cleanCalls.filter((call: any) => !(call.tableNumber === order.tableNumber && call.type === 'clean_request'));
-        localStorage.setItem('waiter_calls', JSON.stringify(filteredCleanCalls));
-        // Çağrıyı geçmişe ekle
-        const cleanCall = cleanCalls.find((call: any) => call.tableNumber === order.tableNumber && call.type === 'clean_request');
-        if (cleanCall) {
-          setCallHistory(prev => [...prev, { ...cleanCall, status: 'resolved' }]);
-        }
-        console.log('✅ Masa temizleme isteği çözüldü');
-        break;
-    }
-
-    // State'i güncelle
-    // setOrders(updatedOrders); // Artık merkezi store kullanıyoruz
-    
-    // LocalStorage'ı güncelle
-    // localStorage.setItem('waiter_orders', JSON.stringify(updatedOrders)); // Artık merkezi store kullanıyoruz
-    
-    console.log(`🎯 Sipariş ${orderId} - ${action} işlemi tamamlandı!`);
-    console.log('📊 Güncellenmiş sipariş:', order);
   };
 
 
@@ -854,12 +731,7 @@ export default function WaiterDashboard() {
                   </span>
                       </div>
                       <button
-                        onClick={() => {
-                          if (call.type === 'waiter_call') handleOrderAction(order.id, 'call_waiter');
-                          if (call.type === 'water_request') handleOrderAction(order.id, 'call_water');
-                          if (call.type === 'bill_request') handleOrderAction(order.id, 'call_bill');
-                          if (call.type === 'clean_request') handleOrderAction(order.id, 'call_clean');
-                        }}
+                        onClick={() => resolveCall(call.id)}
                         className="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium text-sm transition-colors"
                         title="Çağrıyı kaldır"
                       >

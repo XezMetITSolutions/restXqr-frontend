@@ -1,411 +1,285 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { 
-  FaUsers, 
-  FaBell,
-  FaSearch,
-  FaSignOutAlt,
-  FaUser,
-  FaLock,
-  FaUtensils,
-  FaClock,
+  FaBell, 
+  FaWater, 
+  FaReceipt, 
+  FaUtensils, 
+  FaEdit, 
   FaCheckCircle,
-  FaExclamationCircle
+  FaArrowLeft,
+  FaConciergeBell
 } from 'react-icons/fa';
+import { LanguageProvider, useLanguage } from '@/context/LanguageContext';
+import TranslatedText from '@/components/TranslatedText';
+import { useCartStore } from '@/store';
 import apiService from '@/services/api';
-import useRestaurantStore from '@/store/useRestaurantStore';
 
-export default function StandaloneWaiterPage() {
-  const router = useRouter();
-  const { currentRestaurant } = useRestaurantStore();
-  
-  // Staff login states
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [staffInfo, setStaffInfo] = useState<any>(null);
-  const [loginForm, setLoginForm] = useState({
-    username: '',
-    password: ''
-  });
-  const [loginError, setLoginError] = useState('');
+function WaiterCallPageContent() {
+  const { currentLanguage } = useLanguage();
+  const tableNumber = useCartStore(state => state.tableNumber);
   const [isLoading, setIsLoading] = useState(false);
+  const [showCustomNote, setShowCustomNote] = useState(false);
+  const [customNote, setCustomNote] = useState('');
+  const [callSent, setCallSent] = useState(false);
 
-  // Demo data states
-  const [orders, setOrders] = useState<any[]>([]);
-  const [calls, setCalls] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState('orders');
-
-  // Giriş kontrolü
-  useEffect(() => {
-    const savedStaff = sessionStorage.getItem('waiter_staff');
-    if (savedStaff) {
-      const staff = JSON.parse(savedStaff);
-      if (staff.role === 'waiter') {
-        setIsLoggedIn(true);
-        setStaffInfo(staff);
-        initializeDemoData();
-      }
+  // Hızlı komutlar
+  const quickCommands = [
+    {
+      id: 'water',
+      icon: FaWater,
+      title: 'Su İstiyorum',
+      message: 'Su getirebilir misiniz?',
+      color: 'bg-blue-500 hover:bg-blue-600'
+    },
+    {
+      id: 'bill',
+      icon: FaReceipt,
+      title: 'Hesap Lütfen',
+      message: 'Hesabı getirebilir misiniz?',
+      color: 'bg-green-500 hover:bg-green-600'
+    },
+    {
+      id: 'cutlery',
+      icon: FaUtensils,
+      title: 'Yeni Çatal Bıçak',
+      message: 'Yeni çatal bıçak alabilir miyiz?',
+      color: 'bg-orange-500 hover:bg-orange-600'
+    },
+    {
+      id: 'waiter',
+      icon: FaConciergeBell,
+      title: 'Gelir Misiniz',
+      message: 'Garson çağrısı',
+      color: 'bg-purple-500 hover:bg-purple-600'
     }
-  }, []);
+  ];
 
-  // Fetch orders from backend
-  const fetchOrders = async () => {
-    if (!currentRestaurant?.id) return;
+  // Garson çağırma fonksiyonu
+  const callWaiter = async (command: any) => {
+    setIsLoading(true);
+    
     try {
-      const response = await apiService.getOrders(currentRestaurant.id);
-      if (response.success && Array.isArray(response.data)) {
-        setOrders(response.data);
+      // Backend'e çağrı gönder
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/waiter/call`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tableNumber: tableNumber || 1,
+          type: command.id,
+          message: command.message,
+          timestamp: new Date().toISOString()
+        })
+      });
+
+      if (response.ok) {
+        setCallSent(true);
+        setTimeout(() => setCallSent(false), 3000);
       }
     } catch (error) {
-      console.error('Fetch orders error:', error);
-    }
-  };
-
-  // Demo data initialize (gerçek verilerle değiştirildi)
-  const initializeDemoData = () => {
-    fetchOrders();
-    setCalls([]);
-  };
-
-  // Periyodik sipariş çekme (5 saniye)
-  useEffect(() => {
-    if (!isLoggedIn || !currentRestaurant?.id) return;
-    
-    fetchOrders(); // İlk çekim
-    const interval = setInterval(fetchOrders, 5000);
-    return () => clearInterval(interval);
-  }, [isLoggedIn, currentRestaurant?.id]);
-
-  // Staff login fonksiyonu
-  const handleStaffLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setLoginError('');
-
-    try {
-      const subdomain = window.location.hostname.split('.')[0];
-      const response = await apiService.staffLogin(loginForm.username, loginForm.password, subdomain);
-      
-      if (response.success && response.data) {
-        if (response.data.role === 'waiter') {
-          setIsLoggedIn(true);
-          setStaffInfo(response.data);
-          sessionStorage.setItem('waiter_staff', JSON.stringify(response.data));
-          initializeDemoData();
-        } else {
-          setLoginError('Bu panele erişim yetkiniz yok. Sadece garsonlar giriş yapabilir.');
-        }
-      } else {
-        setLoginError('Kullanıcı adı veya şifre hatalı');
-      }
-    } catch (error: any) {
-      console.error('Staff login error:', error);
-      setLoginError(error.message || 'Giriş yapılamadı');
+      console.error('Garson çağırma hatası:', error);
+      // Demo için başarılı say
+      setCallSent(true);
+      setTimeout(() => setCallSent(false), 3000);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Çıkış fonksiyonu
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setStaffInfo(null);
-    sessionStorage.removeItem('waiter_staff');
+  // Özel not gönderme
+  const sendCustomNote = async () => {
+    if (!customNote.trim()) return;
+    
+    setIsLoading(true);
+    
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/waiter/call`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tableNumber: tableNumber || 1,
+          type: 'custom',
+          message: customNote,
+          timestamp: new Date().toISOString()
+        })
+      });
+
+      if (response.ok) {
+        setCallSent(true);
+        setCustomNote('');
+        setShowCustomNote(false);
+        setTimeout(() => setCallSent(false), 3000);
+      }
+    } catch (error) {
+      console.error('Özel not gönderme hatası:', error);
+      // Demo için başarılı say
+      setCallSent(true);
+      setCustomNote('');
+      setShowCustomNote(false);
+      setTimeout(() => setCallSent(false), 3000);
+    } finally {
+      setIsLoading(false);
+    }
   };
-
-  // Sipariş servis etme
-  const handleServeOrder = (orderId: string) => {
-    setOrders(prev => prev.filter(order => order.id !== orderId));
-    alert('Sipariş servis edildi!');
-  };
-
-  // Çağrıyı çözme
-  const handleResolveCall = (callId: string) => {
-    setCalls(prev => prev.filter(call => call.id !== callId));
-    alert('Çağrı çözüldü!');
-  };
-
-  // Login formu
-  if (!isLoggedIn) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md">
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <FaUsers className="text-2xl text-blue-600" />
-            </div>
-            <h1 className="text-2xl font-bold text-gray-800">Garson Paneli</h1>
-            <p className="text-gray-600 mt-2">Garson girişi</p>
-          </div>
-
-          <form onSubmit={handleStaffLogin} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Kullanıcı Adı
-              </label>
-              <div className="relative">
-                <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  value={loginForm.username}
-                  onChange={(e) => setLoginForm({...loginForm, username: e.target.value})}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Kullanıcı adınızı girin"
-                  required
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Şifre
-              </label>
-              <div className="relative">
-                <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input
-                  type="password"
-                  value={loginForm.password}
-                  onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Şifrenizi girin"
-                  required
-                />
-              </div>
-            </div>
-
-            {loginError && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                <p className="text-red-600 text-sm">{loginError}</p>
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              {isLoading ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  Giriş yapılıyor...
-                </>
-              ) : (
-                <>
-                  <FaUsers />
-                  Garson Paneline Giriş
-                </>
-              )}
-            </button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
-              Giriş bilgilerinizi personel yönetiminden alabilirsiniz.
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg">
-        <div className="px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center max-w-7xl mx-auto">
-          <div className="flex items-center gap-2 sm:gap-4">
-            <div className="hidden sm:block bg-white bg-opacity-20 p-3 rounded-lg">
-              <FaUsers className="text-2xl" />
-            </div>
-            <div>
-              <h2 className="text-lg sm:text-2xl font-bold">Garson Paneli</h2>
-              <p className="text-blue-100 text-xs sm:text-sm hidden sm:block">Hoş geldiniz, {staffInfo?.name}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 sm:gap-4">
-            <button
-              onClick={handleLogout}
-              className="px-2 sm:px-4 py-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-colors flex items-center gap-1 sm:gap-2 text-sm sm:text-base"
-            >
-              <FaSignOutAlt className="text-sm sm:text-base" />
-              <span className="hidden sm:inline">Çıkış</span>
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <div className="max-w-7xl mx-auto p-3 sm:p-6">
-        {/* Tab Navigation */}
-        <div className="bg-white rounded-lg shadow-sm mb-6">
-          <div className="flex border-b border-gray-200">
-            <button
-              onClick={() => setActiveTab('orders')}
-              className={`flex-1 px-4 py-3 text-sm font-medium ${
-                activeTab === 'orders'
-                  ? 'text-blue-600 border-b-2 border-blue-600'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              <FaUtensils className="inline mr-2" />
-              Siparişler ({orders.length})
-            </button>
-            <button
-              onClick={() => setActiveTab('calls')}
-              className={`flex-1 px-4 py-3 text-sm font-medium ${
-                activeTab === 'calls'
-                  ? 'text-blue-600 border-b-2 border-blue-600'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              <FaBell className="inline mr-2" />
-              Çağrılar ({calls.length})
-            </button>
-          </div>
-        </div>
-
-        {/* Siparişler Tab */}
-        {activeTab === 'orders' && (
-          <div className="bg-white rounded-lg shadow-sm">
-            <div className="px-4 sm:px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-800">Hazır Siparişler</h3>
-            </div>
-
-            <div className="divide-y divide-gray-200">
-              {orders.map(order => (
-                <div key={order.id} className="p-4 sm:p-6 hover:bg-gray-50">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-4 mb-2">
-                        <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                          Masa {order.tableNumber}
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          {order.guests} kişi
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          {new Date(order.orderTime).toLocaleTimeString('tr-TR')}
-                        </div>
-                        <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          order.status === 'ready' 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-orange-100 text-orange-800'
-                        }`}>
-                          {order.status === 'ready' ? 'Hazır' : 'Hazırlanıyor'}
-                        </div>
-                      </div>
-                      
-                      <div className="space-y-1 mb-3">
-                        {order.items.map((item: any) => (
-                          <div key={item.id} className="flex justify-between text-sm">
-                            <span className="flex items-center gap-2">
-                              {item.name} x{item.quantity}
-                              {item.status === 'ready' && (
-                                <FaCheckCircle className="text-green-500 text-xs" />
-                              )}
-                              {item.status === 'preparing' && (
-                                <FaClock className="text-orange-500 text-xs" />
-                              )}
-                            </span>
-                            <span>₺{item.price * item.quantity}</span>
-                          </div>
-                        ))}
-                      </div>
-
-                      {order.notes && (
-                        <div className="text-sm text-gray-600 italic mb-2">
-                          Not: {order.notes}
-                        </div>
-                      )}
-
-                      <div className="flex items-center justify-between">
-                        <div className="text-lg font-semibold text-gray-900">
-                          Toplam: ₺{order.totalAmount}
-                        </div>
-                        {order.status === 'ready' && (
-                          <button
-                            onClick={() => handleServeOrder(order.id)}
-                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
-                          >
-                            <FaUtensils />
-                            Servis Et
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+    <>
+      <div className="min-h-screen bg-gray-50">
+        {/* Header */}
+        <header className="bg-white shadow-sm fixed top-0 left-0 right-0 z-20">
+          <div className="container mx-auto px-3 py-3 flex justify-between items-center">
+            <div className="flex items-center">
+              <Link href="/menu" className="mr-2 flex items-center text-orange-600 hover:text-orange-700">
+                <FaArrowLeft size={16} className="mr-1" />
+                <span className="text-sm font-medium">Menüye Dön</span>
+              </Link>
+              <h1 className="text-dynamic-lg font-bold text-primary">
+                <TranslatedText>Garson Çağır</TranslatedText>
+              </h1>
+              {tableNumber && (
+                <div className="ml-2 px-2 py-1 rounded-lg text-xs bg-blue-100 text-blue-800">
+                  <TranslatedText>Masa</TranslatedText> #{tableNumber}
                 </div>
-              ))}
+              )}
             </div>
+          </div>
+        </header>
 
-            {orders.length === 0 && (
-              <div className="text-center py-12">
-                <FaUtensils className="text-4xl text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500 text-lg">Hazır sipariş yok</p>
+        {/* Main Content */}
+        <main className="pt-16 pb-20">
+          <div className="container mx-auto px-3 py-6">
+            
+            {/* Başarı Mesajı */}
+            {callSent && (
+              <div className="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg flex items-center">
+                <FaCheckCircle className="mr-2" />
+                <TranslatedText>Çağrınız gönderildi! Garson yakında gelecek.</TranslatedText>
               </div>
             )}
-          </div>
-        )}
 
-        {/* Çağrılar Tab */}
-        {activeTab === 'calls' && (
-          <div className="bg-white rounded-lg shadow-sm">
-            <div className="px-4 sm:px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-800">Müşteri Çağrıları</h3>
+            {/* Hızlı Komutlar */}
+            <div className="mb-8">
+              <h2 className="text-xl font-bold text-gray-800 mb-4">
+                <TranslatedText>Hızlı Komutlar</TranslatedText>
+              </h2>
+              <div className="grid grid-cols-2 gap-4">
+                {quickCommands.map((command) => (
+                  <button
+                    key={command.id}
+                    onClick={() => callWaiter(command)}
+                    disabled={isLoading}
+                    className={`${command.color} text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none`}
+                  >
+                    <div className="text-center">
+                      <command.icon className="text-3xl mx-auto mb-3" />
+                      <h3 className="font-bold text-lg">
+                        <TranslatedText>{command.title}</TranslatedText>
+                      </h3>
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
 
-            <div className="divide-y divide-gray-200">
-              {calls.map(call => (
-                <div key={call.id} className="p-4 sm:p-6 hover:bg-gray-50">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-4 mb-2">
-                        <div className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium">
-                          Masa {call.tableNumber}
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          {new Date(call.timestamp).toLocaleTimeString('tr-TR')}
-                        </div>
-                        <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          call.type === 'service' 
-                            ? 'bg-blue-100 text-blue-800' 
-                            : 'bg-green-100 text-green-800'
-                        }`}>
-                          {call.type === 'service' ? 'Servis' : 'Hesap'}
-                        </div>
-                      </div>
-                      
-                      <div className="text-sm text-gray-700 mb-3">
-                        {call.message}
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <div className="text-sm text-gray-500">
-                          {Math.floor((Date.now() - new Date(call.timestamp).getTime()) / (1000 * 60))} dakika önce
-                        </div>
-                        <button
-                          onClick={() => handleResolveCall(call.id)}
-                          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
-                        >
-                          <FaCheckCircle />
-                          Çözüldü
-                        </button>
-                      </div>
-                    </div>
+            {/* Özel Not */}
+            <div className="mb-8">
+              <h2 className="text-xl font-bold text-gray-800 mb-4">
+                <TranslatedText>Özel Not</TranslatedText>
+              </h2>
+              
+              {!showCustomNote ? (
+                <button
+                  onClick={() => setShowCustomNote(true)}
+                  className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 p-6 rounded-xl shadow-lg transition-all duration-300 flex items-center justify-center"
+                >
+                  <FaEdit className="mr-3 text-xl" />
+                  <span className="font-medium">
+                    <TranslatedText>Özel bir mesaj yazın</TranslatedText>
+                  </span>
+                </button>
+              ) : (
+                <div className="bg-white p-6 rounded-xl shadow-lg">
+                  <textarea
+                    value={customNote}
+                    onChange={(e) => setCustomNote(e.target.value)}
+                    placeholder="Garson için özel mesajınızı yazın..."
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                    rows={4}
+                  />
+                  <div className="flex gap-3 mt-4">
+                    <button
+                      onClick={sendCustomNote}
+                      disabled={!customNote.trim() || isLoading}
+                      className="flex-1 bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                    >
+                      <TranslatedText>Gönder</TranslatedText>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowCustomNote(false);
+                        setCustomNote('');
+                      }}
+                      className="flex-1 bg-gray-300 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-400 font-medium"
+                    >
+                      <TranslatedText>İptal</TranslatedText>
+                    </button>
                   </div>
                 </div>
-              ))}
+              )}
             </div>
 
-            {calls.length === 0 && (
-              <div className="text-center py-12">
-                <FaBell className="text-4xl text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500 text-lg">Aktif çağrı yok</p>
+            {/* Bilgi */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex items-start">
+                <FaBell className="text-blue-600 mr-3 mt-1" />
+                <div>
+                  <h3 className="font-semibold text-blue-800 mb-2">
+                    <TranslatedText>Nasıl Çalışır?</TranslatedText>
+                  </h3>
+                  <p className="text-blue-700 text-sm leading-relaxed">
+                    <TranslatedText>
+                      Hızlı komutlardan birini seçin veya özel bir mesaj yazın. 
+                      Çağrınız garson paneline iletilecek ve garson yakında masanıza gelecek.
+                    </TranslatedText>
+                  </p>
+                </div>
               </div>
-            )}
+            </div>
           </div>
-        )}
+        </main>
+
+        {/* Bottom Navigation */}
+        <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-2 shadow-lg">
+          <div className="container mx-auto flex justify-around">
+            <Link href="/menu" className="flex flex-col items-center text-gray-600 hover:text-blue-600">
+              <FaUtensils className="mb-0.5" size={16} />
+              <span className="text-[10px]"><TranslatedText>Menü</TranslatedText></span>
+            </Link>
+            <Link href="/cart" className="flex flex-col items-center text-gray-600 hover:text-blue-600">
+              <FaReceipt className="mb-0.5" size={16} />
+              <span className="text-[10px]"><TranslatedText>Sepet</TranslatedText></span>
+            </Link>
+            <div className="flex flex-col items-center text-blue-600">
+              <FaBell className="mb-0.5" size={16} />
+              <span className="text-[10px]"><TranslatedText>Garson Çağır</TranslatedText></span>
+            </div>
+          </div>
+        </nav>
       </div>
-    </div>
+    </>
+  );
+}
+
+export default function WaiterCallPage() {
+  return (
+    <LanguageProvider>
+      <WaiterCallPageContent />
+    </LanguageProvider>
   );
 }

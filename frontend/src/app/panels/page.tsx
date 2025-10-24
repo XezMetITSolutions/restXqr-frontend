@@ -337,7 +337,7 @@ export default function PanelsPage() {
 
             {/* Demo Menu CTA */}
             <div className="text-center">
-              <Link href="/panels/menu" className="bg-gradient-to-r from-purple-600 via-blue-600 to-pink-600 text-white px-12 py-6 rounded-3xl text-xl font-black hover:from-purple-500 hover:via-blue-500 hover:to-pink-500 transition-all duration-300 shadow-2xl hover:shadow-purple-500/25 inline-block transform hover:scale-105">
+              <Link href="https://aksaray.restxqr.com/menu/" className="bg-gradient-to-r from-purple-600 via-blue-600 to-pink-600 text-white px-12 py-6 rounded-3xl text-xl font-black hover:from-purple-500 hover:via-blue-500 hover:to-pink-500 transition-all duration-300 shadow-2xl hover:shadow-purple-500/25 inline-block transform hover:scale-105">
                 <FaQrcode className="inline mr-3" />
                 Demo Menüyü Görüntüle
               </Link>
