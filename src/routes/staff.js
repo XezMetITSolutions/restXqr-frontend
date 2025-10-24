@@ -471,9 +471,10 @@ router.post('/login', async (req, res) => {
     }
 
     // Subdomain kontrolü - güvenlik (staff bulmadan önce)
-    const subdomain = req.headers['x-subdomain'] || req.headers['x-forwarded-host']?.split('.')[0];
+    const headerSubdomain = req.headers['x-subdomain'] || req.headers['x-forwarded-host']?.split('.')[0];
     console.log('🔍 Subdomain check:', { 
       subdomain, 
+      headerSubdomain,
       'x-subdomain': req.headers['x-subdomain'],
       'x-forwarded-host': req.headers['x-forwarded-host'],
       host: req.headers.host,
