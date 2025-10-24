@@ -407,6 +407,40 @@ router.post('/:id/change-password', async (req, res) => {
   }
 });
 
+// DELETE /api/restaurants/:id - Delete restaurant
+router.delete('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const restaurant = await Restaurant.findByPk(id);
+    
+    if (!restaurant) {
+      return res.status(404).json({
+        success: false,
+        message: 'Restaurant not found'
+      });
+    }
+    
+    // Delete associated menu categories and items first
+    await MenuCategory.destroy({ where: { restaurantId: id } });
+    await MenuItem.destroy({ where: { restaurantId: id } });
+    
+    // Delete the restaurant
+    await restaurant.destroy();
+    
+    res.json({
+      success: true,
+      message: 'Restaurant deleted successfully'
+    });
+  } catch (error) {
+    console.error('Delete restaurant error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+
 module.exports = router;
 
 
