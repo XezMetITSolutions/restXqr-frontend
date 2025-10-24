@@ -113,7 +113,7 @@ function MenuPageContent() {
                   sessionStorage.setItem('qr-session-token', genData.data.token);
                   setTokenValid(true);
                   setTokenMessage('Yeni QR oturumu oluşturuldu. Menüye erişebilirsiniz.');
-                } else {
+        } else {
                   setTokenValid(false);
                   setTokenMessage('QR kod geçersiz veya süresi dolmuş. Lütfen yeni bir QR kod tarayın.');
                   return;
@@ -123,7 +123,7 @@ function MenuPageContent() {
                 setTokenMessage('QR kod doğrulanamadı. Lütfen yeni bir QR kod tarayın.');
                 return;
               }
-            } else {
+    } else {
               setTokenValid(false);
               setTokenMessage('QR kod geçersiz veya süresi dolmuş. Lütfen yeni bir QR kod tarayın.');
               return; // Token geçersizse devam etme
@@ -217,8 +217,8 @@ function MenuPageContent() {
           const translated = await translate('Menüde ara...');
           setSearchPlaceholder(translated);
         } catch (error) {
-          setSearchPlaceholder('Search menu...');
-        }
+      setSearchPlaceholder('Search menu...');
+    }
       };
       translatePlaceholder();
     }
@@ -376,8 +376,8 @@ function MenuPageContent() {
             <div className="mt-4 mx-auto h-[1px] w-40 bg-gray-200" />
             <div className="mt-3 w-40 h-1 bg-gray-100 rounded overflow-hidden mx-auto">
               <div className="h-full bg-brand animate-progress" />
-            </div>
-          </div>
+                </div>
+              </div>
           <style jsx>{`
             @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
             @keyframes scaleIn { from { transform: scale(.96); opacity: .4 } to { transform: scale(1); opacity: 1 } }
@@ -401,10 +401,10 @@ function MenuPageContent() {
               {tableNumber && (
               <div className="ml-2 px-2 py-1 rounded-lg text-xs" style={{ backgroundColor: 'var(--tone1-bg)', color: 'var(--tone1-text)', border: '1px solid var(--tone1-border)' }}>
                 <TranslatedText>Masa</TranslatedText> #{tableNumber}
-              </div>
-              )}
             </div>
+              )}
           </div>
+        </div>
         </header>
 
         {/* Search */}
@@ -534,7 +534,7 @@ function MenuPageContent() {
                       Debug: {JSON.stringify(item.allergens)}
                     </div>
                   )}
-
+                        
                   <div className="flex justify-between items-center">
                     <button
                       onClick={() => openModal(item)}
@@ -632,30 +632,30 @@ function MenuPageContent() {
           </div>
         </div>
 
-        {/* Bottom Navigation */}
+      {/* Bottom Navigation */}
         <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-2 shadow-lg">
-          <div className="container mx-auto flex justify-around">
+        <div className="container mx-auto flex justify-around">
             <Link href="/menu" className="flex flex-col items-center" style={{ color: primary }}>
-              <FaUtensils className="mb-0.5" size={16} />
-              <span className="text-[10px]"><TranslatedText>Menü</TranslatedText></span>
+            <FaUtensils className="mb-0.5" size={16} />
+            <span className="text-[10px]"><TranslatedText>Menü</TranslatedText></span>
             </Link>
-            <Link href="/cart" className="flex flex-col items-center" style={{ color: primary }}>
-              <div className="relative">
-                <FaShoppingCart className="mb-0.5" size={16} />
+          <Link href="/cart" className="flex flex-col items-center" style={{ color: primary }}>
+            <div className="relative">
+              <FaShoppingCart className="mb-0.5" size={16} />
                 {isClient && cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-600 text-white rounded-full text-[9px] w-4 h-4 flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-red-600 text-white rounded-full text-[9px] w-4 h-4 flex items-center justify-center">
                     {cartCount}
-                  </span>
-                )}
-              </div>
-              <span className="text-[10px]"><TranslatedText>Sepet</TranslatedText></span>
-            </Link>
+                </span>
+              )}
+            </div>
+            <span className="text-[10px]"><TranslatedText>Sepet</TranslatedText></span>
+          </Link>
             <Link href="/waiter" className="flex flex-col items-center" style={{ color: primary }}>
-              <FaBell className="mb-0.5" size={16} />
-              <span className="text-[10px]"><TranslatedText>Garson Çağır</TranslatedText></span>
+            <FaBell className="mb-0.5" size={16} />
+            <span className="text-[10px]"><TranslatedText>Garson Çağır</TranslatedText></span>
             </Link>
-          </div>
-        </nav>
+        </div>
+      </nav>
       </main>
 
       {/* Menu Item Modal */}
