@@ -81,7 +81,7 @@ function HomeContent() {
           <div className="inline-flex items-center px-8 py-4 bg-white/10 rounded-full shadow-2xl mb-8 text-xl font-bold backdrop-blur-xl border border-white/20 hover:bg-white/20 transition-all duration-300">
             <FaStar className="text-yellow-300 mr-3 animate-spin" /> 
             <span className="bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
-              120+ Restoran Güveniyor
+              RestXQr ile Dijital Dönüşüm
             </span>
           </div>
           
@@ -130,8 +130,8 @@ function HomeContent() {
               <div className="text-lg text-gray-200">Satış Artışı</div>
             </div>
             <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20">
-              <div className="text-4xl font-black text-blue-400 mb-2">120+</div>
-              <div className="text-lg text-gray-200">Mutlu Restoran</div>
+              <div className="text-4xl font-black text-blue-400 mb-2">AI</div>
+              <div className="text-lg text-gray-200">Fotoğraf Optimizasyonu</div>
             </div>
             <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20">
               <div className="text-4xl font-black text-purple-400 mb-2">24/7</div>
@@ -157,6 +157,7 @@ function HomeContent() {
             </h2>
             <p className="text-3xl text-gray-700 max-w-5xl mx-auto font-bold leading-relaxed">
               🎨 <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Yapay Zeka</span> ile ürün fotoğraflarınızı profesyonelleştirin! 
+              <br/>Fotoğrafçılara <span className="bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent font-black">binlerce lira harcamanıza gerek yok!</span>
               <br/>Satışlarınızı <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent font-black">%300 artırın</span> ve müşterilerinizi büyüleyin.
             </p>
           </div>
@@ -180,13 +181,13 @@ function HomeContent() {
                     </div>
                   </div>
                   <div className="mt-8 text-left">
-                    <h3 className="text-2xl font-black text-gray-900 mb-6">Sorunlar:</h3>
-                    <ul className="space-y-3 text-gray-600 text-lg">
-                      <li className="flex items-center"><span className="text-red-500 mr-3 text-xl">❌</span> Kötü ışıklandırma</li>
-                      <li className="flex items-center"><span className="text-red-500 mr-3 text-xl">❌</span> Amatör kompozisyon</li>
-                      <li className="flex items-center"><span className="text-red-500 mr-3 text-xl">❌</span> Düşük kalite</li>
-                      <li className="flex items-center"><span className="text-red-500 mr-3 text-xl">❌</span> Müşteri ilgisizliği</li>
-                    </ul>
+                <h3 className="text-2xl font-black text-gray-900 mb-6">Maliyet Tasarrufu:</h3>
+                <ul className="space-y-3 text-gray-600 text-lg">
+                  <li className="flex items-center"><span className="text-red-500 mr-3 text-xl">💰</span> Fotoğrafçı maliyeti: 0₺</li>
+                  <li className="flex items-center"><span className="text-red-500 mr-3 text-xl">⏰</span> Bekleme süresi: 0 gün</li>
+                  <li className="flex items-center"><span className="text-red-500 mr-3 text-xl">📸</span> Profesyonel çekim: Gerek yok</li>
+                  <li className="flex items-center"><span className="text-red-500 mr-3 text-xl">🎨</span> Photoshop: Otomatik</li>
+                </ul>
                   </div>
                 </div>
               </div>
@@ -208,13 +209,13 @@ function HomeContent() {
                     </div>
                   </div>
                   <div className="mt-8 text-left">
-                    <h3 className="text-2xl font-black text-gray-900 mb-6">Çözümler:</h3>
-                    <ul className="space-y-3 text-gray-600 text-lg">
-                      <li className="flex items-center"><span className="text-green-500 mr-3 text-xl">✅</span> Mükemmel ışıklandırma</li>
-                      <li className="flex items-center"><span className="text-green-500 mr-3 text-xl">✅</span> Profesyonel kompozisyon</li>
-                      <li className="flex items-center"><span className="text-green-500 mr-3 text-xl">✅</span> Yüksek kalite</li>
-                      <li className="flex items-center"><span className="text-green-500 mr-3 text-xl">✅</span> Müşteri çekiciliği</li>
-                    </ul>
+                <h3 className="text-2xl font-black text-gray-900 mb-6">AI Avantajları:</h3>
+                <ul className="space-y-3 text-gray-600 text-lg">
+                  <li className="flex items-center"><span className="text-green-500 mr-3 text-xl">🚀</span> Saniyeler içinde hazır</li>
+                  <li className="flex items-center"><span className="text-green-500 mr-3 text-xl">💎</span> Profesyonel kalite</li>
+                  <li className="flex items-center"><span className="text-green-500 mr-3 text-xl">💰</span> Binlerce lira tasarruf</li>
+                  <li className="flex items-center"><span className="text-green-500 mr-3 text-xl">📈</span> Satış artışı garantisi</li>
+                </ul>
                   </div>
                 </div>
               </div>
@@ -226,8 +227,8 @@ function HomeContent() {
                 <div className="bg-gradient-to-r from-purple-500 to-pink-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-8 group-hover:animate-bounce">
                   <FaMagic className="text-white text-3xl" />
                 </div>
-                <h3 className="text-2xl font-black text-gray-900 mb-6">Otomatik Optimizasyon</h3>
-                <p className="text-gray-600 text-lg leading-relaxed">AI, fotoğraflarınızı otomatik olarak analiz eder ve profesyonel hale getirir.</p>
+                <h3 className="text-2xl font-black text-gray-900 mb-6">Maliyet Tasarrufu</h3>
+                <p className="text-gray-600 text-lg leading-relaxed">Fotoğrafçılara binlerce lira harcamanıza gerek yok! AI ile profesyonel sonuçlar.</p>
               </div>
 
               <div className="bg-white p-10 rounded-3xl shadow-xl text-center border-2 border-blue-200 hover:border-blue-300 transition-all duration-300 hover:shadow-2xl hover:scale-105 group">
@@ -243,7 +244,7 @@ function HomeContent() {
                   <FaRocket className="text-white text-3xl" />
                 </div>
                 <h3 className="text-2xl font-black text-gray-900 mb-6">Hızlı Sonuç</h3>
-                <p className="text-gray-600 text-lg leading-relaxed">Saniyeler içinde tüm ürün fotoğraflarınızı profesyonelleştirin.</p>
+                <p className="text-gray-600 text-lg leading-relaxed">Saniyeler içinde tüm ürün fotoğraflarınızı profesyonelleştirin. Bekleme yok!</p>
               </div>
             </div>
 
@@ -254,7 +255,8 @@ function HomeContent() {
                 <div className="relative z-10">
                   <h3 className="text-4xl font-black mb-6">🚀 Hemen Deneyin!</h3>
                   <p className="text-2xl mb-8 text-purple-100 leading-relaxed">
-                    AI görsel optimizasyonu ile ürün fotoğraflarınızı profesyonelleştirin ve satışlarınızı artırın.
+                    AI görsel optimizasyonu ile fotoğrafçılara binlerce lira harcamanıza gerek yok!
+                    <br/>Ürün fotoğraflarınızı profesyonelleştirin ve satışlarınızı artırın.
                   </p>
                   <Link href="/panels" className="bg-white text-purple-600 px-12 py-6 rounded-2xl text-xl font-black hover:bg-purple-50 transition-all duration-300 shadow-lg inline-flex items-center gap-4 hover:scale-105">
                     <FaMagic className="text-2xl" />
@@ -427,16 +429,16 @@ function HomeContent() {
               <div className="bg-gradient-to-r from-orange-500 to-red-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:animate-bounce">
                 <FaUsers className="text-white text-2xl" />
               </div>
-              <h3 className="text-2xl font-black text-white mb-4">120+ Mutlu Restoran</h3>
-              <p className="text-gray-300 text-lg leading-relaxed">Türkiye genelinde başarılı restoranların tercihi.</p>
+              <h3 className="text-2xl font-black text-white mb-4">Mevcut Menünüzü Entegre Ediyoruz</h3>
+              <p className="text-gray-300 text-lg leading-relaxed">Mevcut menünüzü hiç kaybetmeden dijitalleştiriyoruz. Kolay geçiş garantisi.</p>
             </div>
 
             <div className="bg-white/10 backdrop-blur-xl p-8 rounded-3xl border border-white/20 hover:bg-white/20 transition-all duration-300 hover:scale-105 group">
               <div className="bg-gradient-to-r from-indigo-500 to-purple-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:animate-bounce">
                 <FaRocket className="text-white text-2xl" />
               </div>
-              <h3 className="text-2xl font-black text-white mb-4">Hızlı Kurulum</h3>
-              <p className="text-gray-300 text-lg leading-relaxed">24 saat içinde sistemi kurun ve kullanmaya başlayın.</p>
+              <h3 className="text-2xl font-black text-white mb-4">Çok Kısa Sürede Kurulum</h3>
+              <p className="text-gray-300 text-lg leading-relaxed">Saatler içinde sistemi kurun ve kullanmaya başlayın. Hızlı ve kolay.</p>
             </div>
 
             <div className="bg-white/10 backdrop-blur-xl p-8 rounded-3xl border border-white/20 hover:bg-white/20 transition-all duration-300 hover:scale-105 group">
