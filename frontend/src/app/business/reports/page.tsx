@@ -144,7 +144,7 @@ export default function ReportsPage() {
     if (activeTab === 'hours') {
       const ws = XLSX.utils.aoa_to_sheet([
         ['Saat Aralığı', 'Sipariş'],
-        // Boş veriler - gerçek veriler API'den gelecek
+        // Gerçek veriler API'den gelecek
       ]);
       XLSX.utils.book_append_sheet(wb, ws, 'Yoğun Saatler');
     }
@@ -201,7 +201,7 @@ export default function ReportsPage() {
     }
   };
   
-  // Boş veriler - Gerçek veriler API'den gelecek
+  // Gerçek veriler API'den gelecek - şu an için boş
   const currentDailyReport = {
     totalSales: 0,
     totalOrders: 0,
@@ -210,43 +210,21 @@ export default function ReportsPage() {
     averageTableTime: 0
   };
 
-  // Günlük/Haftalık/Aylık Ciro Verileri - Boş veriler
   const revenueData = {
-    daily: {
-      today: 0,
-      yesterday: 0,
-      change: 0
-    },
-    weekly: {
-      thisWeek: 0,
-      lastWeek: 0,
-      change: 0
-    },
-    monthly: {
-      thisMonth: 0,
-      lastMonth: 0,
-      change: 0
-    }
+    daily: { today: 0, yesterday: 0, change: 0 },
+    weekly: { thisWeek: 0, lastWeek: 0, change: 0 },
+    monthly: { thisMonth: 0, lastMonth: 0, change: 0 }
   };
 
-  // Günlük ciro trendi - Boş veriler
   const dailyTrend: { date: string; revenue: number; orders: number }[] = [];
   const maxDailyRevenue = 0;
-
-  // Haftalık ciro trendi - Boş veriler
   const weeklyTrend: { week: string; revenue: number; orders: number }[] = [];
-
-  // Aylık ciro trendi - Boş veriler
   const monthlyTrend: { month: string; revenue: number; orders: number }[] = [];
-
-  // En çok satan ürünler - Boş veriler
   const topProducts: { productId: string; productName: string; totalQuantity: number; totalRevenue: number; orderCount: number }[] = [];
-
-  // Saatlik satış verileri - Boş veriler
   const hourlySales: number[] = [];
   const maxHourly = 0;
   const hourLabels = Array.from({ length: 12 }, (_, i) => `${i + 8}:00`);
-  const profitableHours = new Set([12, 19, 20]);
+  const profitableHours = new Set<number>();
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('tr-TR', {
