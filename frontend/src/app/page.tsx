@@ -222,6 +222,122 @@ function HomeContent() {
         </div>
       </section>
 
+      {/* AI Image Optimization Section */}
+      <section className="py-20 bg-gradient-to-br from-purple-50 to-blue-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl font-bold text-gray-900 mb-6">
+              <span className="text-purple-600">AI</span> ile Görsel Optimizasyonu
+            </h2>
+            <p className="text-2xl text-gray-700 max-w-4xl mx-auto font-medium">
+              🎨 <span className="font-bold text-purple-600">Yapay Zeka</span> ile ürün fotoğraflarınızı profesyonelleştirin! 
+              <br/>Satışlarınızı <span className="text-green-600 font-bold">%300 artırın</span> ve müşterilerinizi büyüleyin.
+            </p>
+          </div>
+          
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              {/* Before Image */}
+              <div className="text-center">
+                <div className="bg-white p-8 rounded-3xl shadow-2xl border-4 border-red-200">
+                  <div className="bg-red-500 text-white px-6 py-3 rounded-full text-lg font-bold mb-6 inline-block">
+                    ❌ ÖNCESİ
+                  </div>
+                  <div className="relative">
+                    <img 
+                      src="/ai-before.jpg" 
+                      alt="AI Optimizasyonu Öncesi - Amatör Ürün Fotoğrafı" 
+                      className="w-full h-80 object-cover rounded-2xl shadow-lg"
+                    />
+                    <div className="absolute top-4 left-4 bg-red-500 text-white px-4 py-2 rounded-lg font-bold">
+                      Amatör Görünüm
+                    </div>
+                  </div>
+                  <div className="mt-6 text-left">
+                    <h3 className="text-xl font-bold text-gray-900 mb-4">Sorunlar:</h3>
+                    <ul className="space-y-2 text-gray-600">
+                      <li className="flex items-center"><span className="text-red-500 mr-2">❌</span> Kötü ışıklandırma</li>
+                      <li className="flex items-center"><span className="text-red-500 mr-2">❌</span> Amatör kompozisyon</li>
+                      <li className="flex items-center"><span className="text-red-500 mr-2">❌</span> Düşük kalite</li>
+                      <li className="flex items-center"><span className="text-red-500 mr-2">❌</span> Müşteri ilgisizliği</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* After Image */}
+              <div className="text-center">
+                <div className="bg-white p-8 rounded-3xl shadow-2xl border-4 border-green-200">
+                  <div className="bg-green-500 text-white px-6 py-3 rounded-full text-lg font-bold mb-6 inline-block">
+                    ✅ SONRASI
+                  </div>
+                  <div className="relative">
+                    <img 
+                      src="/ai-after.jpg" 
+                      alt="AI Optimizasyonu Sonrası - Profesyonel Ürün Fotoğrafı" 
+                      className="w-full h-80 object-cover rounded-2xl shadow-lg"
+                    />
+                    <div className="absolute top-4 left-4 bg-green-500 text-white px-4 py-2 rounded-lg font-bold">
+                      Profesyonel Görünüm
+                    </div>
+                  </div>
+                  <div className="mt-6 text-left">
+                    <h3 className="text-xl font-bold text-gray-900 mb-4">Çözümler:</h3>
+                    <ul className="space-y-2 text-gray-600">
+                      <li className="flex items-center"><span className="text-green-500 mr-2">✅</span> Mükemmel ışıklandırma</li>
+                      <li className="flex items-center"><span className="text-green-500 mr-2">✅</span> Profesyonel kompozisyon</li>
+                      <li className="flex items-center"><span className="text-green-500 mr-2">✅</span> Yüksek kalite</li>
+                      <li className="flex items-center"><span className="text-green-500 mr-2">✅</span> Müşteri çekiciliği</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* AI Features */}
+            <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="bg-white p-8 rounded-2xl shadow-xl text-center border-2 border-purple-200">
+                <div className="bg-gradient-to-r from-purple-500 to-pink-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <FaMagic className="text-white text-2xl" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">Otomatik Optimizasyon</h3>
+                <p className="text-gray-600">AI, fotoğraflarınızı otomatik olarak analiz eder ve profesyonel hale getirir.</p>
+              </div>
+
+              <div className="bg-white p-8 rounded-2xl shadow-xl text-center border-2 border-blue-200">
+                <div className="bg-gradient-to-r from-blue-500 to-cyan-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <FaChartLine className="text-white text-2xl" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">Satış Artışı</h3>
+                <p className="text-gray-600">Profesyonel görseller ile müşteri ilgisini artırın ve satışlarınızı %300 büyütün.</p>
+              </div>
+
+              <div className="bg-white p-8 rounded-2xl shadow-xl text-center border-2 border-green-200">
+                <div className="bg-gradient-to-r from-green-500 to-emerald-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <FaRocket className="text-white text-2xl" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">Hızlı Sonuç</h3>
+                <p className="text-gray-600">Saniyeler içinde tüm ürün fotoğraflarınızı profesyonelleştirin.</p>
+              </div>
+            </div>
+
+            {/* CTA */}
+            <div className="text-center mt-16">
+              <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-8 rounded-3xl shadow-2xl">
+                <h3 className="text-3xl font-bold mb-4">🚀 Hemen Deneyin!</h3>
+                <p className="text-xl mb-6 text-purple-100">
+                  AI görsel optimizasyonu ile ürün fotoğraflarınızı profesyonelleştirin ve satışlarınızı artırın.
+                </p>
+                <Link href="/panels" className="bg-white text-purple-600 px-8 py-4 rounded-2xl text-lg font-bold hover:bg-purple-50 transition-all duration-300 shadow-lg inline-flex items-center gap-3">
+                  <FaMagic className="text-xl" />
+                  AI Optimizasyonunu İncele
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Demo Section */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4 text-center">
