@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { FaQrcode, FaUtensils, FaShoppingCart, FaBell, FaMagic, FaChartLine, FaUsers, FaClock, FaCheckCircle, FaRocket, FaShieldAlt, FaStar, FaPhone, FaWhatsapp, FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { FaQrcode, FaUtensils, FaShoppingCart, FaBell, FaMagic, FaChartLine, FaUsers, FaClock, FaCheckCircle, FaRocket, FaShieldAlt, FaStar, FaPhone, FaWhatsapp, FaChevronDown, FaChevronUp, FaBrain, FaCamera, FaLightbulb, FaGem, FaFire, FaHeart, FaGlobe, FaMobile, FaTablet, FaDesktop } from 'react-icons/fa';
 import { LanguageProvider } from '@/context/LanguageContext';
 import TranslatedText from '@/components/TranslatedText';
 
@@ -65,229 +65,155 @@ function HomeContent() {
   ];
 
   return (
-    <main className="min-h-screen bg-white relative">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-orange-400 via-orange-500 to-orange-600 text-white py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-white/5"></div>
-        <div className="container mx-auto px-4 text-center relative z-10">
-          <div className="inline-flex items-center px-6 py-3 bg-white/20 rounded-full shadow-lg mb-6 text-lg font-semibold backdrop-blur-md border border-white/30">
-            <FaStar className="text-yellow-200 mr-3" /> 
-            <TranslatedText>120+ Restoran Güveniyor</TranslatedText>
-          </div>
-          <h1 className="text-5xl md:text-6xl font-black mb-6 leading-tight">
-            <TranslatedText>Restoranınız</TranslatedText> <span className="text-white"><TranslatedText>Dijital Çağa</TranslatedText></span><br/><TranslatedText>Hazır mı?</TranslatedText>
-          </h1>
-          <p className="text-xl md:text-2xl mb-10 text-orange-50 leading-relaxed max-w-4xl mx-auto font-medium">
-            🚀 <TranslatedText>Türkiye'nin en gelişmiş QR menü ve sipariş yönetim sistemi ile</TranslatedText> <br/>
-            <span className="text-white font-bold"><TranslatedText>satışlarınızı %300 artırın!</TranslatedText></span> <TranslatedText>Rakiplerinizi geride bırakın.</TranslatedText>
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-6 max-w-2xl mx-auto">
-            <Link href="/panels" className="bg-white text-orange-600 px-8 py-4 rounded-2xl text-lg font-black flex items-center justify-center gap-3 transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-105">
-              <FaUsers className="text-xl" /> <TranslatedText>Panelleri Görüntüle</TranslatedText>
-            </Link>
-            <Link href="/panels" className="bg-orange-700 hover:bg-orange-800 text-white px-8 py-4 rounded-2xl text-lg font-black transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-105">
-              <FaRocket className="inline mr-3 text-xl" /> <TranslatedText>Demo İncele</TranslatedText>
-            </Link>
-          </div>
+    <main className="min-h-screen bg-white relative overflow-hidden">
+      {/* Modern Hero Section */}
+      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white overflow-hidden">
+        {/* Animated Background */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-600/20 via-purple-600/20 to-pink-600/20"></div>
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl animate-pulse delay-2000"></div>
         </div>
-      </section>
-
-      
-
-      {/* Services Section */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-5xl font-bold text-blue-900 mb-6 text-center">Hizmetlerimiz</h2>
-          <p className="text-2xl text-blue-700 max-w-4xl mx-auto mb-16 text-center">
-            Restoranınızı dijital dünyaya taşıyacak kapsamlı çözümlerimizi keşfedin.
+        
+        <div className="container mx-auto px-4 text-center relative z-10">
+          {/* Badge */}
+          <div className="inline-flex items-center px-8 py-4 bg-white/10 rounded-full shadow-2xl mb-8 text-xl font-bold backdrop-blur-xl border border-white/20 hover:bg-white/20 transition-all duration-300">
+            <FaStar className="text-yellow-300 mr-3 animate-spin" /> 
+            <span className="bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
+              120+ Restoran Güveniyor
+            </span>
+          </div>
+          
+          {/* Main Title */}
+          <h1 className="text-6xl md:text-8xl font-black mb-8 leading-tight">
+            <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+              Restoranınız
+            </span>
+            <br/>
+            <span className="text-white">
+              Dijital Çağa
+            </span>
+            <br/>
+            <span className="bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+              Hazır mı?
+            </span>
+          </h1>
+          
+          {/* Subtitle */}
+          <p className="text-2xl md:text-3xl mb-12 text-gray-200 leading-relaxed max-w-5xl mx-auto font-medium">
+            🚀 <span className="text-white font-bold">Türkiye'nin en gelişmiş</span> QR menü ve sipariş yönetim sistemi ile
+            <br/>
+            <span className="bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent font-black text-4xl">
+              satışlarınızı %300 artırın!
+            </span>
+            <br/>
+            <span className="text-gray-300">Rakiplerinizi geride bırakın.</span>
           </p>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
-            <div className="bg-white p-8 rounded-3xl shadow-xl text-center border-2 border-blue-200 hover:border-blue-400 transition-all duration-300 transform hover:scale-105">
-              <div className="bg-gradient-to-r from-blue-500 to-cyan-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <FaQrcode className="text-white text-3xl" />
-              </div>
-              <h3 className="text-2xl font-bold text-blue-900 mb-4 text-center"><TranslatedText>QR Menü Sistemi</TranslatedText></h3>
-              <p className="text-blue-700 mb-4 text-center"><TranslatedText>Temassız menü deneyimi</TranslatedText></p>
-              <ul className="text-left space-y-2 text-sm text-blue-600">
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> <TranslatedText>Anlık menü güncelleme</TranslatedText></li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> <TranslatedText>Çoklu dil desteği</TranslatedText></li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> <TranslatedText>Mobil uyumlu tasarım</TranslatedText></li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> <TranslatedText>Hijyen güvencesi</TranslatedText></li>
-              </ul>
-            </div>
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row justify-center gap-8 max-w-3xl mx-auto mb-16">
+            <Link href="/panels" className="group bg-gradient-to-r from-blue-600 to-purple-600 text-white px-12 py-6 rounded-3xl text-xl font-black flex items-center justify-center gap-4 transition-all duration-300 shadow-2xl hover:shadow-purple-500/25 transform hover:scale-105 hover:from-blue-500 hover:to-purple-500">
+              <FaUsers className="text-2xl group-hover:animate-bounce" /> 
+              <span>Panelleri Görüntüle</span>
+            </Link>
+            <Link href="/panels" className="group bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-500 hover:to-blue-500 text-white px-12 py-6 rounded-3xl text-xl font-black transition-all duration-300 shadow-2xl hover:shadow-blue-500/25 transform hover:scale-105">
+              <FaRocket className="inline mr-4 text-2xl group-hover:animate-bounce" /> 
+              <span>Demo İncele</span>
+            </Link>
+          </div>
 
-            <div className="bg-white p-8 rounded-3xl shadow-xl text-center border-2 border-emerald-200 hover:border-emerald-400 transition-all duration-300 transform hover:scale-105">
-              <div className="bg-gradient-to-r from-emerald-500 to-teal-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <FaShoppingCart className="text-white text-3xl" />
-              </div>
-              <h3 className="text-2xl font-bold text-emerald-900 mb-4 text-center"><TranslatedText>Akıllı Sipariş Yönetimi</TranslatedText></h3>
-              <p className="text-emerald-700 mb-4 text-center"><TranslatedText>Otomatik sipariş akışı</TranslatedText></p>
-              <ul className="text-left space-y-2 text-sm text-emerald-600">
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> <TranslatedText>Gerçek zamanlı takip</TranslatedText></li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> <TranslatedText>Öncelik sıralaması</TranslatedText></li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> <TranslatedText>Otomatik bildirimler</TranslatedText></li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> <TranslatedText>Hata önleme</TranslatedText></li>
-              </ul>
+          {/* Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20">
+              <div className="text-4xl font-black text-green-400 mb-2">%300</div>
+              <div className="text-lg text-gray-200">Satış Artışı</div>
             </div>
-
-            <div className="bg-white p-8 rounded-3xl shadow-xl text-center border-2 border-violet-200 hover:border-violet-400 transition-all duration-300 transform hover:scale-105">
-              <div className="bg-gradient-to-r from-violet-500 to-purple-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <FaChartLine className="text-white text-3xl" />
-              </div>
-              <h3 className="text-2xl font-bold text-violet-900 mb-4 text-center"><TranslatedText>Analitik & Raporlama</TranslatedText></h3>
-              <p className="text-violet-700 mb-4 text-center"><TranslatedText>Detaylı iş zekası</TranslatedText></p>
-              <ul className="text-left space-y-2 text-sm text-violet-600">
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> <TranslatedText>Satış analizleri</TranslatedText></li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> <TranslatedText>Müşteri davranışları</TranslatedText></li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> <TranslatedText>Performans metrikleri</TranslatedText></li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> <TranslatedText>Kar marjı analizi</TranslatedText></li>
-              </ul>
+            <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20">
+              <div className="text-4xl font-black text-blue-400 mb-2">120+</div>
+              <div className="text-lg text-gray-200">Mutlu Restoran</div>
             </div>
-
-            <div className="bg-white p-8 rounded-3xl shadow-xl text-center border-2 border-amber-200 hover:border-amber-400 transition-all duration-300 transform hover:scale-105">
-              <div className="bg-gradient-to-r from-amber-500 to-yellow-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <FaMagic className="text-white text-3xl" />
-              </div>
-              <h3 className="text-2xl font-bold text-amber-900 mb-4 text-center"><TranslatedText>AI Menü Optimizasyonu</TranslatedText></h3>
-              <p className="text-amber-700 mb-4 text-center"><TranslatedText>Yapay zeka destekli öneriler</TranslatedText></p>
-              <ul className="text-left space-y-2 text-sm text-amber-600">
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> <TranslatedText>Fiyat optimizasyonu</TranslatedText></li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> <TranslatedText>Popüler ürün analizi</TranslatedText></li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> <TranslatedText>Stok yönetimi</TranslatedText></li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> <TranslatedText>Trend tahminleri</TranslatedText></li>
-              </ul>
-            </div>
-
-            <div className="bg-white p-8 rounded-3xl shadow-xl text-center border-2 border-rose-200 hover:border-rose-400 transition-all duration-300 transform hover:scale-105">
-              <div className="bg-gradient-to-r from-rose-500 to-pink-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <FaShieldAlt className="text-white text-3xl" />
-              </div>
-              <h3 className="text-2xl font-bold text-rose-900 mb-4 text-center"><TranslatedText>Güvenli Ödeme Sistemi</TranslatedText></h3>
-              <p className="text-rose-700 mb-4 text-center"><TranslatedText>PCI DSS uyumlu güvenlik</TranslatedText></p>
-              <ul className="text-left space-y-2 text-sm text-rose-600">
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> <TranslatedText>Kredi kartı güvenliği</TranslatedText></li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> <TranslatedText>SSL şifreleme</TranslatedText></li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> <TranslatedText>Fraud koruması</TranslatedText></li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> <TranslatedText>Güvenli API</TranslatedText></li>
-              </ul>
-            </div>
-
-            <div className="bg-white p-8 rounded-3xl shadow-xl text-center border-2 border-slate-200 hover:border-slate-400 transition-all duration-300 transform hover:scale-105">
-              <div className="bg-gradient-to-r from-slate-500 to-gray-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <FaUsers className="text-white text-3xl" />
-              </div>
-              <h3 className="text-2xl font-bold text-slate-900 mb-4 text-center"><TranslatedText>Çoklu Panel Yönetimi</TranslatedText></h3>
-              <p className="text-slate-700 mb-4 text-center"><TranslatedText>Entegre işletme sistemi</TranslatedText></p>
-              <ul className="text-left space-y-2 text-sm text-slate-600">
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> <TranslatedText>Mutfak paneli</TranslatedText></li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> <TranslatedText>Garson paneli</TranslatedText></li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> <TranslatedText>Kasa paneli</TranslatedText></li>
-                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> <TranslatedText>Yönetim paneli</TranslatedText></li>
-              </ul>
+            <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20">
+              <div className="text-4xl font-black text-purple-400 mb-2">24/7</div>
+              <div className="text-lg text-gray-200">Destek</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-indigo-900 mb-6 text-center">restXqr ile Kazançlarınız</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <div className="text-center">
-              <div className="bg-red-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <FaChartLine className="text-white text-3xl" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">%95 Daha Az Hata</h3>
-              <p className="text-gray-600">Sistemsel yaklaşım ile insan hatalarını ortadan kaldırın</p>
+      {/* AI Image Optimization Section - Düzeltilmiş */}
+      <section className="py-24 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-purple-600/5 to-pink-600/5"></div>
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="text-center mb-20">
+            <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full text-lg font-bold mb-6 shadow-lg">
+              <FaBrain className="mr-3 animate-pulse" />
+              AI Teknolojisi
             </div>
-            
-            <div className="text-center">
-              <div className="bg-green-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <FaRocket className="text-white text-3xl" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">%300 Verimlilik Artışı</h3>
-              <p className="text-gray-600">Otomatik süreçler ile zaman ve kaynak tasarrufu</p>
-            </div>
-            
-            <div className="text-center">
-              <div className="bg-blue-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <FaUsers className="text-white text-3xl" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Müşteri Memnuniyeti</h3>
-              <p className="text-gray-600">Daha hızlı servis, doğru siparişler, daha iyi deneyim</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* AI Image Optimization Section */}
-      <section className="py-20 bg-gradient-to-br from-purple-50 to-blue-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-5xl font-bold text-gray-900 mb-6">
-              <span className="text-purple-600">AI</span> ile Görsel Optimizasyonu
+            <h2 className="text-6xl font-black text-gray-900 mb-8">
+              <span className="bg-gradient-to-r from-purple-600 via-blue-600 to-pink-600 bg-clip-text text-transparent">
+                AI ile Görsel Optimizasyonu
+              </span>
             </h2>
-            <p className="text-2xl text-gray-700 max-w-4xl mx-auto font-medium">
-              🎨 <span className="font-bold text-purple-600">Yapay Zeka</span> ile ürün fotoğraflarınızı profesyonelleştirin! 
-              <br/>Satışlarınızı <span className="text-green-600 font-bold">%300 artırın</span> ve müşterilerinizi büyüleyin.
+            <p className="text-3xl text-gray-700 max-w-5xl mx-auto font-bold leading-relaxed">
+              🎨 <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Yapay Zeka</span> ile ürün fotoğraflarınızı profesyonelleştirin! 
+              <br/>Satışlarınızı <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent font-black">%300 artırın</span> ve müşterilerinizi büyüleyin.
             </p>
           </div>
           
-          <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              {/* Before Image */}
-              <div className="text-center">
-                <div className="bg-white p-8 rounded-3xl shadow-2xl border-4 border-red-200">
-                  <div className="bg-red-500 text-white px-6 py-3 rounded-full text-lg font-bold mb-6 inline-block">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+              {/* ÖNCESİ - Amatör (ai-after.jpg) */}
+              <div className="text-center group">
+                <div className="bg-white p-10 rounded-3xl shadow-2xl border-4 border-red-200 group-hover:border-red-300 transition-all duration-300 group-hover:shadow-3xl group-hover:scale-105">
+                  <div className="bg-gradient-to-r from-red-500 to-red-600 text-white px-8 py-4 rounded-full text-xl font-black mb-8 inline-block shadow-lg">
                     ❌ ÖNCESİ
                   </div>
                   <div className="relative">
                     <img 
-                      src="/ai-before.jpg" 
+                      src="/ai-after.jpg" 
                       alt="AI Optimizasyonu Öncesi - Amatör Ürün Fotoğrafı" 
-                      className="w-full h-80 object-cover rounded-2xl shadow-lg"
+                      className="w-full h-96 object-cover rounded-2xl shadow-xl group-hover:shadow-2xl transition-all duration-300"
                     />
-                    <div className="absolute top-4 left-4 bg-red-500 text-white px-4 py-2 rounded-lg font-bold">
+                    <div className="absolute top-6 left-6 bg-red-500 text-white px-6 py-3 rounded-xl font-black text-lg shadow-lg">
                       Amatör Görünüm
                     </div>
                   </div>
-                  <div className="mt-6 text-left">
-                    <h3 className="text-xl font-bold text-gray-900 mb-4">Sorunlar:</h3>
-                    <ul className="space-y-2 text-gray-600">
-                      <li className="flex items-center"><span className="text-red-500 mr-2">❌</span> Kötü ışıklandırma</li>
-                      <li className="flex items-center"><span className="text-red-500 mr-2">❌</span> Amatör kompozisyon</li>
-                      <li className="flex items-center"><span className="text-red-500 mr-2">❌</span> Düşük kalite</li>
-                      <li className="flex items-center"><span className="text-red-500 mr-2">❌</span> Müşteri ilgisizliği</li>
+                  <div className="mt-8 text-left">
+                    <h3 className="text-2xl font-black text-gray-900 mb-6">Sorunlar:</h3>
+                    <ul className="space-y-3 text-gray-600 text-lg">
+                      <li className="flex items-center"><span className="text-red-500 mr-3 text-xl">❌</span> Kötü ışıklandırma</li>
+                      <li className="flex items-center"><span className="text-red-500 mr-3 text-xl">❌</span> Amatör kompozisyon</li>
+                      <li className="flex items-center"><span className="text-red-500 mr-3 text-xl">❌</span> Düşük kalite</li>
+                      <li className="flex items-center"><span className="text-red-500 mr-3 text-xl">❌</span> Müşteri ilgisizliği</li>
                     </ul>
                   </div>
                 </div>
               </div>
 
-              {/* After Image */}
-              <div className="text-center">
-                <div className="bg-white p-8 rounded-3xl shadow-2xl border-4 border-green-200">
-                  <div className="bg-green-500 text-white px-6 py-3 rounded-full text-lg font-bold mb-6 inline-block">
+              {/* SONRASI - Profesyonel (ai-before.jpg) */}
+              <div className="text-center group">
+                <div className="bg-white p-10 rounded-3xl shadow-2xl border-4 border-green-200 group-hover:border-green-300 transition-all duration-300 group-hover:shadow-3xl group-hover:scale-105">
+                  <div className="bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-4 rounded-full text-xl font-black mb-8 inline-block shadow-lg">
                     ✅ SONRASI
                   </div>
                   <div className="relative">
                     <img 
-                      src="/ai-after.jpg" 
+                      src="/ai-before.jpg" 
                       alt="AI Optimizasyonu Sonrası - Profesyonel Ürün Fotoğrafı" 
-                      className="w-full h-80 object-cover rounded-2xl shadow-lg"
+                      className="w-full h-96 object-cover rounded-2xl shadow-xl group-hover:shadow-2xl transition-all duration-300"
                     />
-                    <div className="absolute top-4 left-4 bg-green-500 text-white px-4 py-2 rounded-lg font-bold">
+                    <div className="absolute top-6 left-6 bg-green-500 text-white px-6 py-3 rounded-xl font-black text-lg shadow-lg">
                       Profesyonel Görünüm
                     </div>
                   </div>
-                  <div className="mt-6 text-left">
-                    <h3 className="text-xl font-bold text-gray-900 mb-4">Çözümler:</h3>
-                    <ul className="space-y-2 text-gray-600">
-                      <li className="flex items-center"><span className="text-green-500 mr-2">✅</span> Mükemmel ışıklandırma</li>
-                      <li className="flex items-center"><span className="text-green-500 mr-2">✅</span> Profesyonel kompozisyon</li>
-                      <li className="flex items-center"><span className="text-green-500 mr-2">✅</span> Yüksek kalite</li>
-                      <li className="flex items-center"><span className="text-green-500 mr-2">✅</span> Müşteri çekiciliği</li>
+                  <div className="mt-8 text-left">
+                    <h3 className="text-2xl font-black text-gray-900 mb-6">Çözümler:</h3>
+                    <ul className="space-y-3 text-gray-600 text-lg">
+                      <li className="flex items-center"><span className="text-green-500 mr-3 text-xl">✅</span> Mükemmel ışıklandırma</li>
+                      <li className="flex items-center"><span className="text-green-500 mr-3 text-xl">✅</span> Profesyonel kompozisyon</li>
+                      <li className="flex items-center"><span className="text-green-500 mr-3 text-xl">✅</span> Yüksek kalite</li>
+                      <li className="flex items-center"><span className="text-green-500 mr-3 text-xl">✅</span> Müşteri çekiciliği</li>
                     </ul>
                   </div>
                 </div>
@@ -295,134 +221,45 @@ function HomeContent() {
             </div>
 
             {/* AI Features */}
-            <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-white p-8 rounded-2xl shadow-xl text-center border-2 border-purple-200">
-                <div className="bg-gradient-to-r from-purple-500 to-pink-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <FaMagic className="text-white text-2xl" />
+            <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="bg-white p-10 rounded-3xl shadow-xl text-center border-2 border-purple-200 hover:border-purple-300 transition-all duration-300 hover:shadow-2xl hover:scale-105 group">
+                <div className="bg-gradient-to-r from-purple-500 to-pink-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-8 group-hover:animate-bounce">
+                  <FaMagic className="text-white text-3xl" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">Otomatik Optimizasyon</h3>
-                <p className="text-gray-600">AI, fotoğraflarınızı otomatik olarak analiz eder ve profesyonel hale getirir.</p>
+                <h3 className="text-2xl font-black text-gray-900 mb-6">Otomatik Optimizasyon</h3>
+                <p className="text-gray-600 text-lg leading-relaxed">AI, fotoğraflarınızı otomatik olarak analiz eder ve profesyonel hale getirir.</p>
               </div>
 
-              <div className="bg-white p-8 rounded-2xl shadow-xl text-center border-2 border-blue-200">
-                <div className="bg-gradient-to-r from-blue-500 to-cyan-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <FaChartLine className="text-white text-2xl" />
+              <div className="bg-white p-10 rounded-3xl shadow-xl text-center border-2 border-blue-200 hover:border-blue-300 transition-all duration-300 hover:shadow-2xl hover:scale-105 group">
+                <div className="bg-gradient-to-r from-blue-500 to-cyan-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-8 group-hover:animate-bounce">
+                  <FaChartLine className="text-white text-3xl" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">Satış Artışı</h3>
-                <p className="text-gray-600">Profesyonel görseller ile müşteri ilgisini artırın ve satışlarınızı %300 büyütün.</p>
+                <h3 className="text-2xl font-black text-gray-900 mb-6">Satış Artışı</h3>
+                <p className="text-gray-600 text-lg leading-relaxed">Profesyonel görseller ile müşteri ilgisini artırın ve satışlarınızı %300 büyütün.</p>
               </div>
 
-              <div className="bg-white p-8 rounded-2xl shadow-xl text-center border-2 border-green-200">
-                <div className="bg-gradient-to-r from-green-500 to-emerald-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <FaRocket className="text-white text-2xl" />
+              <div className="bg-white p-10 rounded-3xl shadow-xl text-center border-2 border-green-200 hover:border-green-300 transition-all duration-300 hover:shadow-2xl hover:scale-105 group">
+                <div className="bg-gradient-to-r from-green-500 to-emerald-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-8 group-hover:animate-bounce">
+                  <FaRocket className="text-white text-3xl" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">Hızlı Sonuç</h3>
-                <p className="text-gray-600">Saniyeler içinde tüm ürün fotoğraflarınızı profesyonelleştirin.</p>
+                <h3 className="text-2xl font-black text-gray-900 mb-6">Hızlı Sonuç</h3>
+                <p className="text-gray-600 text-lg leading-relaxed">Saniyeler içinde tüm ürün fotoğraflarınızı profesyonelleştirin.</p>
               </div>
             </div>
 
             {/* CTA */}
-            <div className="text-center mt-16">
-              <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-8 rounded-3xl shadow-2xl">
-                <h3 className="text-3xl font-bold mb-4">🚀 Hemen Deneyin!</h3>
-                <p className="text-xl mb-6 text-purple-100">
-                  AI görsel optimizasyonu ile ürün fotoğraflarınızı profesyonelleştirin ve satışlarınızı artırın.
-                </p>
-                <Link href="/panels" className="bg-white text-purple-600 px-8 py-4 rounded-2xl text-lg font-bold hover:bg-purple-50 transition-all duration-300 shadow-lg inline-flex items-center gap-3">
-                  <FaMagic className="text-xl" />
-                  AI Optimizasyonunu İncele
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Demo Section */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold text-gray-900 mb-6">Sistemimizi İnceleyin</h2>
-          <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
-            restXqr'in nasıl çalıştığını görmek için panelleri inceleyin. Gerçek restoran deneyimini yaşayın!
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-6">
-            <Link href="/menu" className="inline-block bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-4 rounded-xl text-lg font-bold hover:from-purple-700 hover:to-blue-700 transition-all duration-300 shadow-lg">
-              <FaUtensils className="inline mr-2" />
-              Menüyü İncele
-            </Link>
-            <Link href="/panels" className="inline-block bg-gradient-to-r from-orange-600 to-red-600 text-white px-8 py-4 rounded-xl text-lg font-bold hover:from-orange-700 hover:to-red-700 transition-all duration-300 shadow-lg">
-              <FaUsers className="inline mr-2" />
-              Panelleri Görüntüle
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-gray-900 mb-6 text-center">Müşterilerimiz Ne Diyor?</h2>
-          <p className="text-xl text-gray-600 text-center mb-16 max-w-2xl mx-auto">
-            120+ restoran restXqr ile operasyonlarını dijitalleştirdi ve müşteri memnuniyetini artırdı.
-          </p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <div className="bg-white p-8 rounded-2xl shadow-lg">
-              <div className="flex items-center mb-4">
-                <div className="flex text-yellow-400">
-                  <FaStar /><FaStar /><FaStar /><FaStar /><FaStar />
-                </div>
-              </div>
-              <p className="text-gray-600 mb-6 italic">
-                "restXqr sayesinde siparişlerdeki hatalar %90 azaldı. Müşterilerimiz artık daha hızlı servis alıyor ve memnuniyet oranımız arttı."
-              </p>
-              <div className="flex items-center">
-                <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white font-bold mr-4">
-                  AK
-                </div>
-                <div>
-                  <p className="font-semibold text-gray-900">Ahmet Kaya</p>
-                  <p className="text-sm text-gray-500">Lezzet Durağı - İstanbul</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-white p-8 rounded-2xl shadow-lg">
-              <div className="flex items-center mb-4">
-                <div className="flex text-yellow-400">
-                  <FaStar /><FaStar /><FaStar /><FaStar /><FaStar />
-                </div>
-              </div>
-              <p className="text-gray-600 mb-6 italic">
-                "QR menü sistemi müşterilerimizin çok hoşuna gitti. Özellikle pandemi sonrası temassız hizmet çok önemli oldu."
-              </p>
-              <div className="flex items-center">
-                <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-500 rounded-full flex items-center justify-center text-white font-bold mr-4">
-                  MÖ
-                </div>
-                <div>
-                  <p className="font-semibold text-gray-900">Mehmet Özkan</p>
-                  <p className="text-sm text-gray-500">Cafe Corner - Ankara</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-white p-8 rounded-2xl shadow-lg">
-              <div className="flex items-center mb-4">
-                <div className="flex text-yellow-400">
-                  <FaStar /><FaStar /><FaStar /><FaStar /><FaStar />
-                </div>
-              </div>
-              <p className="text-gray-600 mb-6 italic">
-                "AI menü optimizasyonu harika! Ürün fotoğraflarımız artık çok daha profesyonel görünüyor. Satışlarımız %25 arttı."
-              </p>
-              <div className="flex items-center">
-                <div className="w-12 h-12 bg-gradient-to-r from-pink-500 to-red-500 rounded-full flex items-center justify-center text-white font-bold mr-4">
-                  SY
-                </div>
-                <div>
-                  <p className="font-semibold text-gray-900">Selin Yılmaz</p>
-                  <p className="text-sm text-gray-500">Bistro 34 - İzmir</p>
+            <div className="text-center mt-20">
+              <div className="bg-gradient-to-r from-purple-600 via-blue-600 to-pink-600 text-white p-12 rounded-3xl shadow-2xl relative overflow-hidden">
+                <div className="absolute inset-0 bg-white/10"></div>
+                <div className="relative z-10">
+                  <h3 className="text-4xl font-black mb-6">🚀 Hemen Deneyin!</h3>
+                  <p className="text-2xl mb-8 text-purple-100 leading-relaxed">
+                    AI görsel optimizasyonu ile ürün fotoğraflarınızı profesyonelleştirin ve satışlarınızı artırın.
+                  </p>
+                  <Link href="/panels" className="bg-white text-purple-600 px-12 py-6 rounded-2xl text-xl font-black hover:bg-purple-50 transition-all duration-300 shadow-lg inline-flex items-center gap-4 hover:scale-105">
+                    <FaMagic className="text-2xl" />
+                    AI Optimizasyonunu İncele
+                  </Link>
                 </div>
               </div>
             </div>
@@ -430,138 +267,307 @@ function HomeContent() {
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <h2 className="text-5xl font-bold text-gray-900 mb-6 text-center">Sıkça Sorulan Sorular</h2>
-          <p className="text-xl text-gray-600 text-center mb-16 max-w-3xl mx-auto">
-            restXqr hakkında merak ettiklerinizin cevapları burada. Başka sorularınız için bize ulaşın!
-          </p>
-          <div className="max-w-4xl mx-auto space-y-4">
-            {faqs.map((faq, index) => {
-              const IconComponent = faq.icon;
-              const isOpen = openFAQ === index;
-              
-              return (
-                <div key={index} className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200">
-                  <button
-                    onClick={() => toggleFAQ(index)}
-                    className="w-full p-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors duration-200"
-                  >
-                    <div className="flex items-center">
-                      <div className={`w-12 h-12 rounded-full bg-${faq.color} bg-opacity-10 flex items-center justify-center mr-4`}>
-                        <IconComponent className={`text-${faq.color} text-xl`} />
-                      </div>
-                      <h3 className="text-xl font-bold text-gray-900">{faq.question}</h3>
-                    </div>
-                    <div className="ml-4">
-                      {isOpen ? (
-                        <FaChevronUp className="text-gray-400 text-lg" />
-                      ) : (
-                        <FaChevronDown className="text-gray-400 text-lg" />
-                      )}
-                    </div>
-                  </button>
-                  
-                  <div className={`transition-all duration-300 ease-in-out ${
-                    isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-                  } overflow-hidden`}>
-                    <div className="px-6 pb-6">
-                      <div className="pl-16">
-                        <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-orange-500 to-orange-600 text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-white/5"></div>
-        <div className="container mx-auto px-4 text-center relative z-10">
-          <h2 className="text-5xl font-bold mb-8">Hemen Başlayın!</h2>
-          <p className="text-2xl mb-12 text-orange-50 max-w-3xl mx-auto font-medium">
-            🚀 Restoranınızı bugün dijital dünyaya taşıyın! <br/>
-            <span className="text-white font-bold">14 gün ücretsiz deneme</span> ile risk almadan başlayın.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-6 mb-10">
-            <a href="tel:+905393222797" className="bg-white text-orange-600 px-10 py-5 rounded-2xl text-xl font-black flex items-center justify-center gap-3 transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-105">
-              <FaPhone className="text-2xl" /> Hemen Bizi Arayın
-            </a>
-            <Link href="/panels" className="bg-orange-700 hover:bg-orange-800 text-white px-10 py-5 rounded-2xl text-xl font-black transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-105">
-              <FaRocket className="inline mr-3 text-2xl" /> Demo İncele
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-white text-gray-800 py-20 border-t border-gray-200">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-3 gap-12">
-            <div className="md:col-span-2">
-              <div className="flex items-center mb-6">
-                <div className="h-12 w-12 bg-orange-500 rounded-xl flex items-center justify-center text-white mr-4">
-              <FaUtensils size={20} />
-                </div>
-                <h3 className="text-3xl font-bold text-gray-800">restXqr</h3>
-              </div>
-              <p className="text-gray-600 mb-6 text-lg leading-relaxed">
-                Türkiye'nin en gelişmiş QR menü ve restoran yönetim sistemi. 
-                120+ restoranın güvendiği çözümle satışlarınızı artırın.
-              </p>
-              <div className="flex space-x-4">
-                <a href="tel:+905393222797" className="bg-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-orange-600 transition-all duration-300 flex items-center gap-2">
-                  <FaPhone /> Hemen Arayın
-                </a>
-                <a href="https://wa.me/905393222797" target="_blank" className="bg-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-orange-600 transition-all duration-300 flex items-center gap-2">
-                  <FaWhatsapp /> WhatsApp
-                </a>
-              </div>
+      {/* Modern Services Section */}
+      <section className="py-24 bg-gradient-to-br from-gray-50 to-blue-50 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-purple-600/5 to-pink-600/5"></div>
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="text-center mb-20">
+            <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full text-lg font-bold mb-6 shadow-lg">
+              <FaGem className="mr-3" />
+              Premium Hizmetler
             </div>
-            
-            <div>
-              <h4 className="text-xl font-bold mb-6 text-gray-800">Hizmetlerimiz</h4>
-              <ul className="space-y-3">
-                <li className="text-gray-600 flex items-center gap-2"><FaQrcode className="text-orange-500" /> QR Menü Sistemi</li>
-                <li className="text-gray-600 flex items-center gap-2"><FaShoppingCart className="text-orange-500" /> Akıllı Sipariş Yönetimi</li>
-                <li className="text-gray-600 flex items-center gap-2"><FaChartLine className="text-orange-500" /> Analitik & Raporlama</li>
-                <li className="text-gray-600 flex items-center gap-2"><FaMagic className="text-orange-500" /> AI Menü Optimizasyonu</li>
-                <li className="text-gray-600 flex items-center gap-2"><FaShieldAlt className="text-orange-500" /> Güvenli Ödeme Sistemi</li>
-                <li className="text-gray-600 flex items-center gap-2"><FaUsers className="text-orange-500" /> Çoklu Panel Yönetimi</li>
+            <h2 className="text-6xl font-black text-gray-900 mb-8">
+              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                Hizmetlerimiz
+              </span>
+            </h2>
+            <p className="text-2xl text-gray-600 max-w-4xl mx-auto font-medium leading-relaxed">
+              Restoranınız için <span className="font-black text-gray-900">tam kapsamlı dijital çözümler</span> sunuyoruz
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* QR Menü */}
+            <div className="bg-white p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 group border-2 border-orange-200 hover:border-orange-300">
+              <div className="bg-gradient-to-r from-orange-500 to-red-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:animate-bounce">
+                <FaQrcode className="text-white text-2xl" />
+              </div>
+              <h3 className="text-2xl font-black text-gray-900 mb-4">QR Menü Sistemi</h3>
+              <p className="text-gray-600 text-lg leading-relaxed mb-6">Temassız menü deneyimi ile müşterilerinizin güvenliğini sağlayın. Anlık güncellemeler ve çoklu dil desteği.</p>
+              <ul className="space-y-2 text-gray-600">
+                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> Temassız sipariş</li>
+                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> Çoklu dil desteği</li>
+                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> Anlık güncellemeler</li>
+              </ul>
+            </div>
+
+            {/* Sipariş Yönetimi */}
+            <div className="bg-white p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 group border-2 border-blue-200 hover:border-blue-300">
+              <div className="bg-gradient-to-r from-blue-500 to-cyan-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:animate-bounce">
+                <FaShoppingCart className="text-white text-2xl" />
+              </div>
+              <h3 className="text-2xl font-black text-gray-900 mb-4">Sipariş Yönetimi</h3>
+              <p className="text-gray-600 text-lg leading-relaxed mb-6">Gelişmiş sipariş takip sistemi ile mutfak ve servis koordinasyonunu mükemmelleştirin.</p>
+              <ul className="space-y-2 text-gray-600">
+                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> Gerçek zamanlı takip</li>
+                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> Mutfak entegrasyonu</li>
+                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> Otomatik bildirimler</li>
+              </ul>
+            </div>
+
+            {/* AI Görsel Optimizasyon */}
+            <div className="bg-white p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 group border-2 border-purple-200 hover:border-purple-300">
+              <div className="bg-gradient-to-r from-purple-500 to-pink-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:animate-bounce">
+                <FaBrain className="text-white text-2xl" />
+              </div>
+              <h3 className="text-2xl font-black text-gray-900 mb-4">AI Görsel Optimizasyon</h3>
+              <p className="text-gray-600 text-lg leading-relaxed mb-6">Yapay zeka ile ürün fotoğraflarınızı profesyonelleştirin ve satışlarınızı artırın.</p>
+              <ul className="space-y-2 text-gray-600">
+                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> Otomatik optimizasyon</li>
+                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> Profesyonel görünüm</li>
+                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> Satış artışı</li>
+              </ul>
+            </div>
+
+            {/* Raporlama */}
+            <div className="bg-white p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 group border-2 border-green-200 hover:border-green-300">
+              <div className="bg-gradient-to-r from-green-500 to-emerald-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:animate-bounce">
+                <FaChartLine className="text-white text-2xl" />
+              </div>
+              <h3 className="text-2xl font-black text-gray-900 mb-4">Detaylı Raporlama</h3>
+              <p className="text-gray-600 text-lg leading-relaxed mb-6">Satış analizi, müşteri davranışları ve performans metrikleri ile işinizi büyütün.</p>
+              <ul className="space-y-2 text-gray-600">
+                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> Satış analizi</li>
+                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> Müşteri insights</li>
+                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> Performans metrikleri</li>
+              </ul>
+            </div>
+
+            {/* Çoklu Platform */}
+            <div className="bg-white p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 group border-2 border-indigo-200 hover:border-indigo-300">
+              <div className="bg-gradient-to-r from-indigo-500 to-purple-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:animate-bounce">
+                <FaGlobe className="text-white text-2xl" />
+              </div>
+              <h3 className="text-2xl font-black text-gray-900 mb-4">Çoklu Platform</h3>
+              <p className="text-gray-600 text-lg leading-relaxed mb-6">Masaüstü, tablet ve mobil cihazlarda mükemmel deneyim sunuyoruz.</p>
+              <ul className="space-y-2 text-gray-600">
+                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> Responsive tasarım</li>
+                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> Çoklu cihaz desteği</li>
+                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> Senkronizasyon</li>
+              </ul>
+            </div>
+
+            {/* 7/24 Destek */}
+            <div className="bg-white p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 group border-2 border-red-200 hover:border-red-300">
+              <div className="bg-gradient-to-r from-red-500 to-pink-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:animate-bounce">
+                <FaHeart className="text-white text-2xl" />
+              </div>
+              <h3 className="text-2xl font-black text-gray-900 mb-4">7/24 Destek</h3>
+              <p className="text-gray-600 text-lg leading-relaxed mb-6">Uzman ekibimiz her zaman yanınızda. WhatsApp, telefon ve online destek.</p>
+              <ul className="space-y-2 text-gray-600">
+                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> WhatsApp desteği</li>
+                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> Telefon desteği</li>
+                <li className="flex items-center"><FaCheckCircle className="text-green-500 mr-2" /> Online eğitim</li>
               </ul>
             </div>
           </div>
-          
-          <div className="border-t border-gray-200 mt-12 pt-8">
-            <div className="flex flex-col md:flex-row justify-between items-center">
-              <div className="text-gray-600 mb-4 md:mb-0">
-                <p>&copy; 2025 restXqr. Tüm hakları saklıdır.</p>
-                <p className="text-sm mt-1">Türkiye'nin öncü restoran dijitalleştirme platformu</p>
+        </div>
+      </section>
+
+      {/* Modern Benefits Section */}
+      <section className="py-24 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white relative overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-pink-600/10"></div>
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        </div>
+        
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="text-center mb-20">
+            <div className="inline-flex items-center px-6 py-3 bg-white/10 text-white rounded-full text-lg font-bold mb-6 backdrop-blur-xl border border-white/20">
+              <FaFire className="mr-3 text-orange-400" />
+              Avantajlar
+            </div>
+            <h2 className="text-6xl font-black mb-8">
+              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Neden restXqr?
+              </span>
+            </h2>
+            <p className="text-2xl text-gray-300 max-w-4xl mx-auto font-medium leading-relaxed">
+              <span className="text-white font-bold">Türkiye'nin en gelişmiş</span> restoran yönetim sistemi ile işinizi büyütün
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="bg-white/10 backdrop-blur-xl p-8 rounded-3xl border border-white/20 hover:bg-white/20 transition-all duration-300 hover:scale-105 group">
+              <div className="bg-gradient-to-r from-green-500 to-emerald-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:animate-bounce">
+                <FaChartLine className="text-white text-2xl" />
               </div>
-              <div className="flex items-center space-x-6">
-                <span className="text-gray-600 flex items-center gap-2">
-                  <FaShieldAlt className="text-orange-500" />
-                  SSL Güvenli
-                </span>
-                <span className="text-gray-600 flex items-center gap-2">
-                  <FaStar className="text-orange-500" />
-                  120+ Restoran
-                </span>
-                <span className="text-gray-600 flex items-center gap-2">
-                  <FaPhone className="text-orange-500" />
-                  7/24 Destek
-                </span>
+              <h3 className="text-2xl font-black text-white mb-4">%300 Satış Artışı</h3>
+              <p className="text-gray-300 text-lg leading-relaxed">Profesyonel görseller ve kullanıcı dostu arayüz ile müşteri memnuniyetini artırın.</p>
+            </div>
+
+            <div className="bg-white/10 backdrop-blur-xl p-8 rounded-3xl border border-white/20 hover:bg-white/20 transition-all duration-300 hover:scale-105 group">
+              <div className="bg-gradient-to-r from-blue-500 to-cyan-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:animate-bounce">
+                <FaClock className="text-white text-2xl" />
+              </div>
+              <h3 className="text-2xl font-black text-white mb-4">%50 Zaman Tasarrufu</h3>
+              <p className="text-gray-300 text-lg leading-relaxed">Otomatik sipariş sistemi ile personel verimliliğini artırın ve işlemleri hızlandırın.</p>
+            </div>
+
+            <div className="bg-white/10 backdrop-blur-xl p-8 rounded-3xl border border-white/20 hover:bg-white/20 transition-all duration-300 hover:scale-105 group">
+              <div className="bg-gradient-to-r from-purple-500 to-pink-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:animate-bounce">
+                <FaShieldAlt className="text-white text-2xl" />
+              </div>
+              <h3 className="text-2xl font-black text-white mb-4">%100 Güvenli</h3>
+              <p className="text-gray-300 text-lg leading-relaxed">Bankacılık düzeyinde güvenlik ile müşteri verilerinizi koruyun.</p>
+            </div>
+
+            <div className="bg-white/10 backdrop-blur-xl p-8 rounded-3xl border border-white/20 hover:bg-white/20 transition-all duration-300 hover:scale-105 group">
+              <div className="bg-gradient-to-r from-orange-500 to-red-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:animate-bounce">
+                <FaUsers className="text-white text-2xl" />
+              </div>
+              <h3 className="text-2xl font-black text-white mb-4">120+ Mutlu Restoran</h3>
+              <p className="text-gray-300 text-lg leading-relaxed">Türkiye genelinde başarılı restoranların tercihi.</p>
+            </div>
+
+            <div className="bg-white/10 backdrop-blur-xl p-8 rounded-3xl border border-white/20 hover:bg-white/20 transition-all duration-300 hover:scale-105 group">
+              <div className="bg-gradient-to-r from-indigo-500 to-purple-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:animate-bounce">
+                <FaRocket className="text-white text-2xl" />
+              </div>
+              <h3 className="text-2xl font-black text-white mb-4">Hızlı Kurulum</h3>
+              <p className="text-gray-300 text-lg leading-relaxed">24 saat içinde sistemi kurun ve kullanmaya başlayın.</p>
+            </div>
+
+            <div className="bg-white/10 backdrop-blur-xl p-8 rounded-3xl border border-white/20 hover:bg-white/20 transition-all duration-300 hover:scale-105 group">
+              <div className="bg-gradient-to-r from-green-500 to-blue-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:animate-bounce">
+                <FaHeart className="text-white text-2xl" />
+              </div>
+              <h3 className="text-2xl font-black text-white mb-4">7/24 Destek</h3>
+              <p className="text-gray-300 text-lg leading-relaxed">Uzman ekibimiz her zaman yanınızda.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Modern FAQ Section */}
+      <section className="py-24 bg-gradient-to-br from-gray-50 to-blue-50 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-purple-600/5 to-pink-600/5"></div>
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="text-center mb-20">
+            <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full text-lg font-bold mb-6 shadow-lg">
+              <FaLightbulb className="mr-3" />
+              Sık Sorulan Sorular
+            </div>
+            <h2 className="text-6xl font-black text-gray-900 mb-8">
+              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                Merak Edilenler
+              </span>
+            </h2>
+            <p className="text-2xl text-gray-600 max-w-4xl mx-auto font-medium leading-relaxed">
+              <span className="font-black text-gray-900">En çok sorulan sorular</span> ve detaylı cevapları
+            </p>
+          </div>
+
+          <div className="max-w-4xl mx-auto space-y-6">
+            {faqs.map((faq, index) => (
+              <div key={index} className="bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 border-2 border-gray-100 hover:border-gray-200">
+                <button
+                  onClick={() => toggleFAQ(index)}
+                  className="w-full p-8 text-left flex items-center justify-between group"
+                >
+                  <div className="flex items-center">
+                    <div className={`bg-gradient-to-r ${faq.color === 'orange-500' ? 'from-orange-500 to-red-500' : faq.color === 'blue-500' ? 'from-blue-500 to-cyan-500' : faq.color === 'green-500' ? 'from-green-500 to-emerald-500' : faq.color === 'purple-500' ? 'from-purple-500 to-pink-500' : faq.color === 'red-500' ? 'from-red-500 to-pink-500' : faq.color === 'yellow-500' ? 'from-yellow-500 to-orange-500' : faq.color === 'indigo-500' ? 'from-indigo-500 to-purple-500' : 'from-pink-500 to-red-500'} w-12 h-12 rounded-xl flex items-center justify-center mr-6 group-hover:animate-bounce`}>
+                      <faq.icon className="text-white text-xl" />
+                    </div>
+                    <h3 className="text-xl font-black text-gray-900 group-hover:text-blue-600 transition-colors duration-300">
+                      {faq.question}
+                    </h3>
+                  </div>
+                  <div className="text-gray-400 group-hover:text-blue-600 transition-colors duration-300">
+                    {openFAQ === index ? (
+                      <FaChevronUp className="text-xl" />
+                    ) : (
+                      <FaChevronDown className="text-xl" />
+                    )}
+                  </div>
+                </button>
+                {openFAQ === index && (
+                  <div className="px-8 pb-8">
+                    <div className="border-t border-gray-100 pt-6">
+                      <p className="text-gray-600 text-lg leading-relaxed">
+                        {faq.answer}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Modern CTA Section */}
+      <section className="py-24 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white relative overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-pink-600/10"></div>
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        </div>
+        
+        <div className="container mx-auto px-4 text-center relative z-10">
+          <div className="max-w-5xl mx-auto">
+            <div className="inline-flex items-center px-6 py-3 bg-white/10 text-white rounded-full text-lg font-bold mb-8 backdrop-blur-xl border border-white/20">
+              <FaRocket className="mr-3 text-orange-400 animate-bounce" />
+              Hemen Başlayın
+            </div>
+            
+            <h2 className="text-6xl font-black mb-8">
+              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Restoranınızı Dijitalleştirin
+              </span>
+            </h2>
+            
+            <p className="text-3xl text-gray-200 mb-12 leading-relaxed font-medium">
+              <span className="text-white font-black">Bugün başlayın,</span> yarın farkı görün!
+              <br/>
+              <span className="bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent font-black">
+                %300 satış artışı garantisi
+              </span>
+            </p>
+            
+            <div className="flex flex-col sm:flex-row justify-center gap-8 mb-16">
+              <Link href="/panels" className="group bg-gradient-to-r from-blue-600 to-purple-600 text-white px-12 py-6 rounded-3xl text-xl font-black flex items-center justify-center gap-4 transition-all duration-300 shadow-2xl hover:shadow-purple-500/25 transform hover:scale-105 hover:from-blue-500 hover:to-purple-500">
+                <FaUsers className="text-2xl group-hover:animate-bounce" /> 
+                <span>Ücretsiz Demo</span>
+              </Link>
+              <Link href="/panels" className="group bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-500 hover:to-blue-500 text-white px-12 py-6 rounded-3xl text-xl font-black transition-all duration-300 shadow-2xl hover:shadow-blue-500/25 transform hover:scale-105">
+                <FaPhone className="inline mr-4 text-2xl group-hover:animate-bounce" /> 
+                <span>Hemen İletişim</span>
+              </Link>
+            </div>
+
+            {/* Contact Info */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+              <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20">
+                <FaPhone className="text-3xl text-green-400 mb-4 mx-auto" />
+                <div className="text-xl font-bold text-white mb-2">Telefon</div>
+                <div className="text-gray-300">+90 (555) 123 45 67</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20">
+                <FaWhatsapp className="text-3xl text-green-400 mb-4 mx-auto" />
+                <div className="text-xl font-bold text-white mb-2">WhatsApp</div>
+                <div className="text-gray-300">+90 (555) 123 45 67</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20">
+                <FaGlobe className="text-3xl text-blue-400 mb-4 mx-auto" />
+                <div className="text-xl font-bold text-white mb-2">Website</div>
+                <div className="text-gray-300">www.restxqr.com</div>
               </div>
             </div>
           </div>
         </div>
-      </footer>
-
+      </section>
     </main>
   );
 }
@@ -573,5 +579,3 @@ export default function Home() {
     </LanguageProvider>
   );
 }
-
-
