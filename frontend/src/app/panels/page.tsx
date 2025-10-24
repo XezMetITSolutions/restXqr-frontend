@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { FaBell, FaUtensils, FaDollarSign, FaBuilding, FaArrowLeft, FaCheckCircle, FaUsers, FaChartLine, FaClock, FaShieldAlt, FaPlus, FaStar, FaRocket, FaGem, FaFire, FaHeart, FaGlobe, FaMobile, FaTablet, FaDesktop, FaQrcode, FaSearch, FaGift, FaSoup, FaCommentDots, FaMagic, FaBrain, FaCamera, FaLightbulb } from 'react-icons/fa';
+import { FaBell, FaUtensils, FaDollarSign, FaBuilding, FaArrowLeft, FaCheckCircle, FaUsers, FaChartLine, FaClock, FaShieldAlt, FaPlus, FaStar, FaRocket, FaGem, FaFire, FaHeart, FaGlobe, FaMobile, FaTablet, FaDesktop, FaQrcode, FaSearch, FaGift, FaCommentDots, FaMagic, FaBrain, FaCamera, FaLightbulb, FaPhone, FaWhatsapp } from 'react-icons/fa';
 import { LanguageProvider } from '@/context/LanguageContext';
 import TranslatedText from '@/components/TranslatedText';
 
@@ -226,10 +226,10 @@ export default function PanelsPage() {
                 <span className="bg-gradient-to-r from-purple-600 via-blue-600 to-pink-600 bg-clip-text text-transparent">
                   QR Menü Sistemi
                 </span>
-              </h2>
+            </h2>
               <p className="text-3xl text-gray-700 max-w-5xl mx-auto font-bold leading-relaxed">
                 <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">RestXQr</span> QR menü sisteminin nasıl çalıştığını görmek için demo menümüzü inceleyin
-              </p>
+            </p>
             </div>
             
             {/* Demo Menu Features */}
@@ -250,7 +250,7 @@ export default function PanelsPage() {
               </div>
               <div className="bg-white p-8 rounded-3xl shadow-xl text-center border-2 border-green-200 hover:border-green-300 transition-all duration-300 hover:shadow-2xl hover:scale-105 group">
                 <div className="bg-gradient-to-r from-green-500 to-emerald-500 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:animate-bounce">
-                  <FaSoup className="text-white text-2xl" />
+                  <FaUtensils className="text-white text-2xl" />
                 </div>
                 <h3 className="text-xl font-black text-gray-900 mb-4">Günün Çorbası</h3>
                 <p className="text-gray-600 text-lg">Her gün farklı lezzet</p>
@@ -366,7 +366,7 @@ export default function PanelsPage() {
                 <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
                   Neden RestXQr Panelleri?
                 </span>
-              </h2>
+            </h2>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-7xl mx-auto">
@@ -425,7 +425,7 @@ export default function PanelsPage() {
                 <span className="bg-gradient-to-r from-purple-600 via-blue-600 to-pink-600 bg-clip-text text-transparent">
                   Hemen Başlayın!
                 </span>
-              </h2>
+            </h2>
               
               <p className="text-3xl text-gray-700 mb-12 leading-relaxed font-bold">
                 <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">RestXQr</span> panellerini 14 gün ücretsiz deneyin
@@ -437,7 +437,7 @@ export default function PanelsPage() {
                 <Link href="/menu" className="group bg-gradient-to-r from-blue-600 to-purple-600 text-white px-12 py-6 rounded-3xl text-xl font-black flex items-center justify-center gap-4 transition-all duration-300 shadow-2xl hover:shadow-purple-500/25 transform hover:scale-105 hover:from-blue-500 hover:to-purple-500">
                   <FaQrcode className="text-2xl group-hover:animate-bounce" /> 
                   <span>Menüyü İncele</span>
-                </Link>
+              </Link>
                 <a href="tel:+905393222797" className="group bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-500 hover:to-blue-500 text-white px-12 py-6 rounded-3xl text-xl font-black transition-all duration-300 shadow-2xl hover:shadow-blue-500/25 transform hover:scale-105">
                   <FaPhone className="inline mr-4 text-2xl group-hover:animate-bounce" /> 
                   <span>Hemen Arayın</span>
