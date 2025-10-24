@@ -1,11 +1,11 @@
 {
-  "name": "restxqr-backend",
+  "name": "restxqr-backend-src",
   "version": "1.0.0",
-  "description": "restXqr Backend API",
-  "main": "src/index.js",
+  "description": "restXqr Backend API - Source",
+  "main": "index.js",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
+    "start": "node index.js",
+    "dev": "nodemon index.js",
     "build": "echo 'No build step required'",
     "render-build": "npm install",
     "test": "echo \"Error: no test specified\" && exit 1"
