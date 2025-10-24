@@ -185,7 +185,7 @@ export default function RestaurantsManagement() {
           if (confirm('Bu restoranı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!')) {
             try {
               // Backend'den sil
-              const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/restaurants/${restaurant.id}`, {
+              const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/restaurants/${restaurant.id}`, {
                 method: 'DELETE',
               });
               
