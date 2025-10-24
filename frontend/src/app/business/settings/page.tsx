@@ -1088,7 +1088,6 @@ export default function SettingsPage() {
                             <div className="relative flex justify-center">
                               <div className="scale-110">
                                 <PhonePreview 
-                                  settings={settings}
                                   className="mx-auto"
                                 />
                               </div>

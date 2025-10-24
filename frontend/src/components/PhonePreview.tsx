@@ -2,29 +2,35 @@
 
 import React from 'react';
 import { BusinessSettings } from '@/types';
+import { useBusinessSettingsStore } from '@/store/useBusinessSettingsStore';
 
 interface PhonePreviewProps {
-  settings: BusinessSettings;
+  settings?: BusinessSettings;
   className?: string;
 }
 
-const PhonePreview: React.FC<PhonePreviewProps> = ({ settings, className = '' }) => {
-  const { basicInfo, branding } = settings;
+const PhonePreview: React.FC<PhonePreviewProps> = ({ settings: propSettings, className = '' }) => {
+  // Store'dan settings'i al, propSettings varsa onu kullan
+  const storeSettings = useBusinessSettingsStore(state => state.settings);
+  const settings = propSettings || storeSettings;
+  
+  const { basicInfo = {}, branding = {} } = settings;
 
   // Renk hesaplamaları
   const getBackgroundColor = () => {
-    if (branding.backgroundColor) return branding.backgroundColor;
+    if (branding?.backgroundColor) return branding.backgroundColor;
     return '#FFFFFF';
   };
 
   const getAccentColor = () => {
-    if (branding.accentColor) return branding.accentColor;
+    if (branding?.accentColor) return branding.accentColor;
     return '#F3F4F6';
   };
 
   const getTextColor = () => {
     // Ana rengin koyu versiyonu
-    const hex = branding.primaryColor.replace('#', '');
+    const primaryColor = branding?.primaryColor || '#F97316';
+    const hex = primaryColor.replace('#', '');
     const r = parseInt(hex.substr(0, 2), 16);
     const g = parseInt(hex.substr(2, 2), 16);
     const b = parseInt(hex.substr(4, 2), 16);
@@ -33,7 +39,8 @@ const PhonePreview: React.FC<PhonePreviewProps> = ({ settings, className = '' })
   };
 
   const getSecondaryTextColor = () => {
-    const hex = branding.secondaryColor.replace('#', '');
+    const secondaryColor = branding?.secondaryColor || '#FB923C';
+    const hex = secondaryColor.replace('#', '');
     const r = parseInt(hex.substr(0, 2), 16);
     const g = parseInt(hex.substr(2, 2), 16);
     const b = parseInt(hex.substr(4, 2), 16);
@@ -42,7 +49,7 @@ const PhonePreview: React.FC<PhonePreviewProps> = ({ settings, className = '' })
   };
 
   const getFontSize = () => {
-    switch (branding.fontSize) {
+    switch (branding?.fontSize) {
       case 'small': return 'text-sm';
       case 'large': return 'text-lg';
       default: return 'text-base';
@@ -50,11 +57,11 @@ const PhonePreview: React.FC<PhonePreviewProps> = ({ settings, className = '' })
   };
 
   const getHeaderStyle = () => {
-    const primaryColor = branding.primaryColor;
-    const secondaryColor = branding.secondaryColor;
+    const primaryColor = branding?.primaryColor || '#F97316';
+    const secondaryColor = branding?.secondaryColor || '#FB923C';
     const accentColor = getAccentColor();
     
-    switch (branding.headerStyle) {
+    switch (branding?.headerStyle) {
       case 'gradient':
         return {
           background: `linear-gradient(to right, ${primaryColor}, ${secondaryColor})`,
@@ -111,7 +118,7 @@ const PhonePreview: React.FC<PhonePreviewProps> = ({ settings, className = '' })
                    className="text-lg font-bold"
                    style={{ 
                      color: getTextColor(),
-                     fontFamily: branding.fontFamily
+                     fontFamily: branding?.fontFamily || 'Poppins'
                    }}
                  >
                    Menü
@@ -120,7 +127,7 @@ const PhonePreview: React.FC<PhonePreviewProps> = ({ settings, className = '' })
                    className="px-2 py-1 bg-gray-200 text-xs rounded-full"
                    style={{ 
                      color: getSecondaryTextColor(),
-                     fontFamily: branding.fontFamily
+                     fontFamily: branding?.fontFamily || 'Poppins'
                    }}
                  >
                    Masa #5
@@ -130,7 +137,7 @@ const PhonePreview: React.FC<PhonePreviewProps> = ({ settings, className = '' })
                  className="px-3 py-1 bg-white text-xs rounded-full border flex items-center gap-1"
                  style={{ 
                    color: getTextColor(),
-                   fontFamily: branding.fontFamily
+                   fontFamily: branding?.fontFamily || 'Poppins'
                  }}
                >
                  TR
@@ -148,7 +155,7 @@ const PhonePreview: React.FC<PhonePreviewProps> = ({ settings, className = '' })
                    placeholder="Menüde ara..."
                    className="w-full px-4 py-2 bg-gray-50 rounded-lg text-sm border-0 focus:ring-2 focus:ring-purple-500"
                    style={{ 
-                     fontFamily: branding.fontFamily,
+                     fontFamily: branding?.fontFamily || 'Poppins',
                      color: getTextColor()
                    }}
                  />
@@ -162,8 +169,8 @@ const PhonePreview: React.FC<PhonePreviewProps> = ({ settings, className = '' })
              <div 
                className="mx-4 my-3 p-3 rounded-lg text-white"
                style={{ 
-                 background: `linear-gradient(135deg, ${branding.primaryColor}, ${branding.secondaryColor})`,
-                 fontFamily: branding.fontFamily
+                 background: `linear-gradient(135deg, ${branding?.primaryColor || '#F97316'}, ${branding?.secondaryColor || '#FB923C'})`,
+                 fontFamily: branding?.fontFamily || 'Poppins'
                }}
              >
                <div className="flex items-center gap-3">
@@ -191,8 +198,8 @@ const PhonePreview: React.FC<PhonePreviewProps> = ({ settings, className = '' })
                         : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     }`}
                     style={{ 
-                      fontFamily: branding.fontFamily,
-                      backgroundColor: index === 0 ? branding.primaryColor : undefined
+                      fontFamily: branding?.fontFamily || 'Poppins',
+                      backgroundColor: index === 0 ? branding?.primaryColor || '#F97316' : undefined
                     }}
                   >
                     {category}
@@ -228,14 +235,14 @@ const PhonePreview: React.FC<PhonePreviewProps> = ({ settings, className = '' })
                         className={`font-semibold ${getFontSize()}`}
                         style={{ 
                           color: getTextColor(),
-                          fontFamily: branding.fontFamily
+                          fontFamily: branding?.fontFamily || 'Poppins'
                         }}
                       >
                         Bruschetta
                       </h3>
                       <div 
                         className="text-sm font-bold"
-                        style={{ color: branding.primaryColor }}
+                        style={{ color: branding?.primaryColor || '#F97316' }}
                       >
                         45 ₺
                       </div>
@@ -244,7 +251,7 @@ const PhonePreview: React.FC<PhonePreviewProps> = ({ settings, className = '' })
                     <p 
                       className="text-xs text-gray-600 mb-2"
                       style={{ 
-                        fontFamily: branding.fontFamily
+                        fontFamily: branding?.fontFamily || 'Poppins'
                       }}
                     >
                       Sarımsaklı, zeytinyağlı ve domatesli kızarmış ekmek.
@@ -253,7 +260,7 @@ const PhonePreview: React.FC<PhonePreviewProps> = ({ settings, className = '' })
                     <div className="flex items-center gap-2 mb-3">
                       <span 
                         className="px-2 py-1 bg-pink-100 text-pink-600 text-xs rounded-full"
-                        style={{ fontFamily: branding.fontFamily }}
+                        style={{ fontFamily: branding?.fontFamily || 'Poppins' }}
                       >
                         Gluten
                       </span>
@@ -263,7 +270,7 @@ const PhonePreview: React.FC<PhonePreviewProps> = ({ settings, className = '' })
                       <button 
                         className="flex-1 px-3 py-2 text-xs border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center justify-center gap-1"
                         style={{ 
-                          fontFamily: branding.fontFamily,
+                          fontFamily: branding?.fontFamily || 'Poppins',
                           color: getTextColor()
                         }}
                       >
@@ -276,7 +283,7 @@ const PhonePreview: React.FC<PhonePreviewProps> = ({ settings, className = '' })
                         className="px-4 py-2 text-xs rounded-lg text-white flex items-center gap-1"
                         style={{ 
                           backgroundColor: branding.primaryColor,
-                          fontFamily: branding.fontFamily
+                          fontFamily: branding?.fontFamily || 'Poppins'
                         }}
                       >
                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -298,7 +305,7 @@ const PhonePreview: React.FC<PhonePreviewProps> = ({ settings, className = '' })
                         className={`font-semibold mb-1 ${getFontSize()}`}
                         style={{ 
                           color: getTextColor(),
-                          fontFamily: branding.fontFamily
+                          fontFamily: branding?.fontFamily || 'Poppins'
                         }}
                       >
                         Izgara Tavuk
@@ -306,14 +313,14 @@ const PhonePreview: React.FC<PhonePreviewProps> = ({ settings, className = '' })
                       <p 
                         className="text-xs mb-2 text-gray-600"
                         style={{ 
-                          fontFamily: branding.fontFamily
+                          fontFamily: branding?.fontFamily || 'Poppins'
                         }}
                       >
                         Marine edilmiş tavuk göğsü ızgarada pişirilerek servis edilir.
                       </p>
                       <div 
                         className="text-sm font-bold"
-                        style={{ color: branding.primaryColor }}
+                        style={{ color: branding?.primaryColor || '#F97316' }}
                       >
                         ₺85.00
                       </div>
@@ -328,7 +335,7 @@ const PhonePreview: React.FC<PhonePreviewProps> = ({ settings, className = '' })
                         className={`font-semibold mb-1 ${getFontSize()}`}
                         style={{ 
                           color: getTextColor(),
-                          fontFamily: branding.fontFamily
+                          fontFamily: branding?.fontFamily || 'Poppins'
                         }}
                       >
                         Köfte Tabağı
@@ -336,14 +343,14 @@ const PhonePreview: React.FC<PhonePreviewProps> = ({ settings, className = '' })
                       <p 
                         className="text-xs mb-2 text-gray-600"
                         style={{ 
-                          fontFamily: branding.fontFamily
+                          fontFamily: branding?.fontFamily || 'Poppins'
                         }}
                       >
                         Ev yapımı köfte, pilav ve salata ile servis edilir.
                       </p>
                       <div 
                         className="text-sm font-bold"
-                        style={{ color: branding.primaryColor }}
+                        style={{ color: branding?.primaryColor || '#F97316' }}
                       >
                         ₺75.00
                       </div>
@@ -363,19 +370,19 @@ const PhonePreview: React.FC<PhonePreviewProps> = ({ settings, className = '' })
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M3 2h18a1 1 0 011 1v18a1 1 0 01-1 1H3a1 1 0 01-1-1V3a1 1 0 011-1zm1 2v16h16V4H4z"/>
                   </svg>
-                  <span className="text-xs font-medium" style={{ fontFamily: branding.fontFamily }}>Menü</span>
+                  <span className="text-xs font-medium" style={{ fontFamily: branding?.fontFamily || 'Poppins' }}>Menü</span>
                 </button>
                 <button className="flex flex-col items-center gap-1 py-2 text-gray-400">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"/>
                   </svg>
-                  <span className="text-xs" style={{ fontFamily: branding.fontFamily }}>Sepet</span>
+                  <span className="text-xs" style={{ fontFamily: branding?.fontFamily || 'Poppins' }}>Sepet</span>
                 </button>
                 <button className="flex flex-col items-center gap-1 py-2 text-gray-400">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5-5-5h5v-5a7.5 7.5 0 00-15 0v5h5l-5 5-5-5h5v-5a7.5 7.5 0 0115 0v5z"/>
                   </svg>
-                  <span className="text-xs" style={{ fontFamily: branding.fontFamily }}>Garson Çağır</span>
+                  <span className="text-xs" style={{ fontFamily: branding?.fontFamily || 'Poppins' }}>Garson Çağır</span>
                 </button>
               </div>
             </div>
