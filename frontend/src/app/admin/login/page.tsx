@@ -57,10 +57,10 @@ export default function AdminLogin() {
     if (isLocked) return;
 
     try {
-      // Demo admin bilgileri (gerçek uygulamada API'den gelecek)
+      // Gerçek admin bilgileri
       const validCredentials = {
-        username: 'admin',
-        password: 'restXqr2024!',
+        username: 'xezmet',
+        password: '01528797Mb##',
         twoFactorCode: '123456'
       };
 
@@ -76,8 +76,8 @@ export default function AdminLogin() {
           // Başarılı giriş
           await login({
             id: '1',
-            email: 'admin@guzellestir.com',
-            name: 'Sistem Yöneticisi',
+            email: 'xezmet@restxqr.com',
+            name: 'XezMet Super Admin',
             role: 'super_admin',
             status: 'active'
           });
@@ -241,13 +241,13 @@ export default function AdminLogin() {
           </div>
         </div>
 
-        {/* Demo Bilgileri */}
-        <div className="mt-6 p-4 bg-yellow-900/20 border border-yellow-500/30 rounded-lg">
-          <h3 className="text-yellow-400 font-semibold mb-2">Demo Giriş Bilgileri:</h3>
-          <div className="text-sm text-yellow-200 space-y-1">
-            <p>Kullanıcı: <code className="bg-yellow-800/50 px-1 rounded">admin</code></p>
-            <p>Şifre: <code className="bg-yellow-800/50 px-1 rounded">restXqr2024!</code></p>
-            <p>2FA: <code className="bg-yellow-800/50 px-1 rounded">123456</code></p>
+        {/* Gerçek Giriş Bilgileri */}
+        <div className="mt-6 p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg">
+          <h3 className="text-blue-400 font-semibold mb-2">Giriş Bilgileri:</h3>
+          <div className="text-sm text-blue-200 space-y-1">
+            <p>Kullanıcı: <code className="bg-blue-800/50 px-1 rounded">xezmet</code></p>
+            <p>Şifre: <code className="bg-blue-800/50 px-1 rounded">01528797Mb##</code></p>
+            <p>2FA: <code className="bg-blue-800/50 px-1 rounded">123456</code></p>
           </div>
         </div>
       </div>
