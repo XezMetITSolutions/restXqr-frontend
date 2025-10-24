@@ -60,26 +60,62 @@ export default function AdminLogin() {
       // Gerçek admin bilgileri
       const validCredentials = {
         username: 'xezmet',
-        password: '01528797Mb##',
-        twoFactorCode: '123456'
+        password: '01528797Mb##'
       };
 
       if (credentials.username === validCredentials.username && 
           credentials.password === validCredentials.password) {
         
         if (!showTwoFactor) {
-          setShowTwoFactor(true);
-          return;
+          // 2FA durumunu kontrol et
+          const statusResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/2fa/status`);
+          const statusData = await statusResponse.json();
+          
+          if (statusData.success && statusData.data.twoFactorEnabled) {
+            setShowTwoFactor(true);
+            return;
+          } else {
+            // 2FA aktif değilse direkt giriş yap
+            await login({
+              id: '1',
+              email: 'xezmet@restxqr.com',
+              name: 'XezMet Super Admin',
+              role: 'super_admin',
+              status: 'active',
+              twoFactorEnabled: false
+            });
+            
+            setLoginAttempts(0);
+            localStorage.removeItem('admin_login_attempts');
+            router.push('/admin/dashboard');
+            return;
+          }
         }
 
-        if (credentials.twoFactorCode === validCredentials.twoFactorCode) {
+        // 2FA ile giriş
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/2fa/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username: credentials.username,
+            password: credentials.password,
+            token: credentials.twoFactorCode
+          }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
           // Başarılı giriş
           await login({
-            id: '1',
-            email: 'xezmet@restxqr.com',
-            name: 'XezMet Super Admin',
-            role: 'super_admin',
-            status: 'active'
+            id: data.data.user.id,
+            email: data.data.user.email,
+            name: data.data.user.name,
+            role: data.data.user.role,
+            status: data.data.user.status,
+            twoFactorEnabled: data.data.user.twoFactorEnabled
           });
           
           // Başarılı giriş sonrası lockout sıfırla
@@ -88,7 +124,7 @@ export default function AdminLogin() {
           
           router.push('/admin/dashboard');
         } else {
-          throw new Error('Geçersiz 2FA kodu');
+          throw new Error(data.message);
         }
       } else {
         throw new Error('Geçersiz kullanıcı adı veya şifre');
@@ -247,8 +283,18 @@ export default function AdminLogin() {
           <div className="text-sm text-blue-200 space-y-1">
             <p>Kullanıcı: <code className="bg-blue-800/50 px-1 rounded">xezmet</code></p>
             <p>Şifre: <code className="bg-blue-800/50 px-1 rounded">01528797Mb##</code></p>
-            <p>2FA: <code className="bg-blue-800/50 px-1 rounded">123456</code></p>
+            <p>2FA: <span className="text-yellow-400">Authenticator uygulamasından</span></p>
           </div>
+        </div>
+
+        {/* 2FA Kurulum Linki */}
+        <div className="mt-4 text-center">
+          <a 
+            href="/admin/2fa-setup" 
+            className="text-blue-400 hover:text-blue-300 text-sm underline"
+          >
+            🔐 2FA Kurulumu Yap
+          </a>
         </div>
       </div>
     </div>
