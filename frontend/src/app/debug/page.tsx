@@ -241,9 +241,9 @@ export default function DebugPage() {
   const checkPanelLoginStatus = () => {
     addDetailedLog('Panel Login Kontrol', 'Panel login durumları kontrol ediliyor...');
     
-    // LocalStorage'dan login durumlarını kontrol et
-    const kitchenLogin = localStorage.getItem('kitchen_staff_info');
-    const cashierLogin = localStorage.getItem('cashier_staff_info');
+    // LocalStorage ve SessionStorage'dan login durumlarını kontrol et
+    const kitchenLogin = localStorage.getItem('kitchen_staff');
+    const cashierLogin = sessionStorage.getItem('cashier_staff');
     
     const status = {
       kitchen: {
