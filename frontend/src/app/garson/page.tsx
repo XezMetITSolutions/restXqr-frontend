@@ -183,7 +183,7 @@ export default function GarsonPanel() {
                           )}
                         </div>
                         <div className="text-sm font-semibold text-gray-700">
-                          {(item.price * item.quantity).toFixed(2)}₺
+                          {(Number(item.price) * Number(item.quantity)).toFixed(2)}₺
                         </div>
                       </div>
                     ))}
@@ -201,7 +201,7 @@ export default function GarsonPanel() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-lg font-bold text-gray-800">
                     <FaMoneyBillWave className="text-green-500" />
-                    {order.totalAmount.toFixed(2)}₺
+                    {Number(order.totalAmount).toFixed(2)}₺
                   </div>
                   {order.status === 'ready' && (
                     <div className="flex items-center gap-1 text-green-600 text-sm font-semibold">

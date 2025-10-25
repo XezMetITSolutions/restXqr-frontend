@@ -286,7 +286,7 @@ export default function DebugPanelsPage() {
                 <div className="border-t pt-4 mb-4">
                   <div className="flex justify-between text-lg font-bold">
                     <span>Toplam:</span>
-                    <span className="text-green-600">{getCartTotal().toFixed(2)}₺</span>
+                    <span className="text-green-600">{Number(getCartTotal()).toFixed(2)}₺</span>
                   </div>
                 </div>
 
@@ -335,7 +335,7 @@ export default function DebugPanelsPage() {
                       {order.items.length} ürün
                     </div>
                     <div className="text-lg font-bold text-green-600">
-                      {order.totalAmount.toFixed(2)}₺
+                      {Number(order.totalAmount).toFixed(2)}₺
                     </div>
                   </div>
                 ))
@@ -409,7 +409,7 @@ export default function DebugPanelsPage() {
                         </span>
                       </div>
                       <div className="text-lg font-bold text-green-600">
-                        {order.totalAmount.toFixed(2)}₺
+                        {Number(order.totalAmount).toFixed(2)}₺
                       </div>
                     </div>
                   ))}
@@ -422,7 +422,7 @@ export default function DebugPanelsPage() {
                         </span>
                       </div>
                       <div className="text-lg font-bold text-gray-600">
-                        {order.totalAmount.toFixed(2)}₺
+                        {Number(order.totalAmount).toFixed(2)}₺
                       </div>
                     </div>
                   ))}

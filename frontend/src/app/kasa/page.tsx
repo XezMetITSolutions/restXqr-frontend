@@ -119,13 +119,13 @@ export default function KasaPanel() {
   const getTotalRevenue = () => {
     return orders
       .filter(o => o.status === 'completed')
-      .reduce((sum, order) => sum + order.totalAmount, 0);
+      .reduce((sum, order) => sum + Number(order.totalAmount), 0);
   };
 
   const getPendingPayments = () => {
     return orders
       .filter(o => o.status === 'ready')
-      .reduce((sum, order) => sum + order.totalAmount, 0);
+      .reduce((sum, order) => sum + Number(order.totalAmount), 0);
   };
 
   return (
@@ -218,7 +218,7 @@ export default function KasaPanel() {
                           {item.quantity}x {item.name}
                         </div>
                         <div className="font-semibold text-gray-700">
-                          {(item.price * item.quantity).toFixed(2)}₺
+                          {(Number(item.price) * Number(item.quantity)).toFixed(2)}₺
                         </div>
                       </div>
                     ))}
@@ -229,7 +229,7 @@ export default function KasaPanel() {
                 <div className="flex items-center justify-between mb-4 p-3 bg-white rounded-lg">
                   <div className="text-lg font-bold text-gray-800">TOPLAM</div>
                   <div className="text-2xl font-bold text-green-600">
-                    {order.totalAmount.toFixed(2)}₺
+                    {Number(order.totalAmount).toFixed(2)}₺
                   </div>
                 </div>
 
@@ -277,14 +277,14 @@ export default function KasaPanel() {
             <div className="mb-6">
               <div className="text-center mb-4">
                 <div className="text-4xl font-bold text-gray-800 mb-2">Masa {selectedOrder.tableNumber}</div>
-                <div className="text-3xl font-bold text-green-600">{selectedOrder.totalAmount.toFixed(2)}₺</div>
+                <div className="text-3xl font-bold text-green-600">{Number(selectedOrder.totalAmount).toFixed(2)}₺</div>
               </div>
 
               <div className="border-t border-b border-gray-200 py-3 mb-3">
                 {selectedOrder.items.map((item, index) => (
                   <div key={index} className="flex justify-between py-1">
                     <span>{item.quantity}x {item.name}</span>
-                    <span className="font-semibold">{(item.price * item.quantity).toFixed(2)}₺</span>
+                    <span className="font-semibold">{(Number(item.price) * Number(item.quantity)).toFixed(2)}₺</span>
                   </div>
                 ))}
               </div>
