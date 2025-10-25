@@ -210,12 +210,7 @@ export default function MutfakPanel() {
                   </div>
                 </div>
 
-                {/* Order Notes */}
-                {order.notes && (
-                  <div className="mb-4 p-3 bg-yellow-900 text-yellow-200 rounded-lg">
-                    <strong>⚠️ Özel Not:</strong> {order.notes}
-                  </div>
-                )}
+                {/* Order Notes - Sadece ürün notları gösterilir, ödeme bilgileri mutfağı ilgilendirmez */}
 
                 {/* Action Buttons */}
                 <div className="space-y-2">
