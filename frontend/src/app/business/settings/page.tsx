@@ -1082,18 +1082,65 @@ export default function SettingsPage() {
                               Değişikliklerinizi anlık olarak görüntüleyin
                             </p>
                             
-                            {/* Telefon Önizleme - Daha büyük */}
-                            <div className="relative flex justify-center">
-                              <div className="scale-110">
-                                <PhonePreview 
-                                  className="mx-auto"
-                                />
+                            {/* Modern Telefon Önizleme */}
+                            <div className="relative">
+                              {/* Gradient Background */}
+                              <div className="absolute inset-0 bg-gradient-to-br from-purple-100 via-blue-50 to-pink-100 rounded-2xl opacity-50"></div>
+                              
+                              {/* Phone Frame */}
+                              <div className="relative p-8">
+                                <div className="bg-white rounded-[3rem] shadow-2xl p-4 mx-auto max-w-sm border-8 border-gray-800">
+                                  {/* Notch */}
+                                  <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-40 h-7 bg-gray-800 rounded-b-3xl"></div>
+                                  
+                                  {/* Screen */}
+                                  <div className="bg-gray-50 rounded-[2.5rem] overflow-hidden h-[600px] relative">
+                                    {/* Status Bar */}
+                                    <div className="bg-white px-6 py-3 flex items-center justify-between text-xs">
+                                      <span className="font-semibold">9:41</span>
+                                      <div className="flex items-center gap-1">
+                                        <div className="w-4 h-3 border border-gray-400 rounded-sm relative">
+                                          <div className="absolute inset-0.5 bg-gray-800 rounded-sm"></div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    
+                                    {/* Content */}
+                                    <div className="p-4 overflow-y-auto h-full">
+                                      <PhonePreview className="w-full" />
+                                    </div>
+                                  </div>
+                                  
+                                  {/* Home Indicator */}
+                                  <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gray-800 rounded-full"></div>
+                                </div>
+                              </div>
+                              
+                              {/* Floating Action Buttons */}
+                              <div className="absolute top-4 right-4 flex flex-col gap-2">
+                                <button 
+                                  onClick={() => window.open('/menu', '_blank')}
+                                  className="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform"
+                                  title="Canlı Önizleme"
+                                >
+                                  <FaEye className="text-purple-600" />
+                                </button>
+                                <button 
+                                  onClick={() => window.location.reload()}
+                                  className="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform"
+                                  title="Yenile"
+                                >
+                                  <FaSync className="text-blue-600" />
+                                </button>
                               </div>
                             </div>
                             
-                            <div className="mt-6 text-center">
+                            <div className="mt-6 text-center space-y-2">
+                              <p className="text-sm font-medium text-gray-700">
+                                ✨ Canlı Önizleme
+                              </p>
                               <p className="text-xs text-gray-500">
-                                Ayarlarınızı değiştirdikçe önizleme otomatik güncellenir
+                                Değişiklikleriniz anında yansıtılır
                               </p>
                             </div>
                           </div>
