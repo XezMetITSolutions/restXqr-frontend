@@ -125,8 +125,107 @@ export default function DebugPage() {
     }
   };
 
-  // Sipariş oluştur
-  const createOrder = async () => {
+  // Test siparişi oluştur (hızlı test için)
+  const createTestOrder = async () => {
+    setIsRunning(true);
+    addDetailedLog('Test Siparişi', 'Hızlı test siparişi oluşturuluyor...');
+    
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
+      
+      // Test ürünleri (gerçek menüden ilk 2 ürünü al)
+      const testItems = restaurantMenu.slice(0, 2);
+      
+      if (testItems.length === 0) {
+        addResult('Test Siparişi', false, 'Menü yüklenmedi, önce menüyü yükleyin!');
+        setIsRunning(false);
+        return;
+      }
+      
+      const orderPayload = {
+        restaurantId: 'aksaray',
+        tableNumber: 99, // Test masası
+        items: testItems.map(item => ({
+          menuItemId: item.id,
+          name: item.name,
+          quantity: 1,
+          unitPrice: item.price,
+          price: item.price,
+          notes: `Test siparişi - ${item.category}`
+        })),
+        notes: `Hızlı test siparişi - ${new Date().toLocaleTimeString()}`,
+        orderType: 'dine_in'
+      };
+
+      addDetailedLog('Test Sipariş Payload', `Test sipariş verisi`, orderPayload);
+      
+      const orderResponse = await fetch(`${apiUrl}/orders`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderPayload),
+      });
+
+      addDetailedLog('Test Sipariş Yanıtı', `Status: ${orderResponse.status} ${orderResponse.statusText}`);
+      
+      const orderResult = await orderResponse.json();
+      addDetailedLog('Test Sipariş Sonucu', `API'den dönen veri`, orderResult);
+      
+      if (orderResult.success) {
+        addResult('Test Siparişi', true, `Test siparişi başarıyla oluşturuldu! ID: ${orderResult.data.id}`, orderResult.data);
+        
+        // Mutfak paneline bildirim gönder
+        addDetailedLog('Test Mutfak Bildirimi', 'Mutfak paneline test bildirimi gönderiliyor...');
+        
+        try {
+          const notificationPayload = {
+            eventType: 'new_order',
+            data: {
+              orderId: orderResult.data.id,
+              restaurantId: 'aksaray',
+              tableNumber: 99,
+              items: testItems.map(item => ({
+                name: item.name,
+                quantity: 1,
+                notes: `Test siparişi - ${item.category}`
+              })),
+              totalAmount: testItems.reduce((sum, item) => sum + item.price, 0),
+              timestamp: new Date().toISOString()
+            }
+          };
+          
+          const notificationResponse = await fetch(`${apiUrl}/debug/publish-notification`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(notificationPayload),
+          });
+
+          addDetailedLog('Test Bildirim Yanıtı', `Status: ${notificationResponse.status}`);
+          
+          if (notificationResponse.ok) {
+            addResult('Test Mutfak Bildirimi', true, 'Mutfak paneline test bildirimi gönderildi!');
+          } else {
+            addResult('Test Mutfak Bildirimi', false, 'Test bildirimi gönderilemedi');
+          }
+        } catch (error: any) {
+          addDetailedLog('Test Bildirim Exception', `Test bildirim hatası`, error);
+          addResult('Test Mutfak Bildirimi', false, `Test bildirim hatası: ${error.message}`);
+        }
+        
+      } else {
+        addResult('Test Siparişi', false, `Test siparişi oluşturulamadı: ${orderResult.message}`, orderResult);
+      }
+
+    } catch (error: any) {
+      addDetailedLog('Test Sipariş Exception', `Test sipariş hatası`, error);
+      addResult('Test Siparişi', false, `Test sipariş hatası: ${error.message}`);
+    } finally {
+      setIsRunning(false);
+    }
+  };
     if (selectedItems.length === 0) {
       addResult('Sipariş Oluşturma', false, 'Lütfen en az 1 ürün seçin!');
       return;
@@ -254,12 +353,36 @@ export default function DebugPage() {
                 <FaSync className="mr-2" />
                 API Test
               </h2>
-              <button
-                onClick={testAPI}
-                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 px-4 rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-200"
-              >
-                API Çalışıyor Mu?
-              </button>
+              <div className="space-y-3">
+                <button
+                  onClick={testAPI}
+                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 px-4 rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-200"
+                >
+                  API Çalışıyor Mu?
+                </button>
+                <button
+                  onClick={createTestOrder}
+                  disabled={isRunning || restaurantMenu.length === 0}
+                  className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 px-4 rounded-lg font-semibold hover:from-green-700 hover:to-green-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                >
+                  {isRunning ? (
+                    <div className="flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      <span>Test Siparişi Oluşturuluyor...</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center">
+                      <FaPlay className="mr-2" />
+                      <span>Test Siparişi Oluştur</span>
+                    </div>
+                  )}
+                </button>
+                {restaurantMenu.length === 0 && (
+                  <p className="text-yellow-400 text-sm text-center">
+                    ⚠️ Önce menüyü yükleyin
+                  </p>
+                )}
+              </div>
             </div>
 
             {/* Menü Yükleme */}
