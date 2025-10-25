@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FaShoppingCart, FaBell, FaArrowLeft, FaStar, FaPlus, FaInfo, FaUtensils, FaFilter } from 'react-icons/fa';
+import { FaShoppingCart, FaBell, FaArrowLeft, FaStar, FaPlus, FaInfo, FaUtensils, FaFilter, FaBug } from 'react-icons/fa';
 import useRestaurantStore from '@/store/useRestaurantStore';
 import { useCartStore } from '@/store';
 import AnnouncementPopup from '@/components/AnnouncementPopup';
@@ -46,6 +46,7 @@ function MenuPageContent() {
   const [showSplash, setShowSplash] = useState(false);
   const [tokenValid, setTokenValid] = useState<boolean | null>(null);
   const [tokenMessage, setTokenMessage] = useState('');
+  const [showDebugModal, setShowDebugModal] = useState(false);
   const primary = settings.branding.primaryColor;
   const secondary = settings.branding.secondaryColor || settings.branding.primaryColor;
   
@@ -335,6 +336,34 @@ function MenuPageContent() {
     setSelectedItem(null);
   };
 
+  const showDebugInfo = () => {
+    const debugData = {
+      timestamp: new Date().toLocaleString(),
+      restaurant: {
+        id: currentRestaurant?.id,
+        name: currentRestaurant?.name,
+        username: currentRestaurant?.username
+      },
+      cart: {
+        itemCount: cartItems.length,
+        items: cartItems.map(i => ({
+          name: i.name,
+          quantity: i.quantity,
+          price: i.price + '₺'
+        })),
+        total: cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0) + '₺'
+      },
+      table: tableNumber || 'Belirtilmemiş',
+      menu: {
+        totalItems: items.length,
+        categories: filteredCategories.length
+      }
+    };
+    
+    console.log('🐛 DEBUG BİLGİLERİ:', debugData);
+    alert(JSON.stringify(debugData, null, 2));
+  };
+
   // Token geçersizse menüyü gizle
   if (tokenValid === false) {
     return (
@@ -419,6 +448,23 @@ function MenuPageContent() {
                 <TranslatedText>Masa</TranslatedText> #{tableNumber}
             </div>
               )}
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={showDebugInfo}
+              className="p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-colors"
+              title="Debug Bilgileri"
+            >
+              <FaBug />
+            </button>
+            <Link href="/cart" className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors">
+              <FaShoppingCart className="text-xl" style={{ color: primary }} />
+              {cartItems.length > 0 && (
+                <span className="absolute -top-1 -right-1 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center" style={{ backgroundColor: primary }}>
+                  {cartItems.length}
+                </span>
+              )}
+            </Link>
           </div>
         </div>
         </header>
