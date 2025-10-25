@@ -46,7 +46,8 @@ export default function KitchenDashboard() {
 
   // Real-time connection için EventSource
   useEffect(() => {
-    const eventSource = new EventSource(`${process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com'}/api/events/orders`);
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'https://masapp-backend.onrender.com';
+    const eventSource = new EventSource(`${baseUrl}/api/events/orders`);
     
     eventSource.onopen = () => {
       setIsConnected(true);

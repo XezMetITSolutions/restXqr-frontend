@@ -70,6 +70,44 @@ export default function CashierDashboard() {
       return;
     }
 
+    // Real-time connection için EventSource
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'https://masapp-backend.onrender.com';
+    const eventSource = new EventSource(`${baseUrl}/api/events/orders`);
+    
+    eventSource.onopen = () => {
+      console.log('Cashier dashboard connected to real-time updates');
+    };
+
+    eventSource.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        
+        if (data.type === 'new_order') {
+          console.log('New order received in cashier:', data);
+          // Yeni sipariş geldiğinde bildirim göster
+          createBillReadyNotification({
+            id: `order-${data.data.orderId}`,
+            type: 'new_order',
+            message: `Masa ${data.data.tableNumber} için yeni sipariş`,
+            tableNumber: data.data.tableNumber,
+            orderId: data.data.orderId,
+            timestamp: new Date().toISOString()
+          });
+        }
+      } catch (error) {
+        console.error('Error parsing real-time data in cashier:', error);
+      }
+    };
+
+    eventSource.onerror = () => {
+      console.error('Cashier real-time connection error');
+    };
+
+    return () => {
+      eventSource.close();
+      console.log('Cashier SSE connection closed');
+    };
+
     // Sadece kasiyer (cashier) rolündeki personel kasa paneline erişebilir
     if (authenticatedStaff?.role !== 'cashier' && authenticatedRestaurant?.role !== 'cashier') {
       router.replace('/business/login');
