@@ -682,6 +682,11 @@ export default function DebugPage() {
               <p className="text-yellow-400 text-xs text-center mt-1">
                 ⚠️ Panel login gerektirir
               </p>
+              <div className="mt-2 p-2 bg-orange-500/10 border border-orange-500/20 rounded text-xs">
+                <div className="text-orange-300 font-medium mb-1">Login Bilgileri:</div>
+                <div className="text-gray-300">Username: portakal</div>
+                <div className="text-gray-300">Password: 123456</div>
+              </div>
             </div>
           </div>
 
@@ -716,6 +721,11 @@ export default function DebugPage() {
               <p className="text-yellow-400 text-xs text-center mt-1">
                 ⚠️ Panel login gerektirir
               </p>
+              <div className="mt-2 p-2 bg-green-500/10 border border-green-500/20 rounded text-xs">
+                <div className="text-green-300 font-medium mb-1">Login Bilgileri:</div>
+                <div className="text-gray-300">Username: armut</div>
+                <div className="text-gray-300">Password: 123456</div>
+              </div>
             </div>
           </div>
         </div>
