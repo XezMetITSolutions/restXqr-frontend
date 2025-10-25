@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FaBug, FaPlay, FaCheckCircle, FaExclamationTriangle, FaSync, FaList, FaShoppingCart } from 'react-icons/fa';
+import { FaBug, FaPlay, FaCheckCircle, FaExclamationTriangle, FaSync, FaList, FaShoppingCart, FaBell, FaUtensils, FaCreditCard } from 'react-icons/fa';
+import useRealtime from '@/hooks/useRealtime';
 
 interface DebugResult {
   step: string;
@@ -25,6 +26,33 @@ export default function DebugPage() {
   const [isLoadingMenu, setIsLoadingMenu] = useState(false);
   const [selectedItems, setSelectedItems] = useState<MenuItem[]>([]);
   const [tableNumber, setTableNumber] = useState(5);
+  const [realtimeEvents, setRealtimeEvents] = useState<any[]>([]);
+  const [isRealtimeConnected, setIsRealtimeConnected] = useState(false);
+
+  // Real-time bildirim izleme
+  const { isConnected } = useRealtime({
+    onEvent: (event) => {
+      const timestamp = new Date().toLocaleTimeString();
+      const logMessage = `[${timestamp}] Real-time event alındı: ${event.type}`;
+      
+      addDetailedLog('Real-time Event', logMessage, event);
+      setRealtimeEvents(prev => [{ ...event, timestamp }, ...prev.slice(0, 9)]); // Son 10 eventi tut
+      
+      if (event.type === 'new_order') {
+        addResult('Real-time Bildirim', true, 'Yeni sipariş bildirimi alındı!', event.data);
+      }
+    },
+    onConnect: () => {
+      setIsRealtimeConnected(true);
+      addDetailedLog('Real-time Bağlantı', 'SSE bağlantısı kuruldu');
+      addResult('Real-time Bağlantı', true, 'Real-time bildirim sistemi aktif!');
+    },
+    onDisconnect: () => {
+      setIsRealtimeConnected(false);
+      addDetailedLog('Real-time Bağlantı', 'SSE bağlantısı kesildi');
+      addResult('Real-time Bağlantı', false, 'Real-time bildirim sistemi bağlantısı kesildi');
+    }
+  });
 
   const addResult = (step: string, success: boolean, message: string, data?: any) => {
     const timestamp = new Date().toLocaleTimeString();
@@ -360,9 +388,17 @@ export default function DebugPage() {
           <div className="space-y-6">
             {/* API Test */}
             <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 shadow-2xl border border-white/20">
-              <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
-                <FaSync className="mr-2" />
-                API Test
+              <h2 className="text-xl font-semibold text-white mb-4 flex items-center justify-between">
+                <div className="flex items-center">
+                  <FaSync className="mr-2" />
+                  API Test
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className={`w-3 h-3 rounded-full ${isRealtimeConnected ? 'bg-green-400 animate-pulse' : 'bg-red-400'}`}></div>
+                  <span className={`text-sm ${isRealtimeConnected ? 'text-green-300' : 'text-red-300'}`}>
+                    {isRealtimeConnected ? 'Real-time Aktif' : 'Real-time Bağlantısız'}
+                  </span>
+                </div>
               </h2>
               <div className="space-y-3">
                 <button
@@ -594,46 +630,100 @@ export default function DebugPage() {
           </div>
         </div>
 
-        {/* Target Panels Info */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Real-time Events ve Panel Logları */}
+        <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {/* Real-time Events */}
           <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 shadow-2xl border border-white/20">
-            <div className="flex items-center space-x-3 mb-2">
-              <FaSync className="text-orange-400 text-xl" />
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center space-x-2">
+                <FaBell className="text-purple-400 text-lg" />
+                <h3 className="text-white font-semibold">Real-time Events</h3>
+              </div>
+              <div className={`w-2 h-2 rounded-full ${isRealtimeConnected ? 'bg-green-400 animate-pulse' : 'bg-red-400'}`}></div>
+            </div>
+            <div className="space-y-2 max-h-48 overflow-y-auto">
+              {realtimeEvents.length === 0 ? (
+                <div className="text-center text-gray-400 py-4 text-sm">
+                  Henüz real-time event alınmadı
+                </div>
+              ) : (
+                realtimeEvents.map((event, index) => (
+                  <div key={index} className="p-2 bg-white/5 rounded text-xs">
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-purple-300 font-medium">{event.type}</span>
+                      <span className="text-gray-400">{event.timestamp}</span>
+                    </div>
+                    {event.data && (
+                      <div className="text-gray-300 truncate">
+                        {event.data.orderId ? `Order: ${event.data.orderId}` : JSON.stringify(event.data).substring(0, 50)}...
+                      </div>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* Mutfak Panel Durumu */}
+          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 shadow-2xl border border-white/20">
+            <div className="flex items-center space-x-2 mb-3">
+              <FaUtensils className="text-orange-400 text-lg" />
               <h3 className="text-white font-semibold">Mutfak Paneli</h3>
             </div>
-            <p className="text-gray-300 text-sm">
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-300">Durum:</span>
+                <span className="text-orange-300">Aktif</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-300">Real-time:</span>
+                <span className={isRealtimeConnected ? 'text-green-300' : 'text-red-300'}>
+                  {isRealtimeConnected ? 'Bağlı' : 'Bağlantısız'}
+                </span>
+              </div>
               <a 
                 href="https://aksaray.restxqr.com/kitchen/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-blue-400 hover:text-blue-300 underline"
+                className="block w-full text-center bg-orange-600 hover:bg-orange-700 text-white py-2 px-3 rounded text-sm transition-colors mt-3"
               >
-                https://aksaray.restxqr.com/kitchen/
+                Mutfak Panelini Aç
               </a>
-            </p>
-            <p className="text-gray-400 text-xs mt-1">
-              Yeni siparişler burada görünecek
-            </p>
+              <p className="text-gray-400 text-xs text-center mt-2">
+                Yeni siparişler burada görünecek
+              </p>
+            </div>
           </div>
 
+          {/* Kasa Panel Durumu */}
           <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 shadow-2xl border border-white/20">
-            <div className="flex items-center space-x-3 mb-2">
-              <FaShoppingCart className="text-green-400 text-xl" />
+            <div className="flex items-center space-x-2 mb-3">
+              <FaCreditCard className="text-green-400 text-lg" />
               <h3 className="text-white font-semibold">Kasa Paneli</h3>
             </div>
-            <p className="text-gray-300 text-sm">
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-300">Durum:</span>
+                <span className="text-green-300">Aktif</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-300">Real-time:</span>
+                <span className={isRealtimeConnected ? 'text-green-300' : 'text-red-300'}>
+                  {isRealtimeConnected ? 'Bağlı' : 'Bağlantısız'}
+                </span>
+              </div>
               <a 
                 href="https://aksaray.restxqr.com/cashier/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-blue-400 hover:text-blue-300 underline"
+                className="block w-full text-center bg-green-600 hover:bg-green-700 text-white py-2 px-3 rounded text-sm transition-colors mt-3"
               >
-                https://aksaray.restxqr.com/cashier/
+                Kasa Panelini Aç
               </a>
-            </p>
-            <p className="text-gray-400 text-xs mt-1">
-              Ödeme bekleyen siparişler burada görünecek
-            </p>
+              <p className="text-gray-400 text-xs text-center mt-2">
+                Ödeme bekleyen siparişler burada görünecek
+              </p>
+            </div>
           </div>
         </div>
       </div>
