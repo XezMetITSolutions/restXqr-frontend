@@ -68,7 +68,7 @@ export default function AdminLogin() {
         
         if (!showTwoFactor) {
           // 2FA durumunu kontrol et
-          const statusResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/2fa/status`);
+          const statusResponse = await fetch(`https://masapp-backend.onrender.com/api/admin/2fa/status`);
           const statusData = await statusResponse.json();
           
           if (statusData.success && statusData.data.twoFactorEnabled) {
@@ -93,7 +93,7 @@ export default function AdminLogin() {
         }
 
         // 2FA ile giriş
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/2fa/login`, {
+        const response = await fetch(`https://masapp-backend.onrender.com/api/admin/2fa/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

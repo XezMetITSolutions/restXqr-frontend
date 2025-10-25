@@ -36,7 +36,7 @@ export default function Admin2FASetup() {
     setError('');
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/2fa/setup`, {
+      const response = await fetch(`https://masapp-backend.onrender.com/api/admin/2fa/setup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ export default function Admin2FASetup() {
     setError('');
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/2fa/verify-setup`, {
+      const response = await fetch(`https://masapp-backend.onrender.com/api/admin/2fa/verify-setup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
