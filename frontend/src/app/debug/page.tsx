@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { FaBug, FaUtensils, FaCashRegister, FaBell, FaPlay, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
+import { useState, useEffect } from 'react';
+import { FaBug, FaUtensils, FaCashRegister, FaBell, FaPlay, FaCheckCircle, FaExclamationTriangle, FaRefresh } from 'react-icons/fa';
 
 interface DebugResult {
   step: string;
@@ -20,6 +20,8 @@ export default function DebugPage() {
       { name: 'Test Salata', quantity: 2, price: 15.00, notes: 'Debug siparişi' }
     ]
   });
+  const [restaurantMenu, setRestaurantMenu] = useState<any[]>([]);
+  const [isLoadingMenu, setIsLoadingMenu] = useState(false);
 
   const addResult = (step: string, success: boolean, message: string, data?: any) => {
     const timestamp = new Date().toLocaleTimeString();
@@ -212,6 +214,54 @@ export default function DebugPage() {
     setResults([]);
   };
 
+  // Aksaray restoranının menüsünü çek
+  const loadRestaurantMenu = async () => {
+    setIsLoadingMenu(true);
+    addDetailedLog('Menü Yükleme', 'Aksaray restoranının menüsü çekiliyor...');
+    
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
+      const menuEndpoint = `${apiUrl}/restaurants/aksaray/menu`;
+      
+      addDetailedLog('Menü Endpoint', `Menü endpoint: ${menuEndpoint}`);
+      
+      const response = await fetch(menuEndpoint);
+      addDetailedLog('Menü Yanıtı', `Status: ${response.status} ${response.statusText}`);
+      
+      if (response.ok) {
+        const menuData = await response.json();
+        addDetailedLog('Menü Verisi', `Menü başarıyla çekildi`, menuData);
+        
+        if (menuData.success && menuData.data) {
+          const allItems = menuData.data.categories?.flatMap((category: any) => 
+            category.items?.map((item: any) => ({
+              id: item.id,
+              name: item.name,
+              price: item.price,
+              description: item.description,
+              category: category.name
+            })) || []
+          ) || [];
+          
+          setRestaurantMenu(allItems);
+          addDetailedLog('Menü İşlendi', `${allItems.length} ürün bulundu`, allItems);
+        }
+      } else {
+        const errorText = await response.text();
+        addDetailedLog('Menü Hatası', `Menü çekilemedi`, errorText);
+      }
+    } catch (error: any) {
+      addDetailedLog('Menü Exception', `Menü çekme hatası`, error);
+    } finally {
+      setIsLoadingMenu(false);
+    }
+  };
+
+  // Sayfa yüklendiğinde menüyü çek
+  useEffect(() => {
+    loadRestaurantMenu();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900 p-8">
       <div className="max-w-4xl mx-auto">
@@ -251,15 +301,70 @@ export default function DebugPage() {
           </div>
 
           <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-300 mb-2">Sipariş Ürünleri</label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-gray-300">Sipariş Ürünleri</label>
+              <button
+                onClick={loadRestaurantMenu}
+                disabled={isLoadingMenu}
+                className="flex items-center space-x-1 px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded transition-colors disabled:opacity-50"
+              >
+                <FaRefresh className={isLoadingMenu ? 'animate-spin' : ''} />
+                <span>Menüyü Yenile</span>
+              </button>
+            </div>
+            
+            {/* Menüden Ürün Seçimi */}
+            {restaurantMenu.length > 0 && (
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-300 mb-2">Menüden Ürün Ekle:</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-32 overflow-y-auto">
+                  {restaurantMenu.slice(0, 10).map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        const newItem = {
+                          name: item.name,
+                          quantity: 1,
+                          price: item.price,
+                          notes: `Gerçek ürün - ${item.category}`
+                        };
+                        setOrderData(prev => ({
+                          ...prev,
+                          items: [...prev.items, newItem]
+                        }));
+                      }}
+                      className="text-left p-2 bg-white/5 hover:bg-white/10 rounded text-white text-sm transition-colors"
+                    >
+                      <div className="font-medium">{item.name}</div>
+                      <div className="text-gray-400 text-xs">₺{item.price} - {item.category}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            
             <div className="space-y-2">
               {orderData.items.map((item, index) => (
                 <div key={index} className="flex items-center space-x-4 p-3 bg-white/5 rounded-lg">
                   <div className="flex-1">
                     <div className="text-white font-medium">{item.name}</div>
                     <div className="text-gray-400 text-sm">Adet: {item.quantity} × ₺{item.price}</div>
+                    {item.notes && <div className="text-gray-500 text-xs">{item.notes}</div>}
                   </div>
-                  <div className="text-white font-semibold">₺{(item.price * item.quantity).toFixed(2)}</div>
+                  <div className="flex items-center space-x-2">
+                    <div className="text-white font-semibold">₺{(item.price * item.quantity).toFixed(2)}</div>
+                    <button
+                      onClick={() => {
+                        setOrderData(prev => ({
+                          ...prev,
+                          items: prev.items.filter((_, i) => i !== index)
+                        }));
+                      }}
+                      className="text-red-400 hover:text-red-300 text-sm"
+                    >
+                      ✕
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
