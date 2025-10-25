@@ -259,7 +259,7 @@
             <div id="loadingMessage" style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #666;">
                 <h3>Yükleniyor...</h3>
                 <p>Sayfa yükleniyor, lütfen bekleyin...</p>
-                <button class="btn" onclick="showDebugInfo()" style="margin-top: 1rem; background: #e53935; color: white;">🐛 Debug Bilgilerini Göster</button>
+                <button id="debugBtn" style="margin-top: 1rem; background: #e53935; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">🐛 Debug Bilgilerini Göster</button>
             </div>
         </div>
         
@@ -285,16 +285,16 @@
         let staffInfo = null;
         let orders = [];
         let realtimeConnection = null;
-
-        // Login kontrolü
+            
+            // Login kontrolü
         function checkLogin() {
             const kitchenStaff = localStorage.getItem('kitchen_staff');
             if (kitchenStaff) {
                 staffInfo = JSON.parse(kitchenStaff);
                 isLoggedIn = true;
                 document.querySelector('.header h1').textContent = `Mutfak Arayüzü - ${staffInfo.name}`;
-                loadOrders();
-                connectRealtime();
+            loadOrders();
+            connectRealtime();
             } else {
                 showLoginForm();
             }
@@ -317,7 +317,7 @@
                         </div>
                         <button type="submit" style="width: 100%; padding: 0.75rem; background: #e53935; color: white; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer;">
                             Giriş Yap
-                        </button>
+                    </button>
                     </form>
                     <div id="loginError" style="margin-top: 1rem; color: #e53935; text-align: center; display: none;"></div>
                     <div style="margin-top: 1rem; padding: 1rem; background: #f5f5f5; border-radius: 4px; font-size: 0.9rem;">
@@ -393,7 +393,7 @@
                 
                 if (result.success && result.data) {
                     orders = result.data;
-                    renderOrders();
+                renderOrders();
                 }
             } catch (error) {
                 console.error('Siparişler yüklenemedi:', error);
@@ -410,7 +410,7 @@
             if (loadingMessage) {
                 loadingMessage.style.display = 'none';
             }
-
+            
             if (orders.length === 0) {
                 container.innerHTML = `
                     <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #666;">
@@ -421,32 +421,32 @@
                 `;
                 return;
             }
-
+            
             container.innerHTML = orders.map(order => `
                 <div class="card ${order.priority === 'high' ? 'priority' : ''}">
-                    <div class="card-header">
-                        <div class="table-number">Masa ${order.tableNumber}</div>
+                        <div class="card-header">
+                            <div class="table-number">Masa ${order.tableNumber}</div>
                         ${order.priority === 'high' ? '<div class="priority-badge">Öncelikli</div>' : ''}
-                    </div>
+                        </div>
                     <div class="order-time ${getTimeAgo(order.createdAt) > 20 ? 'urgent' : ''}">${getTimeAgo(order.createdAt)} dk önce</div>
-                    <div class="order-items">
-                        ${order.items.map(item => `
-                            <div class="order-item">
-                                <div class="item-name">
-                                    ${item.name}
-                                    ${item.notes ? `<div class="item-notes">${item.notes}</div>` : ''}
-                                </div>
-                                <div class="item-quantity">x${item.quantity}</div>
+                        <div class="order-items">
+                            ${order.items.map(item => `
+                                <div class="order-item">
+                                    <div class="item-name">
+                                        ${item.name}
+                                        ${item.notes ? `<div class="item-notes">${item.notes}</div>` : ''}
+                                    </div>
+                                    <div class="item-quantity">x${item.quantity}</div>
                                 <button class="btn btn-primary" onclick="updateItemStatus('${order.id}', '${item.id}')">
-                                    Hazırla
-                                </button>
-                            </div>
-                        `).join('')}
-                    </div>
-                    <div class="card-footer">
+                                        Hazırla
+                                    </button>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="card-footer">
                         <div>Toplam: ₺${order.totalAmount}</div>
+                        </div>
                     </div>
-                </div>
             `).join('');
         }
 
@@ -468,7 +468,7 @@
                     },
                     body: JSON.stringify({ status: 'ready' }),
                 });
-
+                
                 if (response.ok) {
                     loadOrders(); // Siparişleri yeniden yükle
                 }
@@ -480,18 +480,18 @@
         // Real-time bağlantı
         function connectRealtime() {
             if (realtimeConnection) return;
-
+                
             const baseUrl = API_URL.replace('/api', '');
             realtimeConnection = new EventSource(`${baseUrl}/api/events/orders`);
-
+                
             realtimeConnection.onmessage = (event) => {
-                try {
-                    const data = JSON.parse(event.data);
-                    if (data.type === 'new_order') {
+                    try {
+                        const data = JSON.parse(event.data);
+                        if (data.type === 'new_order') {
                         console.log('Yeni sipariş geldi:', data);
-                        loadOrders(); // Siparişleri yeniden yükle
-                    }
-                } catch (error) {
+                            loadOrders(); // Siparişleri yeniden yükle
+                        }
+                    } catch (error) {
                     console.error('Real-time veri parse edilemedi:', error);
                 }
             };
@@ -514,20 +514,79 @@
         }
 
         function showDebugInfo() {
-            debugLog('=== SAYFA DEBUG BİLGİLERİ ===');
-            debugLog(`Sayfa URL: ${window.location.href}`);
-            debugLog(`API URL: ${API_URL}`);
-            debugLog(`isLoggedIn: ${isLoggedIn}`);
-            debugLog(`staffInfo: ${JSON.stringify(staffInfo)}`);
-            debugLog(`LocalStorage kitchen_staff: ${localStorage.getItem('kitchen_staff')}`);
-            debugLog(`Orders array length: ${orders.length}`);
+            console.log('🐛 Debug bilgileri gösteriliyor...');
+            
+            // Debug log div'ini bul
+            const logDiv = document.getElementById('debugLog');
+            if (!logDiv) {
+                console.error('Debug log div bulunamadı!');
+                return;
+            }
+            
+            // Log'ları temizle
+            logDiv.innerHTML = '';
+            
+            function addLog(message) {
+                const timestamp = new Date().toLocaleTimeString();
+                logDiv.innerHTML += `[${timestamp}] ${message}<br>`;
+                logDiv.scrollTop = logDiv.scrollHeight;
+                console.log(`🐛 DEBUG: ${message}`);
+            }
+            
+            addLog('=== SAYFA DEBUG BİLGİLERİ ===');
+            addLog(`Sayfa URL: ${window.location.href}`);
+            addLog(`API URL: ${API_URL}`);
+            addLog(`isLoggedIn: ${isLoggedIn}`);
+            addLog(`staffInfo: ${JSON.stringify(staffInfo)}`);
+            addLog(`LocalStorage kitchen_staff: ${localStorage.getItem('kitchen_staff')}`);
+            addLog(`Orders array length: ${orders.length}`);
             
             // Otomatik sipariş testi yap
-            debugOrders();
+            testOrdersAPI();
             
             // Debug panelini göster
             const panel = document.getElementById('debugPanel');
-            panel.style.display = 'block';
+            if (panel) {
+                panel.style.display = 'block';
+            }
+            
+            async function testOrdersAPI() {
+                addLog('=== SİPARİŞ API TESTİ ===');
+                try {
+                    // Önce restoran ID'sini bul
+                    addLog('Restoran ID\'si bulunuyor...');
+                    const restaurantResponse = await fetch(`${API_URL}/restaurants`);
+                    const restaurantData = await restaurantResponse.json();
+                    const aksarayRestaurant = restaurantData.data?.find((r) => r.username === 'aksaray');
+                    
+                    if (!aksarayRestaurant) {
+                        addLog('❌ Aksaray restoranı bulunamadı!');
+                        return;
+                    }
+                    
+                    addLog(`✅ Aksaray restoran ID: ${aksarayRestaurant.id}`);
+                    
+                    const response = await fetch(`${API_URL}/orders?restaurantId=${aksarayRestaurant.id}&status=pending`);
+                    addLog(`Orders Response Status: ${response.status}`);
+                    
+                    const result = await response.json();
+                    addLog(`Orders Response Success: ${result.success}`);
+                    
+                    if (result.success && result.data) {
+                        addLog(`✅ ${result.data.length} sipariş bulundu`);
+                        result.data.slice(0, 3).forEach((order, index) => {
+                            addLog(`Sipariş ${index + 1}: Masa ${order.tableNumber}, ${order.items?.length || 0} ürün, ₺${order.totalAmount}`);
+                        });
+                        if (result.data.length > 3) {
+                            addLog(`... ve ${result.data.length - 3} sipariş daha`);
+                        }
+                    } else {
+                        addLog(`❌ Sipariş verisi alınamadı: ${result.message}`);
+                    }
+                } catch (error) {
+                    addLog(`❌ Sipariş hatası: ${error.message}`);
+                }
+            }
         }
 
         function debugLog(message) {
@@ -673,13 +732,24 @@
                 logoutBtn.addEventListener('click', logout);
             }
             
+            // Debug butonuna event listener ekle
+            const debugBtn = document.getElementById('debugBtn');
+            if (debugBtn) {
+                debugBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🐛 Debug butonu tıklandı');
+                    showDebugInfo();
+                });
+            }
+            
             // 3 saniye sonra otomatik debug bilgilerini göster
             setTimeout(() => {
                 console.log('🐛 Otomatik debug bilgileri gösteriliyor...');
                 showDebugInfo();
             }, 3000);
 
-            // Filtre butonları
+        // Filtre butonları
             const filterButtons = document.querySelectorAll('.filter-btn');
             filterButtons.forEach(button => {
                 button.addEventListener('click', function() {
