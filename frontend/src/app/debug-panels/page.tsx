@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { FaBug, FaUtensils, FaShoppingCart, FaFire, FaUser, FaMoneyBillWave, FaPlay } from 'react-icons/fa';
+import useRestaurantStore from '@/store/useRestaurantStore';
 
 interface MenuItem {
   id: string;
@@ -9,6 +10,7 @@ interface MenuItem {
   price: number;
   description?: string;
   image?: string;
+  restaurantId?: string;
 }
 
 interface OrderItem {
@@ -31,7 +33,15 @@ interface Order {
 }
 
 export default function DebugPanelsPage() {
-  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  // Restaurant store - menu sayfası ile aynı
+  const { 
+    restaurants, 
+    menuItems: storeMenuItems,
+    fetchRestaurants, 
+    fetchRestaurantMenu,
+    loading 
+  } = useRestaurantStore();
+
   const [cart, setCart] = useState<MenuItem[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [restaurantId, setRestaurantId] = useState<string>('');
@@ -40,35 +50,30 @@ export default function DebugPanelsPage() {
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
 
+  // Aksaray restoranını bul
+  const getCurrentRestaurant = () => {
+    return restaurants.find((r: any) => r.username === 'aksaray');
+  };
+
+  const currentRestaurant = getCurrentRestaurant();
+
+  // Aksaray restoranına ait menu itemları filtrele
+  const menuItems = currentRestaurant?.id 
+    ? storeMenuItems.filter((item: any) => item.restaurantId === currentRestaurant.id)
+    : [];
+
   // Restoran ve menu bilgilerini al
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Restoran bilgisi
-        const restaurantResponse = await fetch(`${API_URL}/staff/restaurants`);
-        const restaurantData = await restaurantResponse.json();
-        
-        if (restaurantData.success && restaurantData.data) {
-          const aksaray = restaurantData.data.find((r: any) => r.username === 'aksaray');
-          if (aksaray) {
-            setRestaurantId(aksaray.id);
-            
-            // Menu itemları çek
-            const menuResponse = await fetch(`${API_URL}/menu/items?restaurantId=${aksaray.id}`);
-            const menuData = await menuResponse.json();
-            
-            if (menuData.success && menuData.data) {
-              setMenuItems(menuData.data);
-            }
-          }
-        }
-      } catch (error) {
-        console.error('Veri yüklenemedi:', error);
-      }
-    };
-
-    fetchData();
-  }, []);
+    // Restaurants yoksa fetch et
+    if (restaurants.length === 0) {
+      fetchRestaurants();
+    }
+    // Restaurant varsa menüyü fetch et
+    if (currentRestaurant?.id) {
+      fetchRestaurantMenu(currentRestaurant.id);
+      setRestaurantId(currentRestaurant.id);
+    }
+  }, [restaurants.length, currentRestaurant?.id, fetchRestaurants, fetchRestaurantMenu]);
 
   // Siparişleri çek
   const fetchOrders = async () => {
@@ -210,10 +215,15 @@ export default function DebugPanelsPage() {
               <h2 className="text-xl font-bold">Aksaray Menü</h2>
             </div>
             
-            {menuItems.length === 0 ? (
+            {loading ? (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4"></div>
+                <p className="text-gray-600">Menu yükleniyor...</p>
+              </div>
+            ) : menuItems.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
-                <p>Menu yükleniyor veya menu boş...</p>
-                <p className="text-sm mt-2">Backend'de menu verisi olduğundan emin olun.</p>
+                <p>Menu boş</p>
+                <p className="text-sm mt-2">Aksaray restoranı için menu verisi eklenmelidir.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
