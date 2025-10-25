@@ -253,6 +253,7 @@ app.get('/api/qr/test', async (req, res) => {
 // SSE endpoint for real-time notifications
 app.get('/api/events', (req, res) => {
   console.log('🔌 SSE connection request from:', req.get('origin'));
+  console.log('🔌 SSE endpoint hit at:', new Date().toISOString());
   
   // Set headers for SSE with proper CORS
   res.writeHead(200, {
