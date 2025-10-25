@@ -327,18 +327,31 @@ export default function DebugPage() {
           <div className="mt-4">
             <div className="flex items-center justify-between mb-2">
               <label className="block text-sm font-medium text-gray-300">Sipariş Ürünleri</label>
-              <button
-                onClick={loadRestaurantMenu}
-                disabled={isLoadingMenu}
-                className="flex items-center space-x-1 px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded transition-colors disabled:opacity-50"
-              >
-                <FaSync className={isLoadingMenu ? 'animate-spin' : ''} />
-                <span>Menüyü Yenile</span>
-              </button>
+              <div className="flex items-center space-x-2">
+                {isLoadingMenu && (
+                  <div className="flex items-center space-x-1 text-blue-400 text-xs">
+                    <FaSync className="animate-spin" />
+                    <span>Menü yükleniyor...</span>
+                  </div>
+                )}
+                {restaurantMenu.length > 0 && (
+                  <div className="text-green-400 text-xs">
+                    {restaurantMenu.length} ürün yüklendi
+                  </div>
+                )}
+                <button
+                  onClick={loadRestaurantMenu}
+                  disabled={isLoadingMenu}
+                  className="flex items-center space-x-1 px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded transition-colors disabled:opacity-50"
+                >
+                  <FaSync className={isLoadingMenu ? 'animate-spin' : ''} />
+                  <span>Menüyü Yenile</span>
+                </button>
+              </div>
             </div>
             
             {/* Menüden Ürün Seçimi */}
-            {restaurantMenu.length > 0 && (
+            {restaurantMenu.length > 0 ? (
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-300 mb-2">Menüden Ürün Ekle:</label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-32 overflow-y-auto">
@@ -363,6 +376,12 @@ export default function DebugPage() {
                       <div className="text-gray-400 text-xs">₺{item.price} - {item.category}</div>
                     </button>
                   ))}
+                </div>
+              </div>
+            ) : !isLoadingMenu && (
+              <div className="mb-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                <div className="text-yellow-300 text-sm">
+                  ⚠️ Menü yüklenemedi. "Menüyü Yenile" butonuna tıklayın veya console'da hata detaylarını kontrol edin.
                 </div>
               </div>
             )}
