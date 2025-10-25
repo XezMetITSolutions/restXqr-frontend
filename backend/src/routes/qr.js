@@ -64,6 +64,19 @@ router.post('/generate', async (req, res) => {
     
     console.log('✅ Restaurant found:', restaurant.name);
     
+    // Plan limiti kontrolü - Maksimum masa sayısı
+    const maxTables = restaurant.maxTables || 10;
+    if (tableNumber > maxTables) {
+      console.error(`❌ Table limit exceeded: ${tableNumber} > ${maxTables}`);
+      return res.status(403).json({
+        success: false,
+        message: `Plan limitiniz aşıldı! Maksimum ${maxTables} masa oluşturabilirsiniz. Paketinizi yükseltin.`,
+        limit: maxTables,
+        current: tableNumber,
+        upgradeRequired: true
+      });
+    }
+    
     // Try to reuse existing active, not expired token for this table
     const existing = await QRToken.findOne({
       where: {

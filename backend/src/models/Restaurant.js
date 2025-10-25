@@ -48,6 +48,24 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: 'active',
       field: 'subscription_status'
     },
+    maxTables: {
+      type: DataTypes.INTEGER,
+      defaultValue: 10,
+      field: 'max_tables',
+      comment: 'Maksimum masa sayısı (plan limiti)'
+    },
+    maxMenuItems: {
+      type: DataTypes.INTEGER,
+      defaultValue: 50,
+      field: 'max_menu_items',
+      comment: 'Maksimum menü ürünü sayısı (plan limiti)'
+    },
+    maxStaff: {
+      type: DataTypes.INTEGER,
+      defaultValue: 3,
+      field: 'max_staff',
+      comment: 'Maksimum personel sayısı (plan limiti)'
+    },
     isActive: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,

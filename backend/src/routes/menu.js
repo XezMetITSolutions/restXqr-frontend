@@ -328,6 +328,24 @@ router.post('/:restaurantId/menu/items', async (req, res) => {
       });
     }
     
+    // Plan limiti kontrolü - Maksimum menü ürünü sayısı
+    const restaurant = await Restaurant.findByPk(restaurantId);
+    if (restaurant) {
+      const maxMenuItems = restaurant.maxMenuItems || 50;
+      const currentItemCount = await MenuItem.count({ where: { restaurantId } });
+      
+      if (currentItemCount >= maxMenuItems) {
+        console.error(`❌ Menu item limit exceeded: ${currentItemCount} >= ${maxMenuItems}`);
+        return res.status(403).json({
+          success: false,
+          message: `Plan limitiniz aşıldı! Maksimum ${maxMenuItems} menü ürünü ekleyebilirsiniz. Paketinizi yükseltin.`,
+          limit: maxMenuItems,
+          current: currentItemCount,
+          upgradeRequired: true
+        });
+      }
+    }
+    
     // Handle both simple string and object format for name
     let itemName = name;
     if (typeof name === 'object' && name.tr) {

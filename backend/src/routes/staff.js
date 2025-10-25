@@ -247,6 +247,21 @@ router.post('/restaurant/:restaurantId', async (req, res) => {
     }
 
     console.log('✅ Restaurant found:', restaurant.name);
+    
+    // Plan limiti kontrolü - Maksimum personel sayısı
+    const maxStaff = restaurant.maxStaff || 3;
+    const currentStaffCount = await Staff.count({ where: { restaurantId } });
+    
+    if (currentStaffCount >= maxStaff) {
+      console.error(`❌ Staff limit exceeded: ${currentStaffCount} >= ${maxStaff}`);
+      return res.status(403).json({
+        success: false,
+        message: `Plan limitiniz aşıldı! Maksimum ${maxStaff} personel ekleyebilirsiniz. Paketinizi yükseltin.`,
+        limit: maxStaff,
+        current: currentStaffCount,
+        upgradeRequired: true
+      });
+    }
 
     // Check if email already exists for this restaurant
     const existingStaff = await Staff.findOne({

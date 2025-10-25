@@ -127,7 +127,7 @@ router.get('/:id', async (req, res) => {
 // POST /api/restaurants - Create restaurant
 router.post('/', async (req, res) => {
   try {
-    const { name, username, email, password, phone, address, features } = req.body;
+    const { name, username, email, password, phone, address, features, plan } = req.body;
     
     // Validate required fields
     if (!name || !username || !email || !password) {
@@ -136,6 +136,16 @@ router.post('/', async (req, res) => {
         message: 'Name, username, email, and password are required'
       });
     }
+    
+    // Plan limitlerini belirle
+    const PLAN_LIMITS = {
+      basic: { maxTables: 10, maxMenuItems: 50, maxStaff: 3 },
+      premium: { maxTables: 25, maxMenuItems: 150, maxStaff: 10 },
+      enterprise: { maxTables: 999, maxMenuItems: 999, maxStaff: 999 }
+    };
+    
+    const selectedPlan = plan || 'basic';
+    const limits = PLAN_LIMITS[selectedPlan] || PLAN_LIMITS.basic;
     
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -147,7 +157,11 @@ router.post('/', async (req, res) => {
       password: hashedPassword,
       phone,
       address,
-      features: features || ['qr_menu', 'basic_reports']
+      features: features || ['qr_menu', 'basic_reports'],
+      subscriptionPlan: selectedPlan,
+      maxTables: limits.maxTables,
+      maxMenuItems: limits.maxMenuItems,
+      maxStaff: limits.maxStaff
     });
     
     // Remove password from response
