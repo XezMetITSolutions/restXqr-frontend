@@ -46,11 +46,11 @@ export default function DebugPage() {
     addDetailedLog('Menü Yükleme', 'Aksaray restoranının menüsü çekiliyor...');
     
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com';
       addDetailedLog('API URL', `API URL: ${apiUrl}`);
       
       // Restoranları çek
-      const restaurantResponse = await fetch(`${apiUrl}/restaurants`);
+      const restaurantResponse = await fetch(`${apiUrl}/api/restaurants`);
       addDetailedLog('Restoran Yanıtı', `Status: ${restaurantResponse.status}`);
       
       if (restaurantResponse.ok) {
@@ -63,7 +63,7 @@ export default function DebugPage() {
         
         if (aksarayRestaurant) {
           // Menüyü çek
-          const menuResponse = await fetch(`${apiUrl}/restaurants/${aksarayRestaurant.id}/menu`);
+          const menuResponse = await fetch(`${apiUrl}/api/restaurants/${aksarayRestaurant.id}/menu`);
           addDetailedLog('Menü Yanıtı', `Status: ${menuResponse.status}`);
           
           if (menuResponse.ok) {
@@ -107,7 +107,7 @@ export default function DebugPage() {
     addDetailedLog('API Test', 'API bağlantısı test ediliyor...');
     
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com';
       const healthResponse = await fetch(`${apiUrl}/health`);
       addDetailedLog('Health Check', `Status: ${healthResponse.status}`);
       
@@ -136,7 +136,7 @@ export default function DebugPage() {
     addDetailedLog('Sipariş Oluşturma', 'Sipariş oluşturuluyor...');
     
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com';
       
       const orderPayload = {
         restaurantId: 'aksaray',
@@ -155,7 +155,7 @@ export default function DebugPage() {
 
       addDetailedLog('Sipariş Payload', `Gönderilecek sipariş verisi`, orderPayload);
       
-      const orderResponse = await fetch(`${apiUrl}/orders`, {
+      const orderResponse = await fetch(`${apiUrl}/api/orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -191,7 +191,7 @@ export default function DebugPage() {
             }
           };
           
-          const notificationResponse = await fetch(`${apiUrl}/debug/publish-notification`, {
+          const notificationResponse = await fetch(`${apiUrl}/api/debug/publish-notification`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
