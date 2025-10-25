@@ -105,10 +105,21 @@ export default function StandaloneKitchenPage() {
 
   // Backend'den siparişleri çek
   const fetchOrdersFromBackend = async () => {
-      if (!isLoggedIn || !currentRestaurant?.id) return;
+      if (!isLoggedIn) {
+        console.log('🍳 Sipariş çekme atlandı: Giriş yapılmamış');
+        return;
+      }
+      
+      if (!currentRestaurant?.id) {
+        console.log('🍳 Sipariş çekme atlandı: currentRestaurant.id yok', { currentRestaurant });
+        return;
+      }
       
       try {
-        console.log('🍳 Backend\'den siparişler çekiliyor...');
+        console.log('🍳 Backend\'den siparişler çekiliyor...', { 
+          restaurantId: currentRestaurant.id,
+          restaurantName: currentRestaurant.name 
+        });
         const response = await apiService.getOrders(currentRestaurant.id, 'pending');
         console.log('🍳 Backend siparişleri:', response);
         
