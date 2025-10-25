@@ -155,7 +155,7 @@ export default function DebugPage() {
       }
       
       // Mutfak panelinin çektiği endpoint'i test et
-      const ordersResponse = await fetch(`${apiUrl}/restaurants/${aksarayRestaurant.id}/orders?status=pending`);
+      const ordersResponse = await fetch(`${apiUrl}/orders?restaurantId=${aksarayRestaurant.id}&status=pending`);
       addDetailedLog('Mutfak API Yanıt', `Status: ${ordersResponse.status}`);
       
       if (ordersResponse.ok) {
@@ -164,7 +164,7 @@ export default function DebugPage() {
         
         setKitchenApiStatus({ 
           success: true, 
-          endpoint: `${apiUrl}/restaurants/${aksarayRestaurant.id}/orders?status=pending`,
+          endpoint: `${apiUrl}/orders?restaurantId=${aksarayRestaurant.id}&status=pending`,
           orderCount: ordersData.data?.length || 0,
           data: ordersData
         });
@@ -173,7 +173,7 @@ export default function DebugPage() {
         const errorText = await ordersResponse.text();
         setKitchenApiStatus({ 
           success: false, 
-          endpoint: `${apiUrl}/restaurants/${aksarayRestaurant.id}/orders?status=pending`,
+          endpoint: `${apiUrl}/orders?restaurantId=${aksarayRestaurant.id}&status=pending`,
           error: errorText 
         });
         addResult('Mutfak API Test', false, `Mutfak API hatası: ${ordersResponse.status}`);
@@ -207,7 +207,7 @@ export default function DebugPage() {
       }
       
       // Kasa panelinin çektiği endpoint'i test et
-      const ordersResponse = await fetch(`${apiUrl}/restaurants/${aksarayRestaurant.id}/orders?status=pending`);
+      const ordersResponse = await fetch(`${apiUrl}/orders?restaurantId=${aksarayRestaurant.id}&status=pending`);
       addDetailedLog('Kasa API Yanıt', `Status: ${ordersResponse.status}`);
       
       if (ordersResponse.ok) {
@@ -216,7 +216,7 @@ export default function DebugPage() {
         
         setCashierApiStatus({ 
           success: true, 
-          endpoint: `${apiUrl}/restaurants/${aksarayRestaurant.id}/orders?status=pending`,
+          endpoint: `${apiUrl}/orders?restaurantId=${aksarayRestaurant.id}&status=pending`,
           orderCount: ordersData.data?.length || 0,
           data: ordersData
         });
@@ -225,7 +225,7 @@ export default function DebugPage() {
         const errorText = await ordersResponse.text();
         setCashierApiStatus({ 
           success: false, 
-          endpoint: `${apiUrl}/restaurants/${aksarayRestaurant.id}/orders?status=pending`,
+          endpoint: `${apiUrl}/orders?restaurantId=${aksarayRestaurant.id}&status=pending`,
           error: errorText 
         });
         addResult('Kasa API Test', false, `Kasa API hatası: ${ordersResponse.status}`);
