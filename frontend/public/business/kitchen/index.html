@@ -256,10 +256,6 @@
         
         <div class="cards-container">
             <!-- Siparişler burada dinamik olarak yüklenecek -->
-            <div id="loadingMessage" style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #666;">
-                <h3>Yükleniyor...</h3>
-                <p>Sayfa yükleniyor, lütfen bekleyin...</p>
-        </div>
         </div>
         
     </div>
@@ -274,14 +270,19 @@
             
             // Login kontrolü
         function checkLogin() {
+            console.log('🔍 Login kontrolü yapılıyor...');
             const kitchenStaff = localStorage.getItem('kitchen_staff');
+            console.log('🔍 LocalStorage kitchen_staff:', kitchenStaff);
+            
             if (kitchenStaff) {
                 staffInfo = JSON.parse(kitchenStaff);
                 isLoggedIn = true;
                 document.querySelector('.header h1').textContent = `Mutfak Arayüzü - ${staffInfo.name}`;
-            loadOrders();
-            connectRealtime();
+                console.log('✅ Login başarılı, siparişler yükleniyor...');
+                loadOrders();
+                connectRealtime();
             } else {
+                console.log('❌ Login yok, login formu gösteriliyor...');
                 showLoginForm();
             }
         }
