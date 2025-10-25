@@ -14,7 +14,8 @@ import {
   FaEdit,
   FaTrash,
   FaEye,
-  FaChartLine
+  FaChartLine,
+  FaLock
 } from 'react-icons/fa';
 
 interface Restaurant {
@@ -265,20 +266,30 @@ export default function RestaurantsManagement() {
                 </div>
 
                 {/* Actions */}
-                <div className="flex gap-2">
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => window.open(`https://${restaurant.username}.restxqr.com`, '_blank')}
+                      className="flex-1 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors flex items-center justify-center gap-2 font-medium"
+                    >
+                      <FaEye />
+                      Görüntüle
+                    </button>
+                    <button
+                      onClick={() => router.push(`/admin/restaurants/${restaurant.id}/edit`)}
+                      className="flex-1 py-2 bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition-colors flex items-center justify-center gap-2 font-medium"
+                    >
+                      <FaEdit />
+                      Düzenle
+                    </button>
+                  </div>
                   <button
-                    onClick={() => window.open(`https://${restaurant.username}.restxqr.com`, '_blank')}
-                    className="flex-1 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors flex items-center justify-center gap-2 font-medium"
+                    onClick={() => window.open(`https://${restaurant.username}.restxqr.com/business/login?superadmin=true`, '_blank')}
+                    className="w-full py-2 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-lg hover:from-red-600 hover:to-orange-600 transition-all flex items-center justify-center gap-2 font-bold shadow-md"
+                    title="Süper Admin olarak bu restoranın paneline giriş yap"
                   >
-                    <FaEye />
-                    Görüntüle
-                  </button>
-                  <button
-                    onClick={() => router.push(`/admin/restaurants/${restaurant.id}/edit`)}
-                    className="flex-1 py-2 bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition-colors flex items-center justify-center gap-2 font-medium"
-                  >
-                    <FaEdit />
-                    Düzenle
+                    <FaLock />
+                    🔐 Süper Admin Girişi
                   </button>
                 </div>
               </div>

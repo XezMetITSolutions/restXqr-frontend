@@ -272,52 +272,7 @@ ${result.restaurant.ftpConfig ? `
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Mutfak Türü
-                </label>
-                <select
-                  value={formData.cuisine}
-                  onChange={(e) => setFormData({ ...formData, cuisine: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="">Seçiniz</option>
-                  <option value="turkish">Türk Mutfağı</option>
-                  <option value="italian">İtalyan</option>
-                  <option value="chinese">Çin</option>
-                  <option value="japanese">Japon</option>
-                  <option value="mexican">Meksika</option>
-                  <option value="indian">Hint</option>
-                  <option value="mediterranean">Akdeniz</option>
-                  <option value="fast-food">Fast Food</option>
-                  <option value="cafe">Kafe</option>
-                  <option value="other">Diğer</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Kapasite
-                </label>
-                <input
-                  type="number"
-                  value={formData.capacity}
-                  onChange={(e) => setFormData({ ...formData, capacity: parseInt(e.target.value) || 0 })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Açıklama
-                </label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
+              {/* Mutfak Türü, Kapasite, Açıklama - Gereksiz, kaldırıldı */}
             </div>
           </div>
 
@@ -423,77 +378,7 @@ ${result.restaurant.ftpConfig ? `
             </div>
           </div>
 
-          {/* Çalışma Saatleri */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-6">Çalışma Saatleri</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Açılış Saati
-                </label>
-                <input
-                  type="time"
-                  value={formData.openingTime}
-                  onChange={(e) => setFormData({ ...formData, openingTime: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Kapanış Saati
-                </label>
-                <input
-                  type="time"
-                  value={formData.closingTime}
-                  onChange={(e) => setFormData({ ...formData, closingTime: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Sosyal Medya */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-6">Sosyal Medya</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Website
-                </label>
-                <input
-                  type="url"
-                  value={formData.website}
-                  onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Instagram
-                </label>
-                <input
-                  type="text"
-                  value={formData.instagram}
-                  onChange={(e) => setFormData({ ...formData, instagram: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Facebook
-                </label>
-                <input
-                  type="text"
-                  value={formData.facebook}
-                  onChange={(e) => setFormData({ ...formData, facebook: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-            </div>
-          </div>
+          {/* Çalışma Saatleri ve Sosyal Medya - Gereksiz, kaldırıldı */}
 
           {/* Admin Kullanıcı Bilgileri */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
