@@ -186,7 +186,7 @@ export default function MenuDebugPage() {
     });
 
     try {
-      if (!menuData?.items?.length) {
+      if (!menuData || !menuData.items || menuData.items.length === 0) {
         updateStep('order-simulation', {
           status: 'error',
           message: '❌ Menu verileri yok, simülasyon yapılamıyor'
