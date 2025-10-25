@@ -26,6 +26,24 @@ export default function KitchenDashboard() {
   const [isConnected, setIsConnected] = useState(false);
   const [notifications, setNotifications] = useState<string[]>([]);
 
+  // Session kontrolü - sayfa yüklendiğinde localStorage'dan kontrol et
+  useEffect(() => {
+    const checkSession = () => {
+      const savedStaff = localStorage.getItem('kitchen_staff');
+      if (savedStaff) {
+        try {
+          const staff = JSON.parse(savedStaff);
+          console.log('🍳 Mutfak oturumu geri yüklendi:', staff);
+        } catch (error) {
+          console.error('Session restore error:', error);
+          localStorage.removeItem('kitchen_staff');
+        }
+      }
+    };
+
+    checkSession();
+  }, []);
+
   // Real-time connection için EventSource
   useEffect(() => {
     const eventSource = new EventSource(`${process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com'}/api/events/orders`);

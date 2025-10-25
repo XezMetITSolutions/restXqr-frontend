@@ -47,6 +47,26 @@ export default function StandaloneKitchenPage() {
   const [loginError, setLoginError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Session kontrolü - sayfa yüklendiğinde localStorage'dan kontrol et
+  useEffect(() => {
+    const checkSession = () => {
+      const savedStaff = localStorage.getItem('kitchen_staff');
+      if (savedStaff) {
+        try {
+          const staff = JSON.parse(savedStaff);
+          setIsLoggedIn(true);
+          setStaffInfo(staff);
+          console.log('🍳 Mutfak oturumu geri yüklendi:', staff);
+        } catch (error) {
+          console.error('Session restore error:', error);
+          localStorage.removeItem('kitchen_staff');
+        }
+      }
+    };
+
+    checkSession();
+  }, []);
+
   // Backend'den siparişleri çek
   useEffect(() => {
     const fetchOrdersFromBackend = async () => {
@@ -123,7 +143,7 @@ export default function StandaloneKitchenPage() {
         if (response.data.role === 'chef') {
           setIsLoggedIn(true);
           setStaffInfo(response.data);
-          sessionStorage.setItem('kitchen_staff', JSON.stringify(response.data));
+          localStorage.setItem('kitchen_staff', JSON.stringify(response.data));
           initializeDemoData();
         } else {
           setLoginError('Bu panele erişim yetkiniz yok. Sadece aşçılar giriş yapabilir.');
@@ -143,7 +163,7 @@ export default function StandaloneKitchenPage() {
   const handleLogout = () => {
     setIsLoggedIn(false);
     setStaffInfo(null);
-    sessionStorage.removeItem('kitchen_staff');
+    localStorage.removeItem('kitchen_staff');
   };
 
   // Sadece değişiklik bildirimlerini dinle
