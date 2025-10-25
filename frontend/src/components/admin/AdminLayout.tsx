@@ -147,19 +147,7 @@ export default function AdminLayout({
                     <span className="font-medium">Kullanıcı Yönetimi</span>
                   </Link>
                 </li>
-                <li>
-                  <Link 
-                    href="/admin/qr-management" 
-                    className={`group flex items-center p-4 rounded-xl hover:bg-white/10 text-blue-100 hover:text-white transition-all duration-200 ${
-                      title === 'QR Kod Yönetimi' ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg' : ''
-                    }`}
-                  >
-                    <div className={`p-2 rounded-lg mr-4 transition-all ${title === 'QR Kod Yönetimi' ? 'bg-white/20' : 'bg-white/5 group-hover:bg-white/10'}`}>
-                      <FaQrcode className="text-lg" />
-                    </div>
-                    <span className="font-medium">QR Kod Yönetimi</span>
-                  </Link>
-                </li>
+                {/* QR Kod Yönetimi - Admin panelinden kaldırıldı, restoranlar kendi QR kodlarını oluşturur */}
                 <li>
                   <Link 
                     href="/admin/notifications" 

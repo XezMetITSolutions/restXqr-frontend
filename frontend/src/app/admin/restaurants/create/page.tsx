@@ -22,9 +22,34 @@ interface RestaurantFormData {
   website: string;
   instagram: string;
   facebook: string;
-  plan: 'basic' | 'premium' | 'pro';
+  plan: 'basic' | 'premium' | 'enterprise';
   status: 'active' | 'inactive' | 'pending';
 }
+
+// Plan limitleri
+const PLAN_LIMITS = {
+  basic: {
+    name: 'Basic',
+    price: 2980,
+    maxTables: 10,
+    maxMenuItems: 50,
+    maxStaff: 3
+  },
+  premium: {
+    name: 'Premium',
+    price: 4980,
+    maxTables: 25,
+    maxMenuItems: 150,
+    maxStaff: 10
+  },
+  enterprise: {
+    name: 'Enterprise',
+    price: 9980,
+    maxTables: 999,
+    maxMenuItems: 999,
+    maxStaff: 999
+  }
+};
 
 export default function CreateRestaurant() {
   const router = useRouter();
@@ -460,10 +485,24 @@ ${result.restaurant.ftpConfig ? `
                   onChange={(e) => setFormData({ ...formData, plan: e.target.value as any })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
-                  <option value="basic">Basic - ₺199/ay</option>
-                  <option value="premium">Premium - ₺399/ay</option>
-                  <option value="pro">Pro - ₺599/ay</option>
+                  <option value="basic">Basic - ₺{PLAN_LIMITS.basic.price}/ay</option>
+                  <option value="premium">Premium - ₺{PLAN_LIMITS.premium.price}/ay</option>
+                  <option value="enterprise">Enterprise - ₺{PLAN_LIMITS.enterprise.price}/ay</option>
                 </select>
+                
+                {/* Plan Detayları */}
+                {formData.plan && (
+                  <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <h3 className="text-sm font-semibold text-blue-900 mb-2">
+                      {PLAN_LIMITS[formData.plan].name} Plan Limitleri:
+                    </h3>
+                    <ul className="text-xs text-blue-800 space-y-1">
+                      <li>• Maksimum Masa: {PLAN_LIMITS[formData.plan].maxTables}</li>
+                      <li>• Maksimum Menü Ürünü: {PLAN_LIMITS[formData.plan].maxMenuItems}</li>
+                      <li>• Maksimum Personel: {PLAN_LIMITS[formData.plan].maxStaff}</li>
+                    </ul>
+                  </div>
+                )}
               </div>
 
               <div>
