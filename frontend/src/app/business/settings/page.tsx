@@ -364,10 +364,8 @@ export default function SettingsPage() {
 
   const tabs = [
     { id: 'general', name: 'Genel Ayarlar', icon: FaCog },
-    { id: 'branding', name: 'Görsel Kimlik', icon: FaPalette },
-    { id: 'payment', name: 'Ödeme & Abonelik', icon: FaCreditCard },
-    { id: 'integrations', name: 'Entegrasyonlar', icon: FaPlug },
-    { id: 'notifications', name: 'Bildirimler', icon: FaBell }
+    { id: 'branding', name: 'Görsel Kimlik', icon: FaPalette }
+    // Ödeme & Abonelik, Entegrasyonlar, Bildirimler - Kaldırıldı
   ];
 
   return (
@@ -571,7 +569,7 @@ export default function SettingsPage() {
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           Subdomain
                         </label>
-                        <div className="flex items-center gap-2">
+                        <div className="relative">
                           <input
                             type="text"
                             value={settings.basicInfo.subdomain}
@@ -579,10 +577,10 @@ export default function SettingsPage() {
                               updateBasicInfo({ subdomain: e.target.value });
                               handleSubdomainChange(e.target.value);
                             }}
-                            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            className="w-full px-4 py-2 pr-36 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                           />
-                          <span className="px-4 py-2 bg-purple-100 text-purple-800 rounded-lg font-medium">
-                            .guzellestir.com
+                          <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium bg-gray-50 px-2 py-1 rounded">
+                            .restxqr.com
                           </span>
                         </div>
                         <div className="mt-2 flex items-center gap-2">
@@ -602,7 +600,7 @@ export default function SettingsPage() {
                           </span>
                         </div>
                         <p className="text-sm text-gray-500 mt-1">
-                          Menü adresiniz: <span className="text-purple-600 font-medium">{settings.basicInfo.subdomain}.guzellestir.com</span>
+                          Menü adresiniz: <span className="text-purple-600 font-medium">{settings.basicInfo.subdomain}.restxqr.com</span>
                         </p>
                       </div>
 
@@ -721,14 +719,14 @@ export default function SettingsPage() {
                       {/* Çalışma Saatleri */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Çalışma Saatleri
+                          Çalışma Saatleri (7 Gün)
                         </label>
                         <div className="flex gap-2">
                         <textarea
                           value={settings.basicInfo.workingHours}
                           onChange={(e) => updateBasicInfo({ workingHours: e.target.value })}
-                          rows={3}
-                          placeholder="Pazartesi - Cuma: 08:00 - 22:00&#10;Cumartesi - Pazar: 09:00 - 23:00"
+                          rows={7}
+                          placeholder="Pazartesi: 08:00 - 22:00&#10;Salı: 08:00 - 22:00&#10;Çarşamba: 08:00 - 22:00&#10;Perşembe: 08:00 - 22:00&#10;Cuma: 08:00 - 23:00&#10;Cumartesi: 09:00 - 23:00&#10;Pazar: 09:00 - 22:00"
                             className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                           />
                           <button
