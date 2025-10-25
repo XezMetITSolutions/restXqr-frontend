@@ -226,6 +226,9 @@ export default function DebugPage() {
       setIsRunning(false);
     }
   };
+
+  // Sipariş oluştur
+  const createOrder = async () => {
     if (selectedItems.length === 0) {
       addResult('Sipariş Oluşturma', false, 'Lütfen en az 1 ürün seçin!');
       return;
@@ -324,7 +327,10 @@ export default function DebugPage() {
 
   // Sayfa yüklendiğinde menüyü çek
   useEffect(() => {
-    loadMenu();
+    const initializeMenu = async () => {
+      await loadMenu();
+    };
+    initializeMenu();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const clearResults = () => {
@@ -440,9 +446,9 @@ export default function DebugPage() {
                       </div>
                     </div>
                   ))}
+                </div>
+              )}
             </div>
-          )}
-        </div>
 
             {/* Seçilen Ürünler */}
             {selectedItems.length > 0 && (
@@ -461,12 +467,12 @@ export default function DebugPage() {
                       </div>
                       <div className="flex items-center space-x-2">
                         <div className="text-white font-semibold">₺{item.price}</div>
-            <button
+                        <button
                           onClick={() => setSelectedItems(prev => prev.filter((_, i) => i !== index))}
                           className="text-red-400 hover:text-red-300 text-sm"
-            >
+                        >
                           ✕
-            </button>
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -490,7 +496,7 @@ export default function DebugPage() {
                   </div>
                 </div>
 
-            <button
+                <button
                   onClick={createOrder}
                   disabled={isRunning}
                   className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 px-4 rounded-lg font-semibold hover:from-green-700 hover:to-green-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
@@ -506,7 +512,7 @@ export default function DebugPage() {
                       <span>Sipariş Oluştur</span>
                     </div>
                   )}
-            </button>
+                </button>
               </div>
             )}
           </div>
@@ -519,15 +525,15 @@ export default function DebugPage() {
                 <div className="text-sm text-gray-400">
                   {results.length} log
                 </div>
-            <button
+                <button
                   onClick={clearResults}
                   className="px-3 py-1 bg-gray-600 hover:bg-gray-700 text-white text-sm rounded transition-colors"
-            >
+                >
                   Temizle
-            </button>
-          </div>
-        </div>
-
+                </button>
+              </div>
+            </div>
+            
             <div className="space-y-3 max-h-96 overflow-y-auto">
               {results.length === 0 ? (
                 <div className="text-center text-gray-400 py-8">
@@ -568,9 +574,9 @@ export default function DebugPage() {
                         )}
                       </div>
                     </div>
-                </div>
-              ))
-            )}
+                  </div>
+                ))
+              )}
             </div>
             
             {/* Console Log Info */}
