@@ -23,7 +23,7 @@ import useRealtime from '@/hooks/useRealtime';
 
 export default function StandaloneKitchenPage() {
   const router = useRouter();
-  const { currentRestaurant } = useRestaurantStore();
+  const { currentRestaurant, setCurrentRestaurant } = useRestaurantStore();
   const { 
     getKitchenOrders, 
     updateOrderStatus, 
@@ -82,6 +82,16 @@ export default function StandaloneKitchenPage() {
           const staff = JSON.parse(savedStaff);
           setIsLoggedIn(true);
           setStaffInfo(staff);
+          
+          // Restoran bilgisini de restore et
+          if (staff.restaurantId) {
+            setCurrentRestaurant({
+              id: staff.restaurantId,
+              name: staff.restaurantName || 'Restoran',
+              username: staff.restaurantUsername || window.location.hostname.split('.')[0]
+            } as any);
+          }
+          
           console.log('🍳 Mutfak oturumu geri yüklendi:', staff);
         } catch (error) {
           console.error('Session restore error:', error);
@@ -91,7 +101,7 @@ export default function StandaloneKitchenPage() {
     };
 
     checkSession();
-  }, []);
+  }, [setCurrentRestaurant]);
 
   // Backend'den siparişleri çek
   const fetchOrdersFromBackend = async () => {
@@ -171,6 +181,16 @@ export default function StandaloneKitchenPage() {
           setIsLoggedIn(true);
           setStaffInfo(response.data);
           localStorage.setItem('kitchen_staff', JSON.stringify(response.data));
+          
+          // Restoran bilgisini set et
+          if (response.data.restaurantId) {
+            setCurrentRestaurant({
+              id: response.data.restaurantId,
+              name: response.data.restaurantName || 'Restoran',
+              username: response.data.restaurantUsername || subdomain
+            } as any);
+          }
+          
           initializeDemoData();
         } else {
           setLoginError('Bu panele erişim yetkiniz yok. Sadece aşçılar giriş yapabilir.');
