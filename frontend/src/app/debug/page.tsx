@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FaBug, FaUtensils, FaCashRegister, FaBell, FaPlay, FaCheckCircle, FaExclamationTriangle, FaRefresh } from 'react-icons/fa';
+import { FaBug, FaUtensils, FaCashRegister, FaBell, FaPlay, FaCheckCircle, FaExclamationTriangle, FaSync } from 'react-icons/fa';
 
 interface DebugResult {
   step: string;
@@ -308,7 +308,7 @@ export default function DebugPage() {
                 disabled={isLoadingMenu}
                 className="flex items-center space-x-1 px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded transition-colors disabled:opacity-50"
               >
-                <FaRefresh className={isLoadingMenu ? 'animate-spin' : ''} />
+                <FaSync className={isLoadingMenu ? 'animate-spin' : ''} />
                 <span>Menüyü Yenile</span>
               </button>
             </div>
