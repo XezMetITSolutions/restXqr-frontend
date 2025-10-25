@@ -85,6 +85,31 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Server-Sent Events endpoint for real-time updates
+app.get('/api/events/orders', (req, res) => {
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Cache-Control'
+  });
+
+  // Client'a bağlandığını bildir
+  res.write(`data: ${JSON.stringify({ type: 'connected', message: 'Connected to kitchen updates' })}\n\n`);
+
+  // Client'ı subscribers listesine ekle
+  const clientId = Date.now().toString();
+  const { addSubscriber } = require('./lib/realtime');
+  addSubscriber(clientId, res);
+
+  // Client bağlantısı kesildiğinde temizle
+  req.on('close', () => {
+    const { removeSubscriber } = require('./lib/realtime');
+    removeSubscriber(clientId);
+  });
+});
+
 // API Routes (placeholder)
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/restaurants', require('./routes/restaurants'));

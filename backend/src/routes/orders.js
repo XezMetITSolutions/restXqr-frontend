@@ -129,6 +129,21 @@ router.post('/', async (req, res) => {
     // Deactivation should occur after payment is completed. Placeholder logic below if needed later:
     // await QRToken.update({ isActive: false }, { where: { restaurantId, tableNumber, isActive: true } });
 
+    // Real-time notification için order bilgilerini publish et
+    const { publish } = require('../lib/realtime');
+    publish('new_order', {
+      orderId: order.id,
+      restaurantId: order.restaurantId,
+      tableNumber: order.tableNumber,
+      items: items.map(item => ({
+        name: item.name,
+        quantity: item.quantity,
+        notes: item.notes || ''
+      })),
+      totalAmount: order.totalAmount,
+      timestamp: new Date().toISOString()
+    });
+
     res.status(201).json({ success: true, data: order, message: 'Order created' });
   } catch (error) {
     console.error('POST /orders error:', error);
