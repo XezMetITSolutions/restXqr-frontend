@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mutfak Arayüzü</title>
+    <title>Kasa Paneli</title>
     <link rel="stylesheet" href="../../styles.css">
     <style>
         body {
@@ -13,7 +13,7 @@
             background-color: #f5f5f5;
         }
         .header {
-            background-color: #e53935;
+            background-color: #4caf50;
             color: white;
             padding: 1rem;
             display: flex;
@@ -45,12 +45,12 @@
             cursor: pointer;
         }
         .filter-btn.active {
-            background-color: #e53935;
+            background-color: #4caf50;
             color: white;
         }
         .cards-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 1rem;
         }
         .card {
@@ -60,7 +60,7 @@
             padding: 1rem;
         }
         .card.priority {
-            border-left: 4px solid #e53935;
+            border-left: 4px solid #ff9800;
         }
         .card-header {
             display: flex;
@@ -77,7 +77,7 @@
             color: #757575;
         }
         .order-time.urgent {
-            color: #e53935;
+            color: #ff9800;
             font-weight: bold;
         }
         .order-items {
@@ -96,6 +96,10 @@
             margin: 0 1rem;
             font-weight: bold;
         }
+        .item-price {
+            font-weight: bold;
+            color: #4caf50;
+        }
         .item-notes {
             font-size: 0.8rem;
             color: #757575;
@@ -106,23 +110,35 @@
             justify-content: space-between;
             align-items: center;
             margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f0f0f0;
+        }
+        .total-amount {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #4caf50;
         }
         .btn {
             padding: 0.5rem 1rem;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            font-size: 0.9rem;
         }
         .btn-primary {
-            background-color: #e53935;
-            color: white;
-        }
-        .btn-success {
             background-color: #4caf50;
             color: white;
         }
+        .btn-success {
+            background-color: #2196f3;
+            color: white;
+        }
+        .btn-warning {
+            background-color: #ff9800;
+            color: white;
+        }
         .priority-badge {
-            background-color: #e53935;
+            background-color: #ff9800;
             color: white;
             padding: 0.25rem 0.5rem;
             border-radius: 4px;
@@ -138,12 +154,6 @@
             }
             .header h1 {
                 font-size: 1.2rem;
-            }
-            .header div {
-                display: flex;
-                gap: 0.5rem;
-                flex-wrap: wrap;
-                justify-content: center;
             }
             .container {
                 padding: 0.5rem;
@@ -187,57 +197,11 @@
                 gap: 0.5rem;
             }
         }
-        
-        @media (max-width: 480px) {
-            .header {
-                padding: 0.8rem;
-            }
-            .header h1 {
-                font-size: 1.1rem;
-            }
-            .filter-btn {
-                padding: 0.3rem 0.6rem;
-                font-size: 0.75rem;
-            }
-            .card {
-                padding: 0.6rem;
-            }
-            .table-number {
-                font-size: 0.9rem;
-            }
-            .order-time {
-                font-size: 0.8rem;
-            }
-            .item-name {
-                font-size: 0.9rem;
-            }
-            .item-notes {
-                font-size: 0.75rem;
-            }
-            .priority-badge {
-                font-size: 0.7rem;
-                padding: 0.2rem 0.4rem;
-            }
-        }
-        
-        /* Tablet responsive styles */
-        @media (min-width: 481px) and (max-width: 1024px) {
-            .cards-container {
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            }
-            .container {
-                padding: 0.8rem;
-            }
-            .filter-btn {
-                padding: 0.4rem 0.8rem;
-                font-size: 0.85rem;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>Mutfak Arayüzü</h1>
+        <h1>Kasa Paneli</h1>
         <div>
             <button class="btn">Bildirimler</button>
             <button class="btn">Çıkış</button>
@@ -247,96 +211,13 @@
     <div class="container">
         <div class="filters">
             <button class="filter-btn active">Tümü</button>
-            <button class="filter-btn">Yeni</button>
-            <button class="filter-btn">Hazırlanıyor</button>
-            <button class="filter-btn">Hazır</button>
+            <button class="filter-btn">Ödeme Bekleyen</button>
+            <button class="filter-btn">Ödenen</button>
             <button class="filter-btn">Öncelikli</button>
         </div>
         
         <div class="cards-container">
-            <!-- Masa 1 -->
-            <div class="card priority">
-                <div class="card-header">
-                    <div class="table-number">Masa 1</div>
-                    <div class="priority-badge">Öncelikli</div>
-                </div>
-                <div class="order-time urgent">25 dk önce</div>
-                <div class="order-items">
-                    <div class="order-item">
-                        <div class="item-name">
-                            Karışık Pizza
-                            <div class="item-notes">Ekstra peynir, soğansız</div>
-                        </div>
-                        <div class="item-quantity">x2</div>
-                        <button class="btn btn-success">Hazır</button>
-                    </div>
-                    <div class="order-item">
-                        <div class="item-name">Tiramisu</div>
-                        <div class="item-quantity">x2</div>
-                        <button class="btn btn-primary">Hazırla</button>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <div>Garson: Ahmet</div>
-                </div>
-            </div>
-            
-            <!-- Masa 2 -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="table-number">Masa 2</div>
-                </div>
-                <div class="order-time">10 dk önce</div>
-                <div class="order-items">
-                    <div class="order-item">
-                        <div class="item-name">
-                            Izgara Köfte
-                            <div class="item-notes">Orta pişmiş</div>
-                        </div>
-                        <div class="item-quantity">x1</div>
-                        <button class="btn btn-success">Hazır</button>
-                    </div>
-                    <div class="order-item">
-                        <div class="item-name">
-                            Tavuk Şiş
-                        </div>
-                        <div class="item-quantity">x1</div>
-                        <button class="btn btn-success">Hazır</button>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <div>Garson: Mehmet</div>
-                </div>
-            </div>
-            
-            <!-- Masa 3 -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="table-number">Masa 3</div>
-                </div>
-                <div class="order-time">5 dk önce</div>
-                <div class="order-items">
-                    <div class="order-item">
-                        <div class="item-name">
-                            Salata
-                            <div class="item-notes">Soğansız, ekstra zeytinyağı</div>
-                        </div>
-                        <div class="item-quantity">x1</div>
-                        <button class="btn btn-primary">Hazırla</button>
-                    </div>
-                    <div class="order-item">
-                        <div class="item-name">
-                            Makarna
-                            <div class="item-notes">Bolonez sos</div>
-                        </div>
-                        <div class="item-quantity">x1</div>
-                        <button class="btn btn-primary">Hazırla</button>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <div>Garson: Ayşe</div>
-                </div>
-            </div>
+            <!-- Siparişler burada dinamik olarak yüklenecek -->
         </div>
     </div>
 
@@ -350,11 +231,11 @@
 
         // Login kontrolü
         function checkLogin() {
-            const kitchenStaff = localStorage.getItem('kitchen_staff');
-            if (kitchenStaff) {
-                staffInfo = JSON.parse(kitchenStaff);
+            const cashierStaff = sessionStorage.getItem('cashier_staff');
+            if (cashierStaff) {
+                staffInfo = JSON.parse(cashierStaff);
                 isLoggedIn = true;
-                document.querySelector('.header h1').textContent = `Mutfak Arayüzü - ${staffInfo.name}`;
+                document.querySelector('.header h1').textContent = `Kasa Paneli - ${staffInfo.name}`;
                 loadOrders();
                 connectRealtime();
             } else {
@@ -367,7 +248,7 @@
             const container = document.querySelector('.container');
             container.innerHTML = `
                 <div style="max-width: 400px; margin: 50px auto; padding: 2rem; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <h2 style="text-align: center; margin-bottom: 2rem; color: #e53935;">Mutfak Paneli Girişi</h2>
+                    <h2 style="text-align: center; margin-bottom: 2rem; color: #4caf50;">Kasa Paneli Girişi</h2>
                     <form id="loginForm">
                         <div style="margin-bottom: 1rem;">
                             <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Kullanıcı Adı:</label>
@@ -377,7 +258,7 @@
                             <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Şifre:</label>
                             <input type="password" id="password" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
                         </div>
-                        <button type="submit" style="width: 100%; padding: 0.75rem; background: #e53935; color: white; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer;">
+                        <button type="submit" style="width: 100%; padding: 0.75rem; background: #4caf50; color: white; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer;">
                             Giriş Yap
                         </button>
                     </form>
@@ -416,13 +297,13 @@
                 const result = await response.json();
 
                 if (response.ok && result.success) {
-                    if (result.data.role === 'chef') {
+                    if (result.data.role === 'cashier') {
                         staffInfo = result.data;
-                        localStorage.setItem('kitchen_staff', JSON.stringify(staffInfo));
+                        sessionStorage.setItem('cashier_staff', JSON.stringify(staffInfo));
                         isLoggedIn = true;
                         location.reload(); // Sayfayı yenile
                     } else {
-                        errorDiv.textContent = 'Bu panele erişim yetkiniz yok. Sadece mutfak personeli giriş yapabilir.';
+                        errorDiv.textContent = 'Bu panele erişim yetkiniz yok. Sadece kasiyerler giriş yapabilir.';
                         errorDiv.style.display = 'block';
                     }
                 } else {
@@ -482,14 +363,15 @@
                                     ${item.notes ? `<div class="item-notes">${item.notes}</div>` : ''}
                                 </div>
                                 <div class="item-quantity">x${item.quantity}</div>
-                                <button class="btn btn-primary" onclick="updateItemStatus('${order.id}', '${item.id}')">
-                                    Hazırla
-                                </button>
+                                <div class="item-price">₺${item.price}</div>
                             </div>
                         `).join('')}
                     </div>
                     <div class="card-footer">
-                        <div>Toplam: ₺${order.totalAmount}</div>
+                        <div class="total-amount">Toplam: ₺${order.totalAmount}</div>
+                        <button class="btn btn-primary" onclick="processPayment('${order.id}')">
+                            Ödeme Al
+                        </button>
                     </div>
                 </div>
             `).join('');
@@ -503,22 +385,30 @@
             return Math.floor(diffMs / (1000 * 60));
         }
 
-        // Item durumu güncelle
-        async function updateItemStatus(orderId, itemId) {
+        // Ödeme işlemi
+        async function processPayment(orderId) {
             try {
-                const response = await fetch(`${API_URL}/orders/${orderId}/items/${itemId}`, {
+                const response = await fetch(`${API_URL}/orders/${orderId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ status: 'ready' }),
+                    body: JSON.stringify({ 
+                        status: 'completed',
+                        paymentStatus: 'paid',
+                        paidAt: new Date().toISOString()
+                    }),
                 });
 
                 if (response.ok) {
                     loadOrders(); // Siparişleri yeniden yükle
+                    alert('Ödeme başarıyla alındı!');
+                } else {
+                    alert('Ödeme işlemi başarısız!');
                 }
             } catch (error) {
-                console.error('Item durumu güncellenemedi:', error);
+                console.error('Ödeme işlemi hatası:', error);
+                alert('Ödeme işlemi sırasında hata oluştu!');
             }
         }
 
@@ -548,7 +438,7 @@
 
         // Çıkış fonksiyonu
         function logout() {
-            localStorage.removeItem('kitchen_staff');
+            sessionStorage.removeItem('cashier_staff');
             location.reload();
         }
 
@@ -582,4 +472,3 @@
     </script>
 </body>
 </html>
-
