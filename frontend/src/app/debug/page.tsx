@@ -221,34 +221,58 @@ export default function DebugPage() {
     
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
-      const menuEndpoint = `${apiUrl}/restaurants/aksaray/menu`;
+      addDetailedLog('API URL', `API URL: ${apiUrl}`);
       
-      addDetailedLog('Menü Endpoint', `Menü endpoint: ${menuEndpoint}`);
+      // Önce restoran ID'sini bul
+      const restaurantEndpoint = `${apiUrl}/restaurants`;
+      addDetailedLog('Restoran Endpoint', `Restoran endpoint: ${restaurantEndpoint}`);
       
-      const response = await fetch(menuEndpoint);
-      addDetailedLog('Menü Yanıtı', `Status: ${response.status} ${response.statusText}`);
+      const restaurantResponse = await fetch(restaurantEndpoint);
+      addDetailedLog('Restoran Yanıtı', `Status: ${restaurantResponse.status} ${restaurantResponse.statusText}`);
       
-      if (response.ok) {
-        const menuData = await response.json();
-        addDetailedLog('Menü Verisi', `Menü başarıyla çekildi`, menuData);
+      if (restaurantResponse.ok) {
+        const restaurantData = await restaurantResponse.json();
+        addDetailedLog('Restoran Verisi', `Restoranlar çekildi`, restaurantData);
         
-        if (menuData.success && menuData.data) {
-          const allItems = menuData.data.categories?.flatMap((category: any) => 
-            category.items?.map((item: any) => ({
-              id: item.id,
-              name: item.name,
-              price: item.price,
-              description: item.description,
-              category: category.name
-            })) || []
-          ) || [];
+        // Aksaray restoranını bul
+        const aksarayRestaurant = restaurantData.data?.find((r: any) => r.username === 'aksaray');
+        addDetailedLog('Aksaray Restoran', `Aksaray restoran bulundu`, aksarayRestaurant);
+        
+        if (aksarayRestaurant) {
+          const menuEndpoint = `${apiUrl}/restaurants/${aksarayRestaurant.id}/menu`;
+          addDetailedLog('Menü Endpoint', `Menü endpoint: ${menuEndpoint}`);
           
-          setRestaurantMenu(allItems);
-          addDetailedLog('Menü İşlendi', `${allItems.length} ürün bulundu`, allItems);
+          const menuResponse = await fetch(menuEndpoint);
+          addDetailedLog('Menü Yanıtı', `Status: ${menuResponse.status} ${menuResponse.statusText}`);
+          
+          if (menuResponse.ok) {
+            const menuData = await menuResponse.json();
+            addDetailedLog('Menü Verisi', `Menü başarıyla çekildi`, menuData);
+            
+            if (menuData.success && menuData.data) {
+              const allItems = menuData.data.categories?.flatMap((category: any) => 
+                category.items?.map((item: any) => ({
+                  id: item.id,
+                  name: item.name,
+                  price: item.price,
+                  description: item.description,
+                  category: category.name
+                })) || []
+              ) || [];
+              
+              setRestaurantMenu(allItems);
+              addDetailedLog('Menü İşlendi', `${allItems.length} ürün bulundu`, allItems);
+            }
+          } else {
+            const errorText = await menuResponse.text();
+            addDetailedLog('Menü Hatası', `Menü çekilemedi`, errorText);
+          }
+        } else {
+          addDetailedLog('Restoran Bulunamadı', `Aksaray restoran bulunamadı`);
         }
       } else {
-        const errorText = await response.text();
-        addDetailedLog('Menü Hatası', `Menü çekilemedi`, errorText);
+        const errorText = await restaurantResponse.text();
+        addDetailedLog('Restoran Hatası', `Restoranlar çekilemedi`, errorText);
       }
     } catch (error: any) {
       addDetailedLog('Menü Exception', `Menü çekme hatası`, error);
