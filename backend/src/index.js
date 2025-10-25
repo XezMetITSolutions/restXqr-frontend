@@ -119,6 +119,7 @@ app.use('/api/qr', require('./routes/qr')); // QR code management
 app.use('/api/staff', require('./routes/staff')); // Staff management
 app.use('/api/waiter', require('./routes/waiter')); // Waiter calls
 app.use('/api/admin/2fa', require('./routes/admin2fa')); // Admin 2FA
+app.use('/api/plans', require('./routes/plans')); // Plan management
 // File upload routes - Gerçek dosya yükleme sistemi
 const multer = require('multer');
 const sharp = require('sharp');

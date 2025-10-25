@@ -86,12 +86,41 @@ export default function PlansManagement() {
     setEditValues(plan);
   };
 
-  const handleSave = (planId: string) => {
-    setPlans(plans.map(p => 
-      p.id === planId ? { ...p, ...editValues } : p
-    ));
-    setEditingPlan(null);
-    setEditValues({});
+  const handleSave = async (planId: string) => {
+    try {
+      // Backend'e plan güncellemesini gönder
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api'}/plans/${planId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          maxTables: editValues.maxTables,
+          maxMenuItems: editValues.maxMenuItems,
+          maxStaff: editValues.maxStaff,
+          price: editValues.price
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Frontend state'i güncelle
+        setPlans(plans.map(p => 
+          p.id === planId ? { ...p, ...editValues } : p
+        ));
+        setEditingPlan(null);
+        setEditValues({});
+        
+        // Başarı mesajı
+        alert(`✅ Plan başarıyla güncellendi!\n\n${result.updatedRestaurants || 0} restoran etkilendi.`);
+      } else {
+        alert(`❌ Hata: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Plan güncelleme hatası:', error);
+      alert('❌ Plan güncellenirken bir hata oluştu!');
+    }
   };
 
   const handleCancel = () => {
