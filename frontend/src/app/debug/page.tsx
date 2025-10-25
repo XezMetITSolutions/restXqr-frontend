@@ -22,7 +22,17 @@ export default function DebugPage() {
   });
 
   const addResult = (step: string, success: boolean, message: string, data?: any) => {
-    setResults(prev => [...prev, { step, success, message, data }]);
+    const timestamp = new Date().toLocaleTimeString();
+    const logMessage = `[${timestamp}] ${message}`;
+    console.log(`🐛 DEBUG: ${step} - ${logMessage}`, data);
+    setResults(prev => [...prev, { step, success, message: logMessage, data }]);
+  };
+
+  const addDetailedLog = (step: string, details: string, data?: any) => {
+    const timestamp = new Date().toLocaleTimeString();
+    const logMessage = `[${timestamp}] ${details}`;
+    console.log(`📋 DETAIL: ${step} - ${logMessage}`, data);
+    setResults(prev => [...prev, { step, success: true, message: logMessage, data }]);
   };
 
   const runDebugTest = async () => {
@@ -32,6 +42,10 @@ export default function DebugPage() {
     try {
       // 1. Sipariş Oluştur
       addResult('Sipariş Oluşturma', false, 'Başlatılıyor...');
+      
+      // API URL kontrolü
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
+      addDetailedLog('API URL Kontrolü', `API URL: ${apiUrl}`);
       
       const orderPayload = {
         restaurantId: 'aksaray', // Aksaray restaurant ID
@@ -48,7 +62,14 @@ export default function DebugPage() {
         orderType: 'dine_in'
       };
 
-      const orderResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api'}/orders`, {
+      addDetailedLog('Sipariş Payload', `Gönderilecek sipariş verisi hazırlandı`, orderPayload);
+      
+      const orderEndpoint = `${apiUrl}/orders`;
+      addDetailedLog('API Endpoint', `Sipariş endpoint: ${orderEndpoint}`);
+      
+      addDetailedLog('HTTP İsteği', `POST ${orderEndpoint} - İstek gönderiliyor...`);
+      
+      const orderResponse = await fetch(orderEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -56,7 +77,11 @@ export default function DebugPage() {
         body: JSON.stringify(orderPayload),
       });
 
+      addDetailedLog('HTTP Yanıtı', `Status: ${orderResponse.status} ${orderResponse.statusText}`);
+      addDetailedLog('Response Headers', `Headers: ${JSON.stringify(Object.fromEntries(orderResponse.headers.entries()))}`);
+
       const orderResult = await orderResponse.json();
+      addDetailedLog('Response Body', `API'den dönen veri`, orderResult);
       
       if (orderResult.success) {
         addResult('Sipariş Oluşturma', true, `Sipariş başarıyla oluşturuldu! ID: ${orderResult.data.id}`, orderResult.data);
@@ -76,25 +101,42 @@ export default function DebugPage() {
           }
         };
 
+        addDetailedLog('Mutfak Bildirimi', `Bildirim verisi hazırlandı`, kitchenNotification);
+
         // Real-time bildirim gönder (SSE publish)
         try {
-          const notificationResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api'}/debug/publish-notification`, {
+          const notificationEndpoint = `${apiUrl}/debug/publish-notification`;
+          addDetailedLog('Bildirim Endpoint', `Bildirim endpoint: ${notificationEndpoint}`);
+          
+          const notificationPayload = {
+            eventType: 'new_order',
+            data: kitchenNotification.data
+          };
+          
+          addDetailedLog('Bildirim Payload', `Gönderilecek bildirim verisi`, notificationPayload);
+          addDetailedLog('HTTP İsteği', `POST ${notificationEndpoint} - Bildirim gönderiliyor...`);
+          
+          const notificationResponse = await fetch(notificationEndpoint, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-              eventType: 'new_order',
-              data: kitchenNotification.data
-            }),
+            body: JSON.stringify(notificationPayload),
           });
 
+          addDetailedLog('Bildirim Yanıtı', `Status: ${notificationResponse.status} ${notificationResponse.statusText}`);
+          
           if (notificationResponse.ok) {
+            const notificationResult = await notificationResponse.json();
+            addDetailedLog('Bildirim Sonucu', `Bildirim başarılı`, notificationResult);
             addResult('Mutfak Bildirimi', true, 'Mutfak paneline bildirim gönderildi!', kitchenNotification);
           } else {
-            addResult('Mutfak Bildirimi', false, 'Mutfak bildirimi gönderilemedi', await notificationResponse.text());
+            const errorText = await notificationResponse.text();
+            addDetailedLog('Bildirim Hatası', `Hata detayı`, errorText);
+            addResult('Mutfak Bildirimi', false, 'Mutfak bildirimi gönderilemedi', errorText);
           }
-        } catch (error) {
+        } catch (error: any) {
+          addDetailedLog('Bildirim Exception', `Exception detayı`, error);
           addResult('Mutfak Bildirimi', false, `Mutfak bildirimi hatası: ${error.message}`);
         }
 
@@ -114,34 +156,54 @@ export default function DebugPage() {
           }
         };
 
+        addDetailedLog('Kasa Bildirimi', `Kasa bildirim verisi hazırlandı`, cashierNotification);
+
         try {
-          const cashierResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api'}/debug/publish-notification`, {
+          const cashierEndpoint = `${apiUrl}/debug/publish-notification`;
+          addDetailedLog('Kasa Endpoint', `Kasa endpoint: ${cashierEndpoint}`);
+          
+          const cashierPayload = {
+            eventType: 'cashier_order',
+            data: cashierNotification.data
+          };
+          
+          addDetailedLog('Kasa Payload', `Gönderilecek kasa bildirim verisi`, cashierPayload);
+          addDetailedLog('HTTP İsteği', `POST ${cashierEndpoint} - Kasa bildirimi gönderiliyor...`);
+          
+          const cashierResponse = await fetch(cashierEndpoint, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-              eventType: 'cashier_order',
-              data: cashierNotification.data
-            }),
+            body: JSON.stringify(cashierPayload),
           });
 
+          addDetailedLog('Kasa Yanıtı', `Status: ${cashierResponse.status} ${cashierResponse.statusText}`);
+          
           if (cashierResponse.ok) {
+            const cashierResult = await cashierResponse.json();
+            addDetailedLog('Kasa Sonucu', `Kasa bildirimi başarılı`, cashierResult);
             addResult('Kasa Bildirimi', true, 'Kasa paneline bildirim gönderildi!', cashierNotification);
           } else {
-            addResult('Kasa Bildirimi', false, 'Kasa bildirimi gönderilemedi', await cashierResponse.text());
+            const errorText = await cashierResponse.text();
+            addDetailedLog('Kasa Hatası', `Kasa bildirimi hatası`, errorText);
+            addResult('Kasa Bildirimi', false, 'Kasa bildirimi gönderilemedi', errorText);
           }
-        } catch (error) {
+        } catch (error: any) {
+          addDetailedLog('Kasa Exception', `Kasa bildirimi exception`, error);
           addResult('Kasa Bildirimi', false, `Kasa bildirimi hatası: ${error.message}`);
         }
 
       } else {
+        addDetailedLog('Sipariş Hatası', `Sipariş oluşturulamadı - Detaylar`, orderResult);
         addResult('Sipariş Oluşturma', false, `Sipariş oluşturulamadı: ${orderResult.message}`, orderResult);
       }
 
     } catch (error: any) {
+      addDetailedLog('Genel Exception', `Genel hata detayı`, error);
       addResult('Genel Hata', false, `Debug test hatası: ${error.message}`);
     } finally {
+      addDetailedLog('Test Tamamlandı', `Debug testi tamamlandı`);
       setIsRunning(false);
     }
   };
@@ -237,37 +299,42 @@ export default function DebugPage() {
         {/* Results */}
         {results.length > 0 && (
           <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 shadow-2xl border border-white/20">
-            <h2 className="text-xl font-semibold text-white mb-4">Test Sonuçları</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-white">Test Sonuçları</h2>
+              <div className="text-sm text-gray-400">
+                Toplam: {results.length} log
+              </div>
+            </div>
             
-            <div className="space-y-4">
+            <div className="space-y-3 max-h-96 overflow-y-auto">
               {results.map((result, index) => (
                 <div
                   key={index}
-                  className={`p-4 rounded-lg border-l-4 ${
+                  className={`p-3 rounded-lg border-l-4 ${
                     result.success 
                       ? 'bg-green-500/10 border-green-500' 
                       : 'bg-red-500/10 border-red-500'
                   }`}
                 >
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-start space-x-3">
                     {result.success ? (
-                      <FaCheckCircle className="text-green-400 text-xl" />
+                      <FaCheckCircle className="text-green-400 text-lg mt-0.5 flex-shrink-0" />
                     ) : (
-                      <FaExclamationTriangle className="text-red-400 text-xl" />
+                      <FaExclamationTriangle className="text-red-400 text-lg mt-0.5 flex-shrink-0" />
                     )}
                     
-                    <div className="flex-1">
-                      <div className="text-white font-medium">{result.step}</div>
-                      <div className={`text-sm ${result.success ? 'text-green-300' : 'text-red-300'}`}>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-white font-medium text-sm">{result.step}</div>
+                      <div className={`text-xs mt-1 ${result.success ? 'text-green-300' : 'text-red-300'}`}>
                         {result.message}
                       </div>
                       
                       {result.data && (
                         <details className="mt-2">
-                          <summary className="text-gray-400 text-sm cursor-pointer hover:text-gray-300">
-                            Detayları Göster
+                          <summary className="text-gray-400 text-xs cursor-pointer hover:text-gray-300">
+                            📋 Detayları Göster ({typeof result.data === 'object' ? Object.keys(result.data).length : 1} öğe)
                           </summary>
-                          <pre className="mt-2 p-2 bg-black/20 rounded text-xs text-gray-300 overflow-x-auto">
+                          <pre className="mt-2 p-2 bg-black/20 rounded text-xs text-gray-300 overflow-x-auto max-h-40">
                             {JSON.stringify(result.data, null, 2)}
                           </pre>
                         </details>
@@ -276,6 +343,14 @@ export default function DebugPage() {
                   </div>
                 </div>
               ))}
+            </div>
+            
+            {/* Console Log Info */}
+            <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+              <div className="flex items-center space-x-2 text-blue-300 text-sm">
+                <span>💡</span>
+                <span>Detaylı loglar browser console'da da görüntüleniyor (F12 → Console)</span>
+              </div>
             </div>
           </div>
         )}
