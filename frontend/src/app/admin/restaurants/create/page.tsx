@@ -24,6 +24,10 @@ interface RestaurantFormData {
   facebook: string;
   plan: 'basic' | 'premium' | 'enterprise';
   status: 'active' | 'inactive' | 'pending';
+  // Admin kullanıcı bilgileri
+  adminUsername: string;
+  adminPassword: string;
+  adminPasswordConfirm: string;
 }
 
 // Plan limitleri
@@ -79,7 +83,10 @@ export default function CreateRestaurant() {
     instagram: '',
     facebook: '',
     plan: 'basic',
-    status: 'pending'
+    status: 'pending',
+    adminUsername: '',
+    adminPassword: '',
+    adminPasswordConfirm: ''
   });
 
   const handleSubdomainChange = async (subdomain: string) => {
@@ -127,6 +134,22 @@ export default function CreateRestaurant() {
     
     if (!subdomainValidation.isValid) {
       alert('Lütfen geçerli bir subdomain girin');
+      return;
+    }
+
+    // Admin kullanıcı validasyonu
+    if (!formData.adminUsername || !formData.adminPassword) {
+      alert('Admin kullanıcı adı ve şifre gereklidir');
+      return;
+    }
+
+    if (formData.adminPassword !== formData.adminPasswordConfirm) {
+      alert('Şifreler eşleşmiyor!');
+      return;
+    }
+
+    if (formData.adminPassword.length < 6) {
+      alert('Şifre en az 6 karakter olmalıdır');
       return;
     }
 
@@ -468,6 +491,59 @@ ${result.restaurant.ftpConfig ? `
                   onChange={(e) => setFormData({ ...formData, facebook: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
+              </div>
+            </div>
+          </div>
+
+          {/* Admin Kullanıcı Bilgileri */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 className="text-lg font-medium text-gray-900 mb-6">Admin Kullanıcı Bilgileri</h2>
+            <p className="text-sm text-gray-600 mb-4">Restoran için otomatik olarak bir admin kullanıcısı oluşturulacaktır.</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Kullanıcı Adı *
+                </label>
+                <input
+                  type="text"
+                  value={formData.adminUsername}
+                  onChange={(e) => setFormData({ ...formData, adminUsername: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="admin veya restoran adı"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Şifre *
+                </label>
+                <input
+                  type="password"
+                  value={formData.adminPassword}
+                  onChange={(e) => setFormData({ ...formData, adminPassword: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="En az 6 karakter"
+                  required
+                  minLength={6}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Şifre Tekrar *
+                </label>
+                <input
+                  type="password"
+                  value={formData.adminPasswordConfirm}
+                  onChange={(e) => setFormData({ ...formData, adminPasswordConfirm: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Şifreyi tekrar girin"
+                  required
+                />
+                {formData.adminPassword && formData.adminPasswordConfirm && formData.adminPassword !== formData.adminPasswordConfirm && (
+                  <p className="text-red-500 text-xs mt-1">Şifreler eşleşmiyor!</p>
+                )}
               </div>
             </div>
           </div>

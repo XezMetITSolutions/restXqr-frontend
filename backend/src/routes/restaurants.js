@@ -127,7 +127,7 @@ router.get('/:id', async (req, res) => {
 // POST /api/restaurants - Create restaurant
 router.post('/', async (req, res) => {
   try {
-    const { name, username, email, password, phone, address, features, plan } = req.body;
+    const { name, username, email, password, phone, address, features, plan, adminUsername, adminPassword } = req.body;
     
     // Validate required fields
     if (!name || !username || !email || !password) {
@@ -164,12 +164,40 @@ router.post('/', async (req, res) => {
       maxStaff: limits.maxStaff
     });
     
+    // Admin kullanıcısı oluştur (eğer bilgiler sağlandıysa)
+    let adminUser = null;
+    if (adminUsername && adminPassword) {
+      try {
+        const Staff = require('../models').Staff;
+        if (Staff) {
+          const adminHashedPassword = await bcrypt.hash(adminPassword, 10);
+          adminUser = await Staff.create({
+            restaurantId: restaurant.id,
+            name: 'Admin',
+            email: email, // Restoran emailini kullan
+            username: adminUsername,
+            password: adminHashedPassword,
+            role: 'admin',
+            isActive: true
+          });
+          console.log(`✅ Admin user created for restaurant ${restaurant.name}: ${adminUsername}`);
+        }
+      } catch (staffError) {
+        console.error('Admin user creation error:', staffError);
+        // Admin kullanıcı oluşturulamazsa devam et, restoran oluşturuldu
+      }
+    }
+    
     // Remove password from response
     const { password: _, ...restaurantData } = restaurant.toJSON();
     
     res.status(201).json({
       success: true,
-      data: restaurantData
+      data: restaurantData,
+      adminUser: adminUser ? {
+        username: adminUser.username,
+        role: adminUser.role
+      } : null
     });
   } catch (error) {
     console.error('Create restaurant error:', error);
