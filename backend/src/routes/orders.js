@@ -187,6 +187,43 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+// DELETE /api/orders/bulk?restaurantId=...
+router.delete('/bulk', async (req, res) => {
+  try {
+    const { restaurantId } = req.query;
+    if (!restaurantId) {
+      return res.status(400).json({ success: false, message: 'restaurantId is required' });
+    }
+
+    console.log('🗑️ Bulk delete request for restaurant:', restaurantId);
+
+    // Önce bu restorana ait tüm siparişleri bul
+    const orders = await Order.findAll({ where: { restaurantId } });
+    const orderIds = orders.map(o => o.id);
+
+    if (orderIds.length === 0) {
+      return res.json({ success: true, message: 'No orders to delete', deletedCount: 0 });
+    }
+
+    // Önce OrderItem'ları sil
+    const deletedItems = await OrderItem.destroy({ where: { orderId: orderIds } });
+    console.log(`🗑️ Deleted ${deletedItems} order items`);
+
+    // Sonra Order'ları sil
+    const deletedOrders = await Order.destroy({ where: { restaurantId } });
+    console.log(`🗑️ Deleted ${deletedOrders} orders`);
+
+    res.json({ 
+      success: true, 
+      message: `Deleted ${deletedOrders} orders and ${deletedItems} items`,
+      deletedCount: deletedOrders
+    });
+  } catch (error) {
+    console.error('DELETE /orders/bulk error:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+});
+
 module.exports = router;
 
 
