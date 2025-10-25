@@ -277,15 +277,6 @@ export default function AdminLogin() {
           </div>
         </div>
 
-        {/* Gerçek Giriş Bilgileri */}
-        <div className="mt-6 p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg">
-          <h3 className="text-blue-400 font-semibold mb-2">Giriş Bilgileri:</h3>
-          <div className="text-sm text-blue-200 space-y-1">
-            <p>Kullanıcı: <code className="bg-blue-800/50 px-1 rounded">xezmet</code></p>
-            <p>Şifre: <code className="bg-blue-800/50 px-1 rounded">01528797Mb##</code></p>
-            <p>2FA: <span className="text-yellow-400">Authenticator uygulamasından</span></p>
-          </div>
-        </div>
 
         {/* 2FA Kurulum Linki */}
         <div className="mt-4 text-center">
