@@ -241,25 +241,58 @@ export default function DebugPage() {
   const checkPanelLoginStatus = () => {
     addDetailedLog('Panel Login Kontrol', 'Panel login durumları kontrol ediliyor...');
     
-    // LocalStorage ve SessionStorage'dan login durumlarını kontrol et
-    const kitchenLogin = localStorage.getItem('kitchen_staff');
-    const cashierLogin = sessionStorage.getItem('cashier_staff');
+    // Tüm storage key'lerini listele
+    const allLocalStorageKeys = Object.keys(localStorage);
+    const allSessionStorageKeys = Object.keys(sessionStorage);
+    
+    addDetailedLog('LocalStorage Keys', `Mevcut localStorage key'leri: ${allLocalStorageKeys.join(', ')}`, allLocalStorageKeys);
+    addDetailedLog('SessionStorage Keys', `Mevcut sessionStorage key'leri: ${allSessionStorageKeys.join(', ')}`, allSessionStorageKeys);
+    
+    // Farklı key kombinasyonlarını dene
+    const possibleKitchenKeys = ['kitchen_staff', 'kitchen_staff_info', 'staff_info', 'user', 'auth'];
+    const possibleCashierKeys = ['cashier_staff', 'cashier_staff_info', 'staff_info', 'user', 'auth'];
+    
+    let kitchenLogin = null;
+    let kitchenKey = '';
+    for (const key of possibleKitchenKeys) {
+      const value = localStorage.getItem(key);
+      if (value) {
+        kitchenLogin = value;
+        kitchenKey = key;
+        break;
+      }
+    }
+    
+    let cashierLogin = null;
+    let cashierKey = '';
+    for (const key of possibleCashierKeys) {
+      const value = sessionStorage.getItem(key) || localStorage.getItem(key);
+      if (value) {
+        cashierLogin = value;
+        cashierKey = key;
+        break;
+      }
+    }
+    
+    addDetailedLog('Bulunan Keys', `Mutfak key: ${kitchenKey || 'YOK'}, Kasa key: ${cashierKey || 'YOK'}`);
     
     const status = {
       kitchen: {
         isLoggedIn: !!kitchenLogin,
-        staffInfo: kitchenLogin ? JSON.parse(kitchenLogin) : null
+        staffInfo: kitchenLogin ? JSON.parse(kitchenLogin) : null,
+        storageKey: kitchenKey
       },
       cashier: {
         isLoggedIn: !!cashierLogin,
-        staffInfo: cashierLogin ? JSON.parse(cashierLogin) : null
+        staffInfo: cashierLogin ? JSON.parse(cashierLogin) : null,
+        storageKey: cashierKey
       }
     };
     
     setPanelLoginStatus(status);
     
-    addDetailedLog('Mutfak Login', `Mutfak paneli login durumu: ${status.kitchen.isLoggedIn ? 'Giriş yapılmış' : 'Giriş yapılmamış'}`, status.kitchen.staffInfo);
-    addDetailedLog('Kasa Login', `Kasa paneli login durumu: ${status.cashier.isLoggedIn ? 'Giriş yapılmış' : 'Giriş yapılmamış'}`, status.cashier.staffInfo);
+    addDetailedLog('Mutfak Login', `Mutfak paneli login durumu: ${status.kitchen.isLoggedIn ? 'Giriş yapılmış' : 'Giriş yapılmamış'} (Key: ${kitchenKey})`, status.kitchen.staffInfo);
+    addDetailedLog('Kasa Login', `Kasa paneli login durumu: ${status.cashier.isLoggedIn ? 'Giriş yapılmış' : 'Giriş yapılmamış'} (Key: ${cashierKey})`, status.cashier.staffInfo);
     
     if (!status.kitchen.isLoggedIn) {
       addResult('Panel Login Kontrol', false, 'Mutfak paneline giriş yapılmamış! Bu yüzden siparişler görünmüyor.');
@@ -269,6 +302,102 @@ export default function DebugPage() {
     }
     if (status.kitchen.isLoggedIn && status.cashier.isLoggedIn) {
       addResult('Panel Login Kontrol', true, 'Her iki panele de giriş yapılmış. Siparişler görünmeli.');
+    }
+  };
+
+  // Otomatik login yap (test için)
+  const autoLoginPanels = async () => {
+    addDetailedLog('Otomatik Login', 'Test için panellere otomatik login yapılıyor...');
+    
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
+      
+      // Mutfak paneli için login (portakal / 123456)
+      addDetailedLog('Mutfak Login', 'Mutfak paneli için login yapılıyor (portakal / 123456)...');
+      
+      const kitchenLoginResponse = await fetch(`${apiUrl}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: 'portakal',
+          password: '123456',
+          role: 'kitchen'
+        }),
+      });
+      
+      if (kitchenLoginResponse.ok) {
+        const kitchenData = await kitchenLoginResponse.json();
+        addDetailedLog('Mutfak Login Başarılı', `Mutfak login başarılı`, kitchenData);
+        
+        // Mutfak staff bilgisini localStorage'a kaydet
+        const kitchenStaffInfo = {
+          id: kitchenData.data?.id || 'kitchen_staff_1',
+          username: 'portakal',
+          role: 'kitchen',
+          restaurantId: 'aksaray',
+          name: 'Mutfak Personeli',
+          loginTime: new Date().toISOString()
+        };
+        
+        localStorage.setItem('kitchen_staff', JSON.stringify(kitchenStaffInfo));
+        addDetailedLog('Mutfak Storage', `Mutfak staff bilgisi localStorage'a kaydedildi`, kitchenStaffInfo);
+        
+        addResult('Mutfak Otomatik Login', true, 'Mutfak paneline otomatik login başarılı!');
+      } else {
+        const errorText = await kitchenLoginResponse.text();
+        addDetailedLog('Mutfak Login Hatası', `Mutfak login başarısız`, errorText);
+        addResult('Mutfak Otomatik Login', false, `Mutfak login hatası: ${kitchenLoginResponse.status}`);
+      }
+      
+      // Kasa paneli için login (armut / 123456)
+      addDetailedLog('Kasa Login', 'Kasa paneli için login yapılıyor (armut / 123456)...');
+      
+      const cashierLoginResponse = await fetch(`${apiUrl}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: 'armut',
+          password: '123456',
+          role: 'cashier'
+        }),
+      });
+      
+      if (cashierLoginResponse.ok) {
+        const cashierData = await cashierLoginResponse.json();
+        addDetailedLog('Kasa Login Başarılı', `Kasa login başarılı`, cashierData);
+        
+        // Kasa staff bilgisini sessionStorage'a kaydet
+        const cashierStaffInfo = {
+          id: cashierData.data?.id || 'cashier_staff_1',
+          username: 'armut',
+          role: 'cashier',
+          restaurantId: 'aksaray',
+          name: 'Kasa Personeli',
+          loginTime: new Date().toISOString()
+        };
+        
+        sessionStorage.setItem('cashier_staff', JSON.stringify(cashierStaffInfo));
+        addDetailedLog('Kasa Storage', `Kasa staff bilgisi sessionStorage'a kaydedildi`, cashierStaffInfo);
+        
+        addResult('Kasa Otomatik Login', true, 'Kasa paneline otomatik login başarılı!');
+      } else {
+        const errorText = await cashierLoginResponse.text();
+        addDetailedLog('Kasa Login Hatası', `Kasa login başarısız`, errorText);
+        addResult('Kasa Otomatik Login', false, `Kasa login hatası: ${cashierLoginResponse.status}`);
+      }
+      
+      // Login durumunu tekrar kontrol et
+      setTimeout(() => {
+        checkPanelLoginStatus();
+      }, 1000);
+      
+    } catch (error: any) {
+      addDetailedLog('Otomatik Login Exception', `Otomatik login hatası`, error);
+      addResult('Otomatik Login', false, `Otomatik login hatası: ${error.message}`);
     }
   };
 
@@ -554,6 +683,12 @@ export default function DebugPage() {
                   className="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white py-3 px-4 rounded-lg font-semibold hover:from-purple-700 hover:to-purple-800 transition-all duration-200"
                 >
                   Panel Login Kontrol Et
+                </button>
+                <button
+                  onClick={autoLoginPanels}
+                  className="w-full bg-gradient-to-r from-orange-600 to-orange-700 text-white py-3 px-4 rounded-lg font-semibold hover:from-orange-700 hover:to-orange-800 transition-all duration-200"
+                >
+                  Otomatik Login Yap
                 </button>
                 <button
                   onClick={createTestOrder}
@@ -843,11 +978,46 @@ export default function DebugPage() {
               >
                 API Test Et
               </button>
+              <button
+                onClick={() => {
+                  // Sadece mutfak için login yap
+                  const kitchenLogin = async () => {
+                    try {
+                      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
+                      const response = await fetch(`${apiUrl}/auth/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username: 'portakal', password: '123456', role: 'kitchen' }),
+                      });
+                      if (response.ok) {
+                        const data = await response.json();
+                        const staffInfo = {
+                          id: data.data?.id || 'kitchen_staff_1',
+                          username: 'portakal',
+                          role: 'kitchen',
+                          restaurantId: 'aksaray',
+                          name: 'Mutfak Personeli',
+                          loginTime: new Date().toISOString()
+                        };
+                        localStorage.setItem('kitchen_staff', JSON.stringify(staffInfo));
+                        addResult('Mutfak Login', true, 'Mutfak paneline login başarılı!');
+                        setTimeout(checkPanelLoginStatus, 500);
+                      }
+                    } catch (error) {
+                      addResult('Mutfak Login', false, `Login hatası: ${error}`);
+                    }
+                  };
+                  kitchenLogin();
+                }}
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-3 rounded text-sm transition-colors"
+              >
+                Mutfak Login
+              </button>
               <a 
                 href="https://aksaray.restxqr.com/kitchen/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="block w-full text-center bg-orange-500 hover:bg-orange-600 text-white py-2 px-3 rounded text-sm transition-colors"
+                className="block w-full text-center bg-orange-400 hover:bg-orange-500 text-white py-2 px-3 rounded text-sm transition-colors"
               >
                 Mutfak Panelini Aç
               </a>
@@ -897,11 +1067,46 @@ export default function DebugPage() {
               >
                 API Test Et
               </button>
+              <button
+                onClick={() => {
+                  // Sadece kasa için login yap
+                  const cashierLogin = async () => {
+                    try {
+                      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
+                      const response = await fetch(`${apiUrl}/auth/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username: 'armut', password: '123456', role: 'cashier' }),
+                      });
+                      if (response.ok) {
+                        const data = await response.json();
+                        const staffInfo = {
+                          id: data.data?.id || 'cashier_staff_1',
+                          username: 'armut',
+                          role: 'cashier',
+                          restaurantId: 'aksaray',
+                          name: 'Kasa Personeli',
+                          loginTime: new Date().toISOString()
+                        };
+                        sessionStorage.setItem('cashier_staff', JSON.stringify(staffInfo));
+                        addResult('Kasa Login', true, 'Kasa paneline login başarılı!');
+                        setTimeout(checkPanelLoginStatus, 500);
+                      }
+                    } catch (error) {
+                      addResult('Kasa Login', false, `Login hatası: ${error}`);
+                    }
+                  };
+                  cashierLogin();
+                }}
+                className="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-3 rounded text-sm transition-colors"
+              >
+                Kasa Login
+              </button>
               <a 
                 href="https://aksaray.restxqr.com/cashier/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="block w-full text-center bg-green-500 hover:bg-green-600 text-white py-2 px-3 rounded text-sm transition-colors"
+                className="block w-full text-center bg-green-400 hover:bg-green-500 text-white py-2 px-3 rounded text-sm transition-colors"
               >
                 Kasa Panelini Aç
               </a>
