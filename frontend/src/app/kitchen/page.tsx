@@ -12,7 +12,8 @@ import {
   FaSignOutAlt,
   FaChartLine,
   FaUser,
-  FaLock
+  FaLock,
+  FaBug
 } from 'react-icons/fa';
 import useCentralOrderStore from '@/store/useCentralOrderStore';
 import apiService from '@/services/api';
@@ -714,6 +715,16 @@ export default function StandaloneKitchenPage() {
             </div>
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
+            <a
+              href="https://restxqr.com/debug/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-2 sm:px-4 py-2 bg-blue-500 bg-opacity-80 rounded-lg hover:bg-opacity-100 transition-colors flex items-center gap-1 sm:gap-2 text-sm sm:text-base text-white"
+              title="Debug sayfasını aç"
+            >
+              <FaBug className="text-sm sm:text-base" />
+              <span className="hidden sm:inline">Debug</span>
+            </a>
             <button
               onClick={handleLogout}
               className="px-2 sm:px-4 py-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-colors flex items-center gap-1 sm:gap-2 text-sm sm:text-base"
