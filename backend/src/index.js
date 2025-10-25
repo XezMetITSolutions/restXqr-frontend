@@ -250,6 +250,41 @@ app.get('/api/qr/test', async (req, res) => {
   }
 });
 
+// SSE endpoint for real-time notifications
+app.get('/api/events', (req, res) => {
+  // Set headers for SSE
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Cache-Control'
+  });
+
+  // Generate unique client ID
+  const clientId = `client_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+  
+  // Add subscriber
+  const { addSubscriber, removeSubscriber } = require('./lib/realtime');
+  addSubscriber(clientId, res);
+
+  // Send initial connection message
+  res.write(`data: ${JSON.stringify({
+    type: 'connected',
+    clientId: clientId,
+    timestamp: new Date().toISOString()
+  })}\n\n`);
+
+  // Handle client disconnect
+  req.on('close', () => {
+    removeSubscriber(clientId);
+  });
+
+  req.on('aborted', () => {
+    removeSubscriber(clientId);
+  });
+});
+
 // Debug notification endpoint
 app.post('/api/debug/publish-notification', async (req, res) => {
   try {

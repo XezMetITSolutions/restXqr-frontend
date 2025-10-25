@@ -17,6 +17,7 @@ import {
 import useCentralOrderStore from '@/store/useCentralOrderStore';
 import apiService from '@/services/api';
 import useRestaurantStore from '@/store/useRestaurantStore';
+import useRealtime from '@/hooks/useRealtime';
 
 export default function StandaloneKitchenPage() {
   const router = useRouter();
@@ -47,6 +48,27 @@ export default function StandaloneKitchenPage() {
   const [loginError, setLoginError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Real-time connection
+  const { isConnected: isRealtimeConnected } = useRealtime({
+    onEvent: (event) => {
+      console.log('🍳 Kitchen received realtime event:', event);
+      
+      if (event.type === 'new_order') {
+        console.log('🍳 New order received via realtime:', event.data);
+        // Yeni sipariş geldiğinde siparişleri yeniden çek
+        setTimeout(() => {
+          fetchOrdersFromBackend();
+        }, 1000);
+      }
+    },
+    onConnect: () => {
+      console.log('🍳 Kitchen connected to realtime');
+    },
+    onDisconnect: () => {
+      console.log('🍳 Kitchen disconnected from realtime');
+    }
+  });
+
   // Session kontrolü - sayfa yüklendiğinde localStorage'dan kontrol et
   useEffect(() => {
     const checkSession = () => {
@@ -68,8 +90,7 @@ export default function StandaloneKitchenPage() {
   }, []);
 
   // Backend'den siparişleri çek
-  useEffect(() => {
-    const fetchOrdersFromBackend = async () => {
+  const fetchOrdersFromBackend = async () => {
       if (!isLoggedIn || !currentRestaurant?.id) return;
       
       try {
@@ -93,7 +114,7 @@ export default function StandaloneKitchenPage() {
                   quantity: item.quantity || 1,
                   price: item.price || item.unitPrice || 0,
                   notes: item.notes || '',
-                  status: 'pending' as const,
+                  status: 'preparing' as const,
                   category: 'food' as const,
                   prepTime: item.prepTime || 15
                 })) || [],
@@ -122,6 +143,8 @@ export default function StandaloneKitchenPage() {
       }
     };
 
+  // Backend'den siparişleri çek - useEffect
+  useEffect(() => {
     // Her 5 saniyede bir siparişleri çek
     const interval = setInterval(fetchOrdersFromBackend, 5000);
     fetchOrdersFromBackend(); // İlk yükleme

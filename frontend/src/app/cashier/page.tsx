@@ -58,7 +58,7 @@ export default function StandaloneCashierPage() {
   const fetchOrders = async () => {
     if (!currentRestaurant?.id) return;
     try {
-      const response = await apiService.getOrders(currentRestaurant.id, 'ready'); // Sadece ödeme bekleyen siparişler
+      const response = await apiService.getOrders(currentRestaurant.id, 'pending'); // Ödeme bekleyen siparişler (pending durumunda)
       if (response.success && Array.isArray(response.data)) {
         setOrders(response.data);
       }
