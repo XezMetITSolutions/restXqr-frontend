@@ -250,6 +250,33 @@ app.get('/api/qr/test', async (req, res) => {
   }
 });
 
+// Debug notification endpoint
+app.post('/api/debug/publish-notification', async (req, res) => {
+  try {
+    const { eventType, data } = req.body;
+    
+    console.log('🐛 Debug notification:', { eventType, data });
+    
+    // Real-time bildirim gönder
+    const { publish } = require('./lib/realtime');
+    publish(eventType, data);
+    
+    res.json({
+      success: true,
+      message: 'Debug notification sent',
+      eventType,
+      data
+    });
+  } catch (error) {
+    console.error('Debug notification error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Debug notification failed',
+      error: error.message
+    });
+  }
+});
+
 // Test endpoint for debug page
 app.post('/api/test-image', async (req, res) => {
   try {
