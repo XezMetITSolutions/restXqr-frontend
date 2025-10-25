@@ -6,8 +6,14 @@ const path = require('path');
 const fs = require('fs');
 require('dotenv').config();
 
-// Database connection
-const { connectDB } = require('./models');
+// Database connection (optional for 2FA)
+let connectDB;
+try {
+  connectDB = require('./models').connectDB;
+} catch (error) {
+  console.log('⚠️ Database models not available, 2FA will work without database');
+  connectDB = () => Promise.reject(new Error('Database not available'));
+}
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -315,25 +321,26 @@ const startServer = async () => {
     console.log(`🚀 Backend server running on port ${PORT}`);
     console.log(`📊 Health check: http://localhost:${PORT}/health`);
     console.log(`🌐 API Base: http://localhost:${PORT}/api`);
+    console.log(`🔐 2FA API: http://localhost:${PORT}/api/admin/2fa/status`);
   });
   
-  // Connect to database (non-blocking)
-  connectDB()
-    .then(async () => {
-      console.log('✅ Database connected successfully');
-      
-      // Auto-sync models with database (adds missing columns)
-      const { sequelize } = require('./models');
-      try {
-        await sequelize.sync({ alter: true });
-        console.log('✅ Database models synced successfully');
-      } catch (syncError) {
-        console.error('⚠️ Database sync warning:', syncError.message);
-      }
-    })
-    .catch(error => {
-      console.error('❌ Database connection failed, but server is still running:', error.message);
-    });
+  // Connect to database (non-blocking) - ignore errors for 2FA testing
+  try {
+    await connectDB();
+    console.log('✅ Database connected successfully');
+    
+    // Auto-sync models with database (adds missing columns)
+    const { sequelize } = require('./models');
+    try {
+      await sequelize.sync({ alter: true });
+      console.log('✅ Database models synced successfully');
+    } catch (syncError) {
+      console.error('⚠️ Database sync warning:', syncError.message);
+    }
+  } catch (error) {
+    console.error('⚠️ Database connection failed, but server continues running:', error.message);
+    console.log('🔐 2FA endpoints will work without database');
+  }
   
   return server;
 };

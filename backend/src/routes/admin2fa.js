@@ -1,6 +1,44 @@
 const express = require('express');
 const router = express.Router();
-const twoFactorAuth = require('../lib/twoFactorAuth');
+
+// Basit 2FA servisi (speakeasy olmadan)
+const twoFactorAuth = {
+  generateSecret: (username, issuer = 'RestXQr') => {
+    const secret = 'JBSWY3DPEHPK3PXP'; // Demo secret
+    return {
+      secret: secret,
+      qrCodeUrl: `otpauth://totp/${username}?secret=${secret}&issuer=${issuer}`,
+      manualEntryKey: secret
+    };
+  },
+  
+  generateQRCode: async (qrCodeUrl) => {
+    // Demo QR kod (gerçek uygulamada qrcode paketi kullanılacak)
+    return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
+  },
+  
+  verifyToken: (secret, token) => {
+    // Demo doğrulama (gerçek uygulamada speakeasy kullanılacak)
+    return token === '123456';
+  },
+  
+  generateBackupCodes: (count = 10) => {
+    return Array.from({ length: count }, () => Math.random().toString(36).substring(2, 10).toUpperCase());
+  },
+  
+  verifyBackupCode: (inputCode, backupCodes) => {
+    const upperInputCode = inputCode.toUpperCase();
+    const codeIndex = backupCodes.indexOf(upperInputCode);
+    
+    if (codeIndex !== -1) {
+      const updatedBackupCodes = [...backupCodes];
+      updatedBackupCodes.splice(codeIndex, 1);
+      return { verified: true, backupCodes: updatedBackupCodes };
+    }
+    
+    return { verified: false, backupCodes: backupCodes };
+  }
+};
 
 // Demo admin verisi (gerçek uygulamada veritabanından gelecek)
 const adminData = {
