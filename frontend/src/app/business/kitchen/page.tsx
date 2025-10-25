@@ -25,6 +25,8 @@ export default function KitchenDashboard() {
   const [filter, setFilter] = useState<'all' | 'pending' | 'preparing' | 'ready'>('all');
   const [isConnected, setIsConnected] = useState(false);
   const [notifications, setNotifications] = useState<string[]>([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [staffInfo, setStaffInfo] = useState<any>(null);
 
   // Session kontrolü - sayfa yüklendiğinde localStorage'dan kontrol et
   useEffect(() => {
@@ -34,13 +36,20 @@ export default function KitchenDashboard() {
         try {
           const staff = JSON.parse(savedStaff);
           console.log('🍳 Mutfak oturumu geri yüklendi:', staff);
+          setIsLoggedIn(true);
+          setStaffInfo(staff);
         } catch (error) {
           console.error('Session restore error:', error);
           localStorage.removeItem('kitchen_staff');
+          setIsLoggedIn(false);
+          setStaffInfo(null);
         }
+      } else {
+        setIsLoggedIn(false);
+        setStaffInfo(null);
       }
     };
-
+    
     checkSession();
   }, []);
 
@@ -200,6 +209,26 @@ export default function KitchenDashboard() {
     }
   };
 
+  // Login kontrolü
+  if (!isLoggedIn) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+        <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full mx-4">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Mutfak Paneli</h2>
+            <p className="text-gray-600 mb-6">Mutfak paneline erişmek için giriş yapmanız gerekiyor.</p>
+            <button
+              onClick={() => window.location.href = '/business/login'}
+              className="w-full bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors"
+            >
+              Giriş Yap
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Header */}
@@ -215,6 +244,28 @@ export default function KitchenDashboard() {
             </div>
             
             <div className="flex items-center space-x-4">
+              {/* Debug Button */}
+              <button
+                onClick={() => {
+                  console.log('=== MUTFAK PANELİ DEBUG ===');
+                  console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
+                  console.log('Base URL:', process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'https://masapp-backend.onrender.com');
+                  console.log('SSE URL:', `${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'https://masapp-backend.onrender.com'}/api/events/orders`);
+                  console.log('Connection Status:', isConnected);
+                  console.log('Orders Count:', orders.length);
+                  console.log('Notifications:', notifications);
+                  
+                  // API Health Check
+                  fetch(`${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'https://masapp-backend.onrender.com'}/health`)
+                    .then(res => res.json())
+                    .then(data => console.log('API Health:', data))
+                    .catch(err => console.error('API Health Error:', err));
+                }}
+                className="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm font-semibold"
+              >
+                🔧 Debug
+              </button>
+              
               {/* Connection Status */}
               <div className="flex items-center space-x-2">
                 <div className={`w-3 h-3 rounded-full ${isConnected ? 'bg-green-400' : 'bg-red-400'}`}></div>

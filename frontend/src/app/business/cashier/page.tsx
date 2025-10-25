@@ -772,6 +772,29 @@ export default function CashierDashboard() {
               </div>
             </div>
             <div className="flex items-center gap-2 sm:gap-4">
+              {/* Debug Button */}
+              <button
+                onClick={() => {
+                  console.log('=== KASA PANELİ DEBUG ===');
+                  console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
+                  console.log('Base URL:', process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'https://masapp-backend.onrender.com');
+                  console.log('SSE URL:', `${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'https://masapp-backend.onrender.com'}/api/events/orders`);
+                  console.log('Authenticated Staff:', authenticatedStaff);
+                  console.log('Authenticated Restaurant:', authenticatedRestaurant);
+                  console.log('Orders Count:', orders.length);
+                  console.log('Notifications:', notifications);
+                  
+                  // API Health Check
+                  fetch(`${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'https://masapp-backend.onrender.com'}/health`)
+                    .then(res => res.json())
+                    .then(data => console.log('API Health:', data))
+                    .catch(err => console.error('API Health Error:', err));
+                }}
+                className="px-2 sm:px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors flex items-center gap-1 sm:gap-2 text-sm sm:text-base"
+              >
+                🔧 Debug
+              </button>
+              
               <button
                 onClick={() => {
                   logout();
