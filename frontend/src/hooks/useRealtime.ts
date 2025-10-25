@@ -25,6 +25,7 @@ export const useRealtime = (options: UseRealtimeOptions = {}) => {
     const eventsUrl = `${apiUrl}/events`;
 
     console.log('🔌 Connecting to SSE:', eventsUrl);
+    console.log('🔌 Current origin:', typeof window !== 'undefined' ? window.location.origin : 'server');
 
     const eventSource = new EventSource(eventsUrl);
     eventSourceRef.current = eventSource;

@@ -252,13 +252,17 @@ app.get('/api/qr/test', async (req, res) => {
 
 // SSE endpoint for real-time notifications
 app.get('/api/events', (req, res) => {
-  // Set headers for SSE
+  console.log('🔌 SSE connection request from:', req.get('origin'));
+  
+  // Set headers for SSE with proper CORS
   res.writeHead(200, {
     'Content-Type': 'text/event-stream',
     'Cache-Control': 'no-cache',
     'Connection': 'keep-alive',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Cache-Control'
+    'Access-Control-Allow-Origin': req.get('origin') || '*',
+    'Access-Control-Allow-Credentials': 'true',
+    'Access-Control-Allow-Headers': 'Cache-Control, Content-Type',
+    'X-Accel-Buffering': 'no' // Disable nginx buffering
   });
 
   // Generate unique client ID
