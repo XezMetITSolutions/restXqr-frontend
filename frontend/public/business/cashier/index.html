@@ -321,7 +321,17 @@
             if (!isLoggedIn) return;
 
             try {
-                const response = await fetch(`${API_URL}/orders?restaurantId=aksaray&status=pending`);
+                // Önce restoran ID'sini bul
+                const restaurantResponse = await fetch(`${API_URL}/restaurants`);
+                const restaurantData = await restaurantResponse.json();
+                const aksarayRestaurant = restaurantData.data?.find((r) => r.username === 'aksaray');
+                
+                if (!aksarayRestaurant) {
+                    console.error('Aksaray restoranı bulunamadı');
+                    return;
+                }
+                
+                const response = await fetch(`${API_URL}/orders?restaurantId=${aksarayRestaurant.id}&status=pending`);
                 const result = await response.json();
 
                 if (result.success && result.data) {

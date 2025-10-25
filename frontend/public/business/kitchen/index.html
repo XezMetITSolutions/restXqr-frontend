@@ -371,11 +371,21 @@
         // Siparişleri yükle
         async function loadOrders() {
             if (!isLoggedIn) return;
-
+            
             try {
-                const response = await fetch(`${API_URL}/orders?restaurantId=aksaray&status=pending`);
+                // Önce restoran ID'sini bul
+                const restaurantResponse = await fetch(`${API_URL}/restaurants`);
+                const restaurantData = await restaurantResponse.json();
+                const aksarayRestaurant = restaurantData.data?.find((r) => r.username === 'aksaray');
+                
+                if (!aksarayRestaurant) {
+                    console.error('Aksaray restoranı bulunamadı');
+                    return;
+                }
+                
+                const response = await fetch(`${API_URL}/orders?restaurantId=${aksarayRestaurant.id}&status=pending`);
                 const result = await response.json();
-
+                
                 if (result.success && result.data) {
                     orders = result.data;
                     renderOrders();
@@ -555,7 +565,20 @@
             debugLog(`isLoggedIn: ${isLoggedIn}`);
             
             try {
-                const response = await fetch(`${API_URL}/orders?restaurantId=aksaray&status=pending`);
+                // Önce restoran ID'sini bul
+                debugLog('Restoran ID\'si bulunuyor...');
+                const restaurantResponse = await fetch(`${API_URL}/restaurants`);
+                const restaurantData = await restaurantResponse.json();
+                const aksarayRestaurant = restaurantData.data?.find((r) => r.username === 'aksaray');
+                
+                if (!aksarayRestaurant) {
+                    debugLog('❌ Aksaray restoranı bulunamadı!');
+                    return;
+                }
+                
+                debugLog(`✅ Aksaray restoran ID: ${aksarayRestaurant.id}`);
+                
+                const response = await fetch(`${API_URL}/orders?restaurantId=${aksarayRestaurant.id}&status=pending`);
                 debugLog(`Orders Response Status: ${response.status}`);
                 debugLog(`Orders Response Headers: ${JSON.stringify([...response.headers.entries()])}`);
                 
