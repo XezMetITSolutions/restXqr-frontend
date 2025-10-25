@@ -260,7 +260,7 @@ export default function DebugPage() {
   // Sayfa yüklendiğinde menüyü çek
   useEffect(() => {
     loadRestaurantMenu();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900 p-8">
