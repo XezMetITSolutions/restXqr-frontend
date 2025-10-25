@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { FaBug, FaSync, FaCheckCircle, FaExclamationTriangle, FaUtensils, FaShoppingCart, FaClock } from 'react-icons/fa';
+import { FaBug, FaSync, FaCheckCircle, FaExclamationTriangle, FaUtensils, FaShoppingCart, FaClock, FaTrash } from 'react-icons/fa';
 
 interface DebugStep {
   id: string;
@@ -18,6 +18,7 @@ export default function OrderFlowDebugPage() {
   const [restaurantInfo, setRestaurantInfo] = useState<any>(null);
   const [cartOrders, setCartOrders] = useState<any[]>([]);
   const [kitchenOrders, setKitchenOrders] = useState<any[]>([]);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
 
@@ -228,6 +229,77 @@ export default function OrderFlowDebugPage() {
     }
   };
 
+  // Tüm siparişleri sil
+  const deleteAllOrders = async () => {
+    if (!restaurantInfo?.id) {
+      alert('❌ Önce debug analizi çalıştırın!');
+      return;
+    }
+
+    const confirmed = confirm(
+      `⚠️ TÜM SİPARİŞLERİ SİLMEK İSTEDİĞİNİZDEN EMİN MİSİNİZ?\n\n` +
+      `Restoran: ${restaurantInfo.name}\n` +
+      `Backend'deki ${cartOrders.length} sipariş silinecek.\n` +
+      `LocalStorage'daki ${kitchenOrders.length} sipariş temizlenecek.\n\n` +
+      `Bu işlem GERİ ALINAMAZ!`
+    );
+
+    if (!confirmed) return;
+
+    setIsDeleting(true);
+    
+    const step = addStep({
+      id: 'delete-orders',
+      title: '🗑️ Siparişleri Silme',
+      status: 'pending',
+      message: 'Tüm siparişler siliniyor...'
+    });
+
+    try {
+      // 1. Backend'den sil
+      const response = await fetch(`${API_URL}/orders/bulk?restaurantId=${restaurantInfo.id}`, {
+        method: 'DELETE'
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        // 2. LocalStorage'ı temizle
+        localStorage.removeItem('central-orders');
+        
+        // 3. State'leri güncelle
+        setCartOrders([]);
+        setKitchenOrders([]);
+        
+        updateStep('delete-orders', {
+          status: 'success',
+          message: `✅ ${result.deletedCount} sipariş başarıyla silindi! LocalStorage temizlendi.`,
+          data: result
+        });
+        
+        alert(`✅ Başarılı!\n\n${result.deletedCount} sipariş silindi.\nLocalStorage temizlendi.`);
+      } else {
+        updateStep('delete-orders', {
+          status: 'error',
+          message: `❌ Silme işlemi başarısız: ${result.message}`,
+          data: result
+        });
+        
+        alert(`❌ Hata: ${result.message}`);
+      }
+    } catch (error: any) {
+      updateStep('delete-orders', {
+        status: 'error',
+        message: `❌ API hatası: ${error.message}`,
+        data: error
+      });
+      
+      alert(`❌ Hata: ${error.message}`);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const getStatusIcon = (status: DebugStep['status']) => {
     switch (status) {
       case 'success': return <FaCheckCircle className="text-green-500" />;
@@ -253,18 +325,34 @@ export default function OrderFlowDebugPage() {
                 Menu → Cart → Kitchen panel sipariş akışını adım adım takip edin
               </p>
             </div>
-            <button
-              onClick={runFullDebug}
-              disabled={isRunning}
-              className={`px-6 py-3 rounded-lg font-semibold flex items-center gap-2 ${
-                isRunning 
-                  ? 'bg-gray-400 cursor-not-allowed' 
-                  : 'bg-blue-500 hover:bg-blue-600 text-white'
-              }`}
-            >
-              <FaSync className={isRunning ? 'animate-spin' : ''} />
-              {isRunning ? 'Analiz Ediliyor...' : 'Debug Başlat'}
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={runFullDebug}
+                disabled={isRunning}
+                className={`px-6 py-3 rounded-lg font-semibold flex items-center gap-2 ${
+                  isRunning 
+                    ? 'bg-gray-400 cursor-not-allowed' 
+                    : 'bg-blue-500 hover:bg-blue-600 text-white'
+                }`}
+              >
+                <FaSync className={isRunning ? 'animate-spin' : ''} />
+                {isRunning ? 'Analiz Ediliyor...' : 'Debug Başlat'}
+              </button>
+              
+              <button
+                onClick={deleteAllOrders}
+                disabled={isDeleting || !restaurantInfo}
+                className={`px-6 py-3 rounded-lg font-semibold flex items-center gap-2 ${
+                  isDeleting || !restaurantInfo
+                    ? 'bg-gray-400 cursor-not-allowed' 
+                    : 'bg-red-500 hover:bg-red-600 text-white'
+                }`}
+                title={!restaurantInfo ? 'Önce debug analizi çalıştırın' : 'Tüm siparişleri sil'}
+              >
+                <FaTrash className={isDeleting ? 'animate-pulse' : ''} />
+                {isDeleting ? 'Siliniyor...' : 'Siparişleri Sil'}
+              </button>
+            </div>
           </div>
         </div>
 
