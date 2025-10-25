@@ -78,13 +78,14 @@ export const createQRCodeURL = (restaurantSlug: string, tableNumber?: number, to
   const baseUrl = `https://${restaurantSlug}.restxqr.com`;
   
   if (tableNumber && token) {
-    return `${baseUrl}/menu?t=${token}&table=${tableNumber}`;
+    // Token ve masa numarası varsa - Backend'in döndüğü format ile aynı
+    return `${baseUrl}/menu/?t=${token}&table=${tableNumber}`;
   } else if (tableNumber) {
-    return `${baseUrl}/menu?table=${tableNumber}`;
+    return `${baseUrl}/menu/?table=${tableNumber}`;
   } else if (token) {
-    return `${baseUrl}/menu?t=${token}`;
+    return `${baseUrl}/menu/?t=${token}`;
   } else {
-    return `${baseUrl}/menu`;
+    return `${baseUrl}/menu/`;
   }
 };
 
