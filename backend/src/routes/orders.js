@@ -62,6 +62,20 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ success: false, message: 'restaurantId and items are required' });
     }
 
+    console.log('📦 Order creation request:', { restaurantId, tableNumber, itemsCount: items.length });
+
+    // Eğer restaurantId string ise (username), gerçek ID'yi bul
+    let actualRestaurantId = restaurantId;
+    if (typeof restaurantId === 'string' && !restaurantId.includes('-')) {
+      console.log('🔍 Looking up restaurant by username:', restaurantId);
+      const restaurant = await Restaurant.findOne({ where: { username: restaurantId } });
+      if (!restaurant) {
+        return res.status(404).json({ success: false, message: `Restaurant with username '${restaurantId}' not found` });
+      }
+      actualRestaurantId = restaurant.id;
+      console.log('✅ Found restaurant:', { username: restaurantId, id: actualRestaurantId });
+    }
+
     // Basic total calc if client did not send
     let totalAmount = 0;
     for (const it of items) {
@@ -71,7 +85,7 @@ router.post('/', async (req, res) => {
     }
 
     const order = await Order.create({
-      restaurantId,
+      restaurantId: actualRestaurantId,
       tableNumber: tableNumber || null,
       customerName: customerName || null,
       status: 'pending',
@@ -91,17 +105,17 @@ router.post('/', async (req, res) => {
         try {
           // Try find by name within this restaurant
           if (it.name) {
-            const found = await MenuItem.findOne({ where: { restaurantId, name: it.name } });
+            const found = await MenuItem.findOne({ where: { restaurantId: actualRestaurantId, name: it.name } });
             if (found) {
               resolvedMenuItemId = found.id;
             } else {
               // ensure default category exists
-              let defCat = await MenuCategory.findOne({ where: { restaurantId, name: 'Genel' } });
+              let defCat = await MenuCategory.findOne({ where: { restaurantId: actualRestaurantId, name: 'Genel' } });
               if (!defCat) {
-                defCat = await MenuCategory.create({ restaurantId, name: 'Genel' });
+                defCat = await MenuCategory.create({ restaurantId: actualRestaurantId, name: 'Genel' });
               }
               const created = await MenuItem.create({
-                restaurantId,
+                restaurantId: actualRestaurantId,
                 categoryId: defCat.id,
                 name: it.name,
                 price: unitPrice,
