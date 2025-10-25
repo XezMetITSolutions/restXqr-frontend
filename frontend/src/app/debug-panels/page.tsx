@@ -47,6 +47,7 @@ export default function DebugPanelsPage() {
   const [restaurantId, setRestaurantId] = useState<string>('');
   const [tableNumber, setTableNumber] = useState<number>(5);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
 
@@ -184,6 +185,45 @@ export default function DebugPanelsPage() {
     return orders.filter(o => o.status === status);
   };
 
+  // Tüm siparişleri sil
+  const deleteAllOrders = async () => {
+    if (!restaurantId) {
+      alert('❌ Restoran bilgisi yok!');
+      return;
+    }
+
+    const confirmed = confirm(
+      `⚠️ TÜM SİPARİŞLERİ SİLMEK İSTEDİĞİNİZDEN EMİN MİSİNİZ?\n\n` +
+      `Aksaray restoranının ${orders.length} siparişi silinecek.\n\n` +
+      `Bu işlem GERİ ALINAMAZ!`
+    );
+
+    if (!confirmed) return;
+
+    setIsDeleting(true);
+
+    try {
+      const response = await fetch(`${API_URL}/orders/bulk?restaurantId=${restaurantId}`, {
+        method: 'DELETE'
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setOrders([]);
+        alert(`✅ Başarılı!\n\n${result.deletedCount} sipariş silindi.`);
+        fetchOrders(); // Listeyi yenile
+      } else {
+        alert(`❌ Hata: ${result.message}`);
+      }
+    } catch (error: any) {
+      console.error('Silme hatası:', error);
+      alert(`❌ Hata: ${error.message}`);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -202,6 +242,18 @@ export default function DebugPanelsPage() {
                 <div className="text-2xl font-bold text-purple-600">{orders.length}</div>
                 <div className="text-sm text-gray-600">Toplam Sipariş</div>
               </div>
+              <button
+                onClick={deleteAllOrders}
+                disabled={isDeleting || orders.length === 0}
+                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                  isDeleting || orders.length === 0
+                    ? 'bg-gray-400 cursor-not-allowed text-white'
+                    : 'bg-red-500 hover:bg-red-600 text-white'
+                }`}
+                title={orders.length === 0 ? 'Silinecek sipariş yok' : 'Tüm siparişleri sil'}
+              >
+                {isDeleting ? '🗑️ Siliniyor...' : '🗑️ Tüm Siparişleri Sil'}
+              </button>
             </div>
           </div>
         </div>
