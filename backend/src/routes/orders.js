@@ -165,29 +165,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// PUT /api/orders/:id (status update)
-router.put('/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { status } = req.body;
-    const allowed = ['pending', 'preparing', 'ready', 'completed', 'cancelled'];
-    if (status && !allowed.includes(status)) {
-      return res.status(400).json({ success: false, message: 'invalid status' });
-    }
-
-    const order = await Order.findByPk(id);
-    if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
-
-    if (status) order.status = status;
-    await order.save();
-    res.json({ success: true, data: order });
-  } catch (error) {
-    console.error('PUT /orders/:id error:', error);
-    res.status(500).json({ success: false, message: 'Internal server error' });
-  }
-});
-
-// DELETE /api/orders/bulk?restaurantId=...
+// DELETE /api/orders/bulk?restaurantId=... (MUST BE BEFORE /:id route)
 router.delete('/bulk', async (req, res) => {
   try {
     const { restaurantId } = req.query;
@@ -220,6 +198,28 @@ router.delete('/bulk', async (req, res) => {
     });
   } catch (error) {
     console.error('DELETE /orders/bulk error:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+});
+
+// PUT /api/orders/:id (status update) - MUST BE AFTER /bulk route
+router.put('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    const allowed = ['pending', 'preparing', 'ready', 'completed', 'cancelled'];
+    if (status && !allowed.includes(status)) {
+      return res.status(400).json({ success: false, message: 'invalid status' });
+    }
+
+    const order = await Order.findByPk(id);
+    if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
+
+    if (status) order.status = status;
+    await order.save();
+    res.json({ success: true, data: order });
+  } catch (error) {
+    console.error('PUT /orders/:id error:', error);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 });
