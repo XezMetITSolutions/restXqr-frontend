@@ -48,7 +48,7 @@ export default function DebugPage() {
         orderType: 'dine_in'
       };
 
-      const orderResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com'}/api/orders`, {
+      const orderResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com'}/orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -78,7 +78,7 @@ export default function DebugPage() {
 
         // Real-time bildirim gönder (SSE publish)
         try {
-          const notificationResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com'}/api/debug/publish-notification`, {
+          const notificationResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com'}/debug/publish-notification`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -115,7 +115,7 @@ export default function DebugPage() {
         };
 
         try {
-          const cashierResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com'}/api/debug/publish-notification`, {
+          const cashierResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com'}/debug/publish-notification`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
