@@ -293,19 +293,35 @@ function MenuPageContent() {
 
   const addToCart = (item: any) => {
     try {
-      addItem({
+      const cartItem = {
         itemId: item.id,
         name: item.name,
         price: item.price,
         quantity: 1,
         image: item.image,
-        preparationTime: item.preparationTime // hazırlık süresini ekle
+        preparationTime: item.preparationTime
+      };
+      
+      console.log('🛒 SEPETE EKLEME:', {
+        timestamp: new Date().toLocaleString(),
+        ürün: item.name,
+        fiyat: item.price + '₺',
+        kategori: item.category,
+        restaurantId: currentRestaurant?.id,
+        restaurantName: currentRestaurant?.name,
+        masaNo: tableNumber,
+        cartItem
       });
+      
+      addItem(cartItem);
       setToastVisible(true);
+      
+      console.log('✅ Sepete eklendi! Toplam ürün:', cartItems.length + 1);
+      
       // Auto hide toast after 3 seconds
       setTimeout(() => setToastVisible(false), 3000);
     } catch (error) {
-      console.error('Error adding item to cart:', error);
+      console.error('❌ Sepete ekleme hatası:', error);
     }
   };
 

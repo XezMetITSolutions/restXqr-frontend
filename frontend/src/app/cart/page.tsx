@@ -69,28 +69,51 @@ function CartPageContent() {
   const handlePayment = async () => {
     if (isSubmitting) return;
     
+    console.log('💳 ÖDE ME İŞLEMİ BAŞLADI:', {
+      timestamp: new Date().toLocaleString(),
+      paymentMethod,
+      tipAmount: tipAmount + '₺',
+      donationAmount: donationAmount + '₺',
+      subtotal: subtotal + '₺',
+      total: total + '₺'
+    });
+    
     setIsSubmitting(true);
     try {
       // Resolve restaurantId (fallback to subdomain lookup if not in store)
       let restaurantId = currentRestaurant?.id as string | undefined;
+      
+      console.log('🏪 RESTORAN BİLGİSİ:', {
+        currentRestaurant,
+        restaurantId,
+        kaynak: restaurantId ? 'currentRestaurant store' : 'subdomain lookup gerekli'
+      });
+      
       if (!restaurantId && typeof window !== 'undefined') {
         try {
           const sub = window.location.hostname.split('.')[0];
           const base = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com';
           const API = base.endsWith('/api') ? base : `${base.replace(/\/$/, '')}/api`;
+          
+          console.log('🔍 SUBDOMAIN LOOKUP:', { subdomain: sub, apiUrl: API });
+          
           const res = await fetch(`${API}/staff/restaurants`);
           const data = await res.json();
           const found = Array.isArray(data?.data) ? data.data.find((r: any) => r.username === sub) : null;
           restaurantId = found?.id;
+          
+          console.log('✅ SUBDOMAIN LOOKUP SONUCU:', { found, restaurantId });
         } catch (e) {
-          console.error('Restaurant resolve failed:', e);
+          console.error('❌ Restaurant resolve failed:', e);
         }
       }
 
       if (!restaurantId) {
+        console.error('❌ RESTORAN ID BULUNAMADI!');
         alert('Restoran bilgisi alınamadı. Lütfen sayfayı yenileyip tekrar deneyin.');
         return;
       }
+      
       // Backend'e sipariş gönder
       const orderData = {
         restaurantId,
@@ -107,9 +130,31 @@ function CartPageContent() {
         orderType: 'dine_in'
       };
 
+      console.log('📦 SİPARİŞ VERİSİ:', {
+        restaurantId,
+        restaurantName: currentRestaurant?.name || 'Bilinmiyor',
+        tableNumber: tableNumber || 'Belirtilmemiş',
+        itemCount: items.length,
+        items: items.map(i => `${i.name} x${i.quantity}`),
+        totalAmount: total + '₺',
+        paymentMethod,
+        orderData
+      });
+      
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
+      console.log('🌐 API ENDPOINT:', `${apiUrl}/orders`);
+
       const response = await apiService.createOrder(orderData);
       
+      console.log('📨 API YANITI:', response);
+      
       if (response.success) {
+        console.log('✅ SİPARİŞ BAŞARILI!', {
+          orderId: response.data?.id,
+          status: response.data?.status,
+          createdAt: response.data?.created_at
+        });
+        
         // En uzun hazırlık süresini hesapla
         const maxPrepTime = getMaxPreparationTime();
         
@@ -119,6 +164,8 @@ function CartPageContent() {
         setTipAmount(0);
         setDonationAmount(0);
         
+        console.log('🧹 Sepet temizlendi');
+        
         // Sipariş onay mesajı göster
         if (maxPrepTime > 0) {
           alert(`✅ Siparişiniz alınmıştır!\n\nSiparişiniz ${maxPrepTime} dakika içinde masanıza getirilecektir.`);
@@ -126,13 +173,15 @@ function CartPageContent() {
           alert('✅ Siparişiniz alınmıştır!\n\nSiparişiniz kısa sürede masanıza getirilecektir.');
         }
       } else {
+        console.error('❌ SİPARİŞ BAŞARISIZ:', response);
         alert('❌ Sipariş gönderilemedi. Lütfen tekrar deneyin.');
       }
     } catch (error) {
-      console.error('Order creation error:', error);
+      console.error('❌ SİPARİŞ HATASI:', error);
       alert('❌ Sipariş gönderilemedi. Lütfen tekrar deneyin.');
     } finally {
       setIsSubmitting(false);
+      console.log('🏁 Ödeme işlemi tamamlandı');
     }
   };
 
