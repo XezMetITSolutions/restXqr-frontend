@@ -315,7 +315,7 @@ export default function DebugPage() {
       // Mutfak paneli için login (portakal / 123456)
       addDetailedLog('Mutfak Login', 'Mutfak paneli için login yapılıyor (portakal / 123456)...');
       
-      const kitchenLoginResponse = await fetch(`${apiUrl}/auth/login`, {
+      const kitchenLoginResponse = await fetch(`${apiUrl}/staff/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -323,7 +323,7 @@ export default function DebugPage() {
         body: JSON.stringify({
           username: 'portakal',
           password: '123456',
-          role: 'kitchen'
+          subdomain: 'aksaray'
         }),
       });
       
@@ -354,7 +354,7 @@ export default function DebugPage() {
       // Kasa paneli için login (armut / 123456)
       addDetailedLog('Kasa Login', 'Kasa paneli için login yapılıyor (armut / 123456)...');
       
-      const cashierLoginResponse = await fetch(`${apiUrl}/auth/login`, {
+      const cashierLoginResponse = await fetch(`${apiUrl}/staff/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -362,7 +362,7 @@ export default function DebugPage() {
         body: JSON.stringify({
           username: 'armut',
           password: '123456',
-          role: 'cashier'
+          subdomain: 'aksaray'
         }),
       });
       
@@ -691,6 +691,29 @@ export default function DebugPage() {
                   Otomatik Login Yap
                 </button>
                 <button
+                  onClick={async () => {
+                    addDetailedLog('Aksaray Staff Oluştur', 'Aksaray restoranı için staff üyeleri oluşturuluyor...');
+                    try {
+                      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
+                      const response = await fetch(`${apiUrl}/staff/create-aksaray`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                      });
+                      const result = await response.json();
+                      if (response.ok) {
+                        addResult('Aksaray Staff Oluştur', true, `Aksaray staff üyeleri oluşturuldu! ${result.data.length} üye`, result.data);
+                      } else {
+                        addResult('Aksaray Staff Oluştur', false, `Staff oluşturulamadı: ${result.message}`);
+                      }
+                    } catch (error) {
+                      addResult('Aksaray Staff Oluştur', false, `Staff oluşturma hatası: ${error}`);
+                    }
+                  }}
+                  className="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 text-white py-3 px-4 rounded-lg font-semibold hover:from-indigo-700 hover:to-indigo-800 transition-all duration-200"
+                >
+                  Aksaray Staff Oluştur
+                </button>
+                <button
                   onClick={createTestOrder}
                   disabled={isRunning || restaurantMenu.length === 0}
                   className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 px-4 rounded-lg font-semibold hover:from-green-700 hover:to-green-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
@@ -984,10 +1007,10 @@ export default function DebugPage() {
                   const kitchenLogin = async () => {
                     try {
                       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
-                      const response = await fetch(`${apiUrl}/auth/login`, {
+                      const response = await fetch(`${apiUrl}/staff/login`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username: 'portakal', password: '123456', role: 'kitchen' }),
+                        body: JSON.stringify({ username: 'portakal', password: '123456', subdomain: 'aksaray' }),
                       });
                       if (response.ok) {
                         const data = await response.json();
@@ -1073,10 +1096,10 @@ export default function DebugPage() {
                   const cashierLogin = async () => {
                     try {
                       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
-                      const response = await fetch(`${apiUrl}/auth/login`, {
+                      const response = await fetch(`${apiUrl}/staff/login`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username: 'armut', password: '123456', role: 'cashier' }),
+                        body: JSON.stringify({ username: 'armut', password: '123456', subdomain: 'aksaray' }),
                       });
                       if (response.ok) {
                         const data = await response.json();

@@ -830,6 +830,97 @@ router.post('/create-hazal', async (req, res) => {
   }
 });
 
+// POST /api/staff/create-aksaray - Create Aksaray staff members
+router.post('/create-aksaray', async (req, res) => {
+  try {
+    if (!Staff || !Restaurant) {
+      return res.status(503).json({
+        success: false,
+        message: 'Staff system temporarily unavailable - models not loaded'
+      });
+    }
+
+    console.log('🔍 Creating Aksaray staff members...');
+    
+    // Find Aksaray restaurant
+    const aksarayRestaurant = await Restaurant.findOne({
+      where: { username: 'aksaray' }
+    });
+
+    if (!aksarayRestaurant) {
+      return res.status(404).json({
+        success: false,
+        message: 'Aksaray restaurant not found'
+      });
+    }
+
+    console.log('✅ Aksaray restaurant found:', aksarayRestaurant.id);
+
+    // Aksaray staff members
+    const staffMembers = [
+      {
+        restaurantId: aksarayRestaurant.id,
+        username: 'portakal',
+        password: '123456',
+        name: 'Portakal Mutfak',
+        email: 'portakal@aksaray.com',
+        role: 'chef', // kitchen yerine chef kullan
+        status: 'active'
+      },
+      {
+        restaurantId: aksarayRestaurant.id,
+        username: 'armut',
+        password: '123456',
+        name: 'Armut Kasa',
+        email: 'armut@aksaray.com',
+        role: 'cashier',
+        status: 'active'
+      }
+    ];
+
+    const createdStaff = [];
+    
+    for (const staffData of staffMembers) {
+      try {
+        // Check if staff already exists
+        const existingStaff = await Staff.findOne({
+          where: { 
+            restaurantId: staffData.restaurantId,
+            username: staffData.username 
+          }
+        });
+
+        if (existingStaff) {
+          console.log(`✅ Staff already exists: ${staffData.name}`);
+          createdStaff.push(existingStaff);
+        } else {
+          const staff = await Staff.create(staffData);
+          console.log(`✅ Staff created: ${staff.name} (${staff.id})`);
+          createdStaff.push(staff);
+        }
+      } catch (error) {
+        console.error(`❌ Error creating staff ${staffData.name}:`, error);
+      }
+    }
+
+    console.log('✅ Aksaray staff creation completed');
+
+    res.json({
+      success: true,
+      message: 'Aksaray staff members created successfully',
+      data: createdStaff
+    });
+
+  } catch (error) {
+    console.error('❌ Error creating Aksaray staff:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error creating Aksaray staff',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
 // POST /api/staff/restore-menu - Restore menu data for Hazal
 router.post('/restore-menu', async (req, res) => {
   try {
