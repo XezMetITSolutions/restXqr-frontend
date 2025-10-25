@@ -46,11 +46,11 @@ export default function DebugPage() {
     addDetailedLog('Menü Yükleme', 'Aksaray restoranının menüsü çekiliyor...');
     
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
       addDetailedLog('API URL', `API URL: ${apiUrl}`);
       
       // Restoranları çek
-      const restaurantResponse = await fetch(`${apiUrl}/api/restaurants`);
+      const restaurantResponse = await fetch(`${apiUrl}/restaurants`);
       addDetailedLog('Restoran Yanıtı', `Status: ${restaurantResponse.status}`);
       
       if (restaurantResponse.ok) {
@@ -63,7 +63,7 @@ export default function DebugPage() {
         
         if (aksarayRestaurant) {
           // Menüyü çek
-          const menuResponse = await fetch(`${apiUrl}/api/restaurants/${aksarayRestaurant.id}/menu`);
+          const menuResponse = await fetch(`${apiUrl}/restaurants/${aksarayRestaurant.id}/menu`);
           addDetailedLog('Menü Yanıtı', `Status: ${menuResponse.status}`);
           
           if (menuResponse.ok) {
@@ -107,8 +107,8 @@ export default function DebugPage() {
     addDetailedLog('API Test', 'API bağlantısı test ediliyor...');
     
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com';
-      const healthResponse = await fetch(`${apiUrl}/health`);
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'https://masapp-backend.onrender.com';
+      const healthResponse = await fetch(`${baseUrl}/health`);
       addDetailedLog('Health Check', `Status: ${healthResponse.status}`);
       
       if (healthResponse.ok) {
@@ -136,7 +136,7 @@ export default function DebugPage() {
     addDetailedLog('Sipariş Oluşturma', 'Sipariş oluşturuluyor...');
     
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
       
       const orderPayload = {
         restaurantId: 'aksaray',
@@ -155,7 +155,7 @@ export default function DebugPage() {
 
       addDetailedLog('Sipariş Payload', `Gönderilecek sipariş verisi`, orderPayload);
       
-      const orderResponse = await fetch(`${apiUrl}/api/orders`, {
+      const orderResponse = await fetch(`${apiUrl}/orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -191,7 +191,7 @@ export default function DebugPage() {
             }
           };
           
-          const notificationResponse = await fetch(`${apiUrl}/api/debug/publish-notification`, {
+          const notificationResponse = await fetch(`${apiUrl}/debug/publish-notification`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -317,9 +317,9 @@ export default function DebugPage() {
                       </div>
                     </div>
                   ))}
-                </div>
-              )}
             </div>
+          )}
+        </div>
 
             {/* Seçilen Ürünler */}
             {selectedItems.length > 0 && (
@@ -338,12 +338,12 @@ export default function DebugPage() {
                       </div>
                       <div className="flex items-center space-x-2">
                         <div className="text-white font-semibold">₺{item.price}</div>
-                        <button
+            <button
                           onClick={() => setSelectedItems(prev => prev.filter((_, i) => i !== index))}
                           className="text-red-400 hover:text-red-300 text-sm"
-                        >
+            >
                           ✕
-                        </button>
+            </button>
                       </div>
                     </div>
                   ))}
@@ -367,7 +367,7 @@ export default function DebugPage() {
                   </div>
                 </div>
 
-                <button
+            <button
                   onClick={createOrder}
                   disabled={isRunning}
                   className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 px-4 rounded-lg font-semibold hover:from-green-700 hover:to-green-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
@@ -383,7 +383,7 @@ export default function DebugPage() {
                       <span>Sipariş Oluştur</span>
                     </div>
                   )}
-                </button>
+            </button>
               </div>
             )}
           </div>
@@ -396,15 +396,15 @@ export default function DebugPage() {
                 <div className="text-sm text-gray-400">
                   {results.length} log
                 </div>
-                <button
+            <button
                   onClick={clearResults}
                   className="px-3 py-1 bg-gray-600 hover:bg-gray-700 text-white text-sm rounded transition-colors"
-                >
+            >
                   Temizle
-                </button>
-              </div>
-            </div>
-            
+            </button>
+          </div>
+        </div>
+
             <div className="space-y-3 max-h-96 overflow-y-auto">
               {results.length === 0 ? (
                 <div className="text-center text-gray-400 py-8">
@@ -445,9 +445,9 @@ export default function DebugPage() {
                         )}
                       </div>
                     </div>
-                  </div>
-                ))
-              )}
+                </div>
+              ))
+            )}
             </div>
             
             {/* Console Log Info */}
