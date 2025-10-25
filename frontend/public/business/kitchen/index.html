@@ -259,27 +259,9 @@
             <div id="loadingMessage" style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #666;">
                 <h3>Yükleniyor...</h3>
                 <p>Sayfa yükleniyor, lütfen bekleyin...</p>
-                <div style="margin-top: 1rem;">
-                    <button onclick="alert('Debug Test: ' + window.location.href)" style="background: #e53935; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin: 5px;">🔍 Test 1</button>
-                    <button onclick="console.log('Debug Test:', window.location.href)" style="background: #2196F3; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin: 5px;">🔍 Test 2</button>
-                    <button onclick="document.getElementById('debugPanel').style.display='block'" style="background: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin: 5px;">🔍 Test 3</button>
-                </div>
-            </div>
+        </div>
         </div>
         
-        <!-- Debug Panel -->
-        <div id="debugPanel" style="display: none; margin-top: 2rem; padding: 1rem; background: #f0f0f0; border-radius: 8px;">
-            <h3 style="margin-top: 0; color: #e53935;">🐛 Debug Paneli</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-                <button onclick="testAPI()" style="background: #2196F3; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">API Test</button>
-                <button onclick="testOrders()" style="background: #4CAF50; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">Sipariş Test</button>
-                <button onclick="testLogin()" style="background: #FF9800; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">Login Test</button>
-                <button onclick="clearDebug()" style="background: #f44336; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">Temizle</button>
-            </div>
-            <div id="debugLog" style="background: #000; color: #0f0; padding: 1rem; border-radius: 4px; font-family: monospace; font-size: 0.8rem; max-height: 300px; overflow-y: auto;">
-                Debug logları burada görünecek...<br>
-            </div>
-        </div>
     </div>
 
     <script>
@@ -511,74 +493,6 @@
             location.reload();
         }
 
-        // Basit Debug Fonksiyonları
-        function addLog(message) {
-            const logDiv = document.getElementById('debugLog');
-            if (!logDiv) return;
-            const timestamp = new Date().toLocaleTimeString();
-            logDiv.innerHTML += `[${timestamp}] ${message}<br>`;
-            logDiv.scrollTop = logDiv.scrollHeight;
-            console.log(`🐛 DEBUG: ${message}`);
-        }
-
-        function clearDebug() {
-            const logDiv = document.getElementById('debugLog');
-            if (logDiv) logDiv.innerHTML = 'Debug logları temizlendi...<br>';
-        }
-
-        function testAPI() {
-            addLog('=== API TEST ===');
-            addLog(`API URL: ${API_URL}`);
-            fetch(`${API_URL}/restaurants`)
-                .then(response => {
-                    addLog(`Restaurants Status: ${response.status}`);
-                    return response.json();
-                })
-                .then(data => {
-                    addLog(`Restaurants Success: ${data.success}`);
-                    addLog(`Restaurants Count: ${data.data?.length || 0}`);
-                })
-                .catch(error => {
-                    addLog(`❌ API Error: ${error.message}`);
-                });
-        }
-
-        function testOrders() {
-            addLog('=== SİPARİŞ TEST ===');
-            fetch(`${API_URL}/restaurants`)
-                .then(response => response.json())
-                .then(data => {
-                    const aksarayRestaurant = data.data?.find((r) => r.username === 'aksaray');
-                    if (!aksarayRestaurant) {
-                        addLog('❌ Aksaray restoranı bulunamadı!');
-                        return;
-                    }
-                    addLog(`✅ Aksaray ID: ${aksarayRestaurant.id}`);
-                    
-                    return fetch(`${API_URL}/orders?restaurantId=${aksarayRestaurant.id}&status=pending`);
-                })
-                .then(response => {
-                    addLog(`Orders Status: ${response.status}`);
-                    return response.json();
-                })
-                .then(data => {
-                    addLog(`Orders Success: ${data.success}`);
-                    addLog(`Orders Count: ${data.data?.length || 0}`);
-                    if (data.data && data.data.length > 0) {
-                        addLog(`İlk sipariş: Masa ${data.data[0].tableNumber}, ₺${data.data[0].totalAmount}`);
-                    }
-                })
-                .catch(error => {
-                    addLog(`❌ Orders Error: ${error.message}`);
-                });
-        }
-
-        function testLogin() {
-            addLog('=== LOGIN TEST ===');
-            addLog(`isLoggedIn: ${isLoggedIn}`);
-            addLog(`staffInfo: ${JSON.stringify(staffInfo)}`);
-            addLog(`LocalStorage: ${localStorage.getItem('kitchen_staff')}`);
-        }
 
         function debugLog(message) {
             const logDiv = document.getElementById('debugLog');
@@ -734,11 +648,6 @@
                 });
             }
             
-            // Otomatik debug paneli aç
-            setTimeout(() => {
-                console.log('🐛 Debug paneli otomatik açılıyor...');
-                document.getElementById('debugPanel').style.display = 'block';
-            }, 2000);
 
         // Filtre butonları
             const filterButtons = document.querySelectorAll('.filter-btn');
