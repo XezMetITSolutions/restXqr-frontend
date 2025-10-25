@@ -99,11 +99,11 @@ export default function MenuDebugPage() {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
       
       // Kategorileri çek
-      const categoriesResponse = await fetch(`${API_URL}/menu/categories?restaurantId=${restaurantId}`);
+      const categoriesResponse = await fetch(`${API_URL}/restaurants/${restaurantId}/menu/categories`);
       const categoriesData = await categoriesResponse.json();
       
       // Menu itemları çek
-      const itemsResponse = await fetch(`${API_URL}/menu/items?restaurantId=${restaurantId}`);
+      const itemsResponse = await fetch(`${API_URL}/restaurants/${restaurantId}/menu/items`);
       const itemsData = await itemsResponse.json();
       
       const menuInfo = {
@@ -112,8 +112,8 @@ export default function MenuDebugPage() {
         categoriesCount: categoriesData.data?.length || 0,
         itemsCount: itemsData.data?.length || 0,
         endpoints: {
-          categories: `${API_URL}/menu/categories?restaurantId=${restaurantId}`,
-          items: `${API_URL}/menu/items?restaurantId=${restaurantId}`
+          categories: `${API_URL}/restaurants/${restaurantId}/menu/categories`,
+          items: `${API_URL}/restaurants/${restaurantId}/menu/items`
         }
       };
       
