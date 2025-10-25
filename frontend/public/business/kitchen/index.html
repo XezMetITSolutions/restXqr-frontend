@@ -256,6 +256,11 @@
         
         <div class="cards-container">
             <!-- Siparişler burada dinamik olarak yüklenecek -->
+            <div id="loadingMessage" style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #666;">
+                <h3>Yükleniyor...</h3>
+                <p>Sayfa yükleniyor, lütfen bekleyin...</p>
+                <button class="btn" onclick="showDebugInfo()" style="margin-top: 1rem; background: #e53935; color: white;">🐛 Debug Bilgilerini Göster</button>
+            </div>
         </div>
         
         <!-- Debug Panel -->
@@ -400,11 +405,18 @@
             const container = document.querySelector('.cards-container');
             if (!container) return;
 
+            // Loading mesajını gizle
+            const loadingMessage = document.getElementById('loadingMessage');
+            if (loadingMessage) {
+                loadingMessage.style.display = 'none';
+            }
+
             if (orders.length === 0) {
                 container.innerHTML = `
                     <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #666;">
                         <h3>Henüz sipariş yok</h3>
                         <p>Yeni siparişler geldiğinde burada görünecek.</p>
+                        <button class="btn" onclick="showDebugInfo()" style="margin-top: 1rem; background: #e53935; color: white;">🐛 Debug Bilgilerini Göster</button>
                     </div>
                 `;
                 return;
@@ -499,6 +511,23 @@
         function toggleDebug() {
             const panel = document.getElementById('debugPanel');
             panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function showDebugInfo() {
+            debugLog('=== SAYFA DEBUG BİLGİLERİ ===');
+            debugLog(`Sayfa URL: ${window.location.href}`);
+            debugLog(`API URL: ${API_URL}`);
+            debugLog(`isLoggedIn: ${isLoggedIn}`);
+            debugLog(`staffInfo: ${JSON.stringify(staffInfo)}`);
+            debugLog(`LocalStorage kitchen_staff: ${localStorage.getItem('kitchen_staff')}`);
+            debugLog(`Orders array length: ${orders.length}`);
+            
+            // Otomatik sipariş testi yap
+            debugOrders();
+            
+            // Debug panelini göster
+            const panel = document.getElementById('debugPanel');
+            panel.style.display = 'block';
         }
 
         function debugLog(message) {
@@ -635,6 +664,7 @@
 
         // Sayfa yüklendiğinde
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('🐛 Mutfak paneli yüklendi');
             checkLogin();
 
             // Çıkış butonu
@@ -642,6 +672,12 @@
             if (logoutBtn) {
                 logoutBtn.addEventListener('click', logout);
             }
+            
+            // 3 saniye sonra otomatik debug bilgilerini göster
+            setTimeout(() => {
+                console.log('🐛 Otomatik debug bilgileri gösteriliyor...');
+                showDebugInfo();
+            }, 3000);
 
             // Filtre butonları
             const filterButtons = document.querySelectorAll('.filter-btn');
