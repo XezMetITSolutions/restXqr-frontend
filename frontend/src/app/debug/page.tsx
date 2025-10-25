@@ -389,19 +389,6 @@ export default function DebugPage() {
             {/* API Test */}
             <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 shadow-2xl border border-white/20">
               <h2 className="text-xl font-semibold text-white mb-4 flex items-center justify-between">
-                <div className="flex items-center">
-                  <FaSync className="mr-2" />
-                  API Test
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className={`w-3 h-3 rounded-full ${isRealtimeConnected ? 'bg-green-400 animate-pulse' : 'bg-red-400'}`}></div>
-                  <span className={`text-sm ${isRealtimeConnected ? 'text-green-300' : 'text-red-300'}`}>
-                    {isRealtimeConnected ? 'Real-time Aktif' : 'Real-time Bağlantısız'}
-                  </span>
-                </div>
-              </h2>
-              <div className="space-y-3">
-                <button
                   onClick={testAPI}
                   className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 px-4 rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-200"
                 >
@@ -692,6 +679,9 @@ export default function DebugPage() {
               <p className="text-gray-400 text-xs text-center mt-2">
                 Yeni siparişler burada görünecek
               </p>
+              <p className="text-yellow-400 text-xs text-center mt-1">
+                ⚠️ Panel login gerektirir
+              </p>
             </div>
           </div>
 
@@ -722,6 +712,9 @@ export default function DebugPage() {
               </a>
               <p className="text-gray-400 text-xs text-center mt-2">
                 Ödeme bekleyen siparişler burada görünecek
+              </p>
+              <p className="text-yellow-400 text-xs text-center mt-1">
+                ⚠️ Panel login gerektirir
               </p>
             </div>
           </div>
