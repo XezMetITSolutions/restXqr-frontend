@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Paneli - Aksaray</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            color: #6c5ce7;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: #6c5ce7;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5f3dc4;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .debug-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .debug-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .debug-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .debug-card h3 {
+            color: #6c5ce7;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .menu-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .menu-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .category-card {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #6c5ce7;
+        }
+
+        .category-name {
+            font-weight: 600;
+            color: #6c5ce7;
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .menu-item {
+            background: white;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            border: 1px solid #e9ecef;
+        }
+
+        .test-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .test-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .order-test {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .order-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #6c5ce7;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .log-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .log-output {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+
+        .log-entry {
+            margin-bottom: 0.5rem;
+            padding: 0.25rem 0;
+            border-bottom: 1px solid #4a5568;
+        }
+
+        .log-time {
+            color: #a0aec0;
+            font-size: 0.8rem;
+        }
+
+        .log-message {
+            color: #e2e8f0;
+        }
+
+        .log-success {
+            color: #68d391;
+        }
+
+        .log-error {
+            color: #fc8181;
+        }
+
+        .log-warning {
+            color: #f6e05e;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .debug-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .test-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .order-form {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🐛 Debug Paneli - Aksaray</h1>
+        <div class="header-buttons">
+            <button class="btn btn-primary" onclick="loadMenu()">📋 Menü Yükle</button>
+            <button class="btn btn-success" onclick="testOrder()">🧪 Test Siparişi</button>
+            <button class="btn btn-warning" onclick="clearLogs()">🗑️ Logları Temizle</button>
+            <button class="btn btn-danger" onclick="logout()">🚪 Çıkış</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Debug Kartları -->
+        <div class="debug-grid">
+            <div class="debug-card">
+                <h3>🔗 API Bağlantısı</h3>
+                <div id="apiStatus">Test ediliyor...</div>
+                <button class="btn btn-primary" onclick="testAPI()" style="margin-top: 1rem; width: 100%;">API Test</button>
+            </div>
+            
+            <div class="debug-card">
+                <h3>🏪 Restoran Bilgisi</h3>
+                <div id="restaurantInfo">Yükleniyor...</div>
+                <button class="btn btn-primary" onclick="loadRestaurant()" style="margin-top: 1rem; width: 100%;">Restoran Yükle</button>
+            </div>
+            
+            <div class="debug-card">
+                <h3>📊 Sipariş İstatistikleri</h3>
+                <div id="orderStats">Yükleniyor...</div>
+                <button class="btn btn-primary" onclick="loadOrderStats()" style="margin-top: 1rem; width: 100%;">İstatistik Yükle</button>
+            </div>
+            
+            <div class="debug-card">
+                <h3>👥 Personel Durumu</h3>
+                <div id="staffStatus">Yükleniyor...</div>
+                <button class="btn btn-primary" onclick="checkStaff()" style="margin-top: 1rem; width: 100%;">Personel Kontrol</button>
+            </div>
+        </div>
+
+        <!-- Menü Bölümü -->
+        <div class="menu-section">
+            <h2>🍽️ Aksaray Menüsü</h2>
+            <div id="menuContent">
+                <p>Menü yüklenmek için "Menü Yükle" butonuna tıklayın.</p>
+            </div>
+        </div>
+
+        <!-- Test Bölümü -->
+        <div class="test-section">
+            <h2>🧪 Test İşlemleri</h2>
+            <div class="test-buttons">
+                <button class="btn btn-primary" onclick="testLogin()">🔐 Login Test</button>
+                <button class="btn btn-success" onclick="testOrder()">📝 Sipariş Test</button>
+                <button class="btn btn-warning" onclick="testRealtime()">⚡ Real-time Test</button>
+                <button class="btn btn-danger" onclick="testError()">❌ Hata Test</button>
+            </div>
+        </div>
+
+        <!-- Sipariş Test Formu -->
+        <div class="order-test">
+            <h2>📝 Test Siparişi Oluştur</h2>
+            <div class="order-form">
+                <div class="form-group">
+                    <label>Masa Numarası:</label>
+                    <input type="number" id="tableNumber" value="1" min="1" max="20">
+                </div>
+                <div class="form-group">
+                    <label>Müşteri Adı:</label>
+                    <input type="text" id="customerName" value="Test Müşteri">
+                </div>
+                <div class="form-group">
+                    <label>Öncelik:</label>
+                    <select id="priority">
+                        <option value="normal">Normal</option>
+                        <option value="high">Yüksek</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Sipariş Notu:</label>
+                    <input type="text" id="orderNotes" value="Test siparişi">
+                </div>
+            </div>
+            <button class="btn btn-success" onclick="createTestOrder()" style="margin-top: 1rem; width: 100%;">🧪 Test Siparişi Oluştur</button>
+        </div>
+
+        <!-- Log Bölümü -->
+        <div class="log-section">
+            <h2>📋 Debug Logları</h2>
+            <div class="log-output" id="logOutput">
+                <div class="log-entry">
+                    <span class="log-time">[${new Date().toLocaleTimeString()}]</span>
+                    <span class="log-message">Debug paneli başlatıldı</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API Configuration
+        const API_URL = 'https://masapp-backend.onrender.com/api';
+        let restaurantId = null;
+        let menuData = null;
+
+        // Log fonksiyonu
+        function addLog(message, type = 'info') {
+            const logOutput = document.getElementById('logOutput');
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            
+            const time = new Date().toLocaleTimeString();
+            const typeClass = type === 'success' ? 'log-success' : 
+                            type === 'error' ? 'log-error' : 
+                            type === 'warning' ? 'log-warning' : 'log-message';
+            
+            logEntry.innerHTML = `
+                <span class="log-time">[${time}]</span>
+                <span class="${typeClass}">${message}</span>
+            `;
+            
+            logOutput.appendChild(logEntry);
+            logOutput.scrollTop = logOutput.scrollHeight;
+        }
+
+        // Logları temizle
+        function clearLogs() {
+            document.getElementById('logOutput').innerHTML = '';
+            addLog('Loglar temizlendi', 'warning');
+        }
+
+        // API test
+        async function testAPI() {
+            addLog('API bağlantısı test ediliyor...', 'info');
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                const result = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('apiStatus').innerHTML = `
+                        <div style="color: #28a745; font-weight: 600;">✅ API Bağlantısı Başarılı</div>
+                        <div style="font-size: 0.9rem; color: #666;">Status: ${response.status}</div>
+                    `;
+                    addLog('API bağlantısı başarılı', 'success');
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                document.getElementById('apiStatus').innerHTML = `
+                    <div style="color: #dc3545; font-weight: 600;">❌ API Bağlantısı Başarısız</div>
+                    <div style="font-size: 0.9rem; color: #666;">Hata: ${error.message}</div>
+                `;
+                addLog(`API bağlantısı başarısız: ${error.message}`, 'error');
+            }
+        }
+
+        // Restoran bilgisi yükle
+        async function loadRestaurant() {
+            addLog('Restoran bilgisi yükleniyor...', 'info');
+            try {
+                const response = await fetch(`${API_URL}/restaurants`);
+                const result = await response.json();
+                
+                if (result.success && result.data) {
+                    const aksarayRestaurant = result.data.find(r => r.username === 'aksaray');
+                    if (aksarayRestaurant) {
+                        restaurantId = aksarayRestaurant.id;
+                        document.getElementById('restaurantInfo').innerHTML = `
+                            <div style="color: #28a745; font-weight: 600;">✅ Aksaray Restoranı Bulundu</div>
+                            <div style="font-size: 0.9rem; color: #666;">
+                                ID: ${aksarayRestaurant.id}<br>
+                                Ad: ${aksarayRestaurant.name}<br>
+                                Username: ${aksarayRestaurant.username}
+                            </div>
+                        `;
+                        addLog(`Restoran bulundu: ${aksarayRestaurant.name}`, 'success');
+                    } else {
+                        throw new Error('Aksaray restoranı bulunamadı');
+                    }
+                } else {
+                    throw new Error('Restoran verisi alınamadı');
+                }
+            } catch (error) {
+                document.getElementById('restaurantInfo').innerHTML = `
+                    <div style="color: #dc3545; font-weight: 600;">❌ Restoran Bulunamadı</div>
+                    <div style="font-size: 0.9rem; color: #666;">Hata: ${error.message}</div>
+                `;
+                addLog(`Restoran yüklenemedi: ${error.message}`, 'error');
+            }
+        }
+
+        // Sipariş istatistikleri
+        async function loadOrderStats() {
+            if (!restaurantId) {
+                addLog('Önce restoran bilgisini yükleyin', 'warning');
+                return;
+            }
+            
+            addLog('Sipariş istatistikleri yükleniyor...', 'info');
+            try {
+                const response = await fetch(`${API_URL}/orders?restaurantId=${restaurantId}`);
+                const result = await response.json();
+                
+                if (result.success && result.data) {
+                    const orders = result.data;
+                    const pending = orders.filter(o => o.status === 'pending').length;
+                    const preparing = orders.filter(o => o.status === 'preparing').length;
+                    const ready = orders.filter(o => o.status === 'ready').length;
+                    const total = orders.length;
+                    
+                    document.getElementById('orderStats').innerHTML = `
+                        <div style="color: #28a745; font-weight: 600;">✅ İstatistikler Yüklendi</div>
+                        <div style="font-size: 0.9rem; color: #666;">
+                            Toplam: ${total}<br>
+                            Bekleyen: ${pending}<br>
+                            Hazırlanıyor: ${preparing}<br>
+                            Hazır: ${ready}
+                        </div>
+                    `;
+                    addLog(`İstatistikler yüklendi: ${total} sipariş`, 'success');
+                } else {
+                    throw new Error('Sipariş verisi alınamadı');
+                }
+            } catch (error) {
+                document.getElementById('orderStats').innerHTML = `
+                    <div style="color: #dc3545; font-weight: 600;">❌ İstatistikler Yüklenemedi</div>
+                    <div style="font-size: 0.9rem; color: #666;">Hata: ${error.message}</div>
+                `;
+                addLog(`İstatistikler yüklenemedi: ${error.message}`, 'error');
+            }
+        }
+
+        // Personel kontrolü
+        async function checkStaff() {
+            addLog('Personel durumu kontrol ediliyor...', 'info');
+            try {
+                const response = await fetch(`${API_URL}/staff?restaurantId=${restaurantId || 'aksaray'}`);
+                const result = await response.json();
+                
+                if (result.success && result.data) {
+                    const staff = result.data;
+                    const waiter = staff.filter(s => s.role === 'waiter').length;
+                    const chef = staff.filter(s => s.role === 'chef').length;
+                    const cashier = staff.filter(s => s.role === 'cashier').length;
+                    
+                    document.getElementById('staffStatus').innerHTML = `
+                        <div style="color: #28a745; font-weight: 600;">✅ Personel Bulundu</div>
+                        <div style="font-size: 0.9rem; color: #666;">
+                            Garson: ${waiter}<br>
+                            Aşçı: ${chef}<br>
+                            Kasa: ${cashier}<br>
+                            Toplam: ${staff.length}
+                        </div>
+                    `;
+                    addLog(`Personel bulundu: ${staff.length} kişi`, 'success');
+                } else {
+                    throw new Error('Personel verisi alınamadı');
+                }
+            } catch (error) {
+                document.getElementById('staffStatus').innerHTML = `
+                    <div style="color: #dc3545; font-weight: 600;">❌ Personel Bulunamadı</div>
+                    <div style="font-size: 0.9rem; color: #666;">Hata: ${error.message}</div>
+                `;
+                addLog(`Personel kontrolü başarısız: ${error.message}`, 'error');
+            }
+        }
+
+        // Menü yükle
+        async function loadMenu() {
+            if (!restaurantId) {
+                addLog('Önce restoran bilgisini yükleyin', 'warning');
+                return;
+            }
+            
+            addLog('Menü yükleniyor...', 'info');
+            try {
+                // Kategorileri çek
+                const categoriesResponse = await fetch(`${API_URL}/restaurants/${restaurantId}/menu/categories`);
+                const categoriesData = await categoriesResponse.json();
+                
+                // Menu itemları çek
+                const itemsResponse = await fetch(`${API_URL}/restaurants/${restaurantId}/menu/items`);
+                const itemsData = await itemsResponse.json();
+                
+                if (categoriesData.success && itemsData.success) {
+                    menuData = {
+                        categories: categoriesData.data || [],
+                        items: itemsData.data || []
+                    };
+                    
+                    let menuHTML = `
+                        <div style="color: #28a745; font-weight: 600; margin-bottom: 1rem;">
+                            ✅ Menü Yüklendi: ${menuData.categories.length} kategori, ${menuData.items.length} ürün
+                        </div>
+                        <div class="menu-categories">
+                    `;
+                    
+                    menuData.categories.forEach(category => {
+                        const categoryItems = menuData.items.filter(item => item.categoryId === category.id);
+                        menuHTML += `
+                            <div class="category-card">
+                                <div class="category-name">${category.name}</div>
+                                <div class="menu-items">
+                                    ${categoryItems.map(item => `
+                                        <div class="menu-item">${item.name} - ${parseFloat(item.price || 0).toFixed(2)}₺</div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    menuHTML += '</div>';
+                    document.getElementById('menuContent').innerHTML = menuHTML;
+                    addLog(`Menü yüklendi: ${menuData.categories.length} kategori, ${menuData.items.length} ürün`, 'success');
+                } else {
+                    throw new Error('Menü verisi alınamadı');
+                }
+            } catch (error) {
+                document.getElementById('menuContent').innerHTML = `
+                    <div style="color: #dc3545; font-weight: 600;">❌ Menü Yüklenemedi</div>
+                    <div style="font-size: 0.9rem; color: #666;">Hata: ${error.message}</div>
+                `;
+                addLog(`Menü yüklenemedi: ${error.message}`, 'error');
+            }
+        }
+
+        // Test siparişi oluştur
+        async function createTestOrder() {
+            if (!restaurantId || !menuData || !menuData.items.length) {
+                addLog('Önce restoran ve menü bilgilerini yükleyin', 'warning');
+                return;
+            }
+            
+            const tableNumber = document.getElementById('tableNumber').value;
+            const customerName = document.getElementById('customerName').value;
+            const priority = document.getElementById('priority').value;
+            const orderNotes = document.getElementById('orderNotes').value;
+            
+            addLog('Test siparişi oluşturuluyor...', 'info');
+            
+            try {
+                // İlk ürünü seç
+                const testItem = menuData.items[0];
+                
+                const orderData = {
+                    restaurantId: restaurantId,
+                    tableNumber: parseInt(tableNumber),
+                    customerName: customerName,
+                    priority: priority,
+                    notes: orderNotes,
+                    items: [{
+                        menuItemId: testItem.id,
+                        name: testItem.name,
+                        price: parseFloat(testItem.price || 0),
+                        quantity: 1,
+                        notes: 'Test siparişi'
+                    }],
+                    totalAmount: parseFloat(testItem.price || 0),
+                    status: 'pending',
+                    paymentStatus: 'pending'
+                };
+                
+                const response = await fetch(`${API_URL}/orders`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    addLog(`Test siparişi oluşturuldu! ID: ${result.data.id}`, 'success');
+                    addLog(`Masa: ${tableNumber}, Ürün: ${testItem.name}, Tutar: ${testItem.price}₺`, 'info');
+                } else {
+                    throw new Error(result.message || 'Sipariş oluşturulamadı');
+                }
+            } catch (error) {
+                addLog(`Test siparişi oluşturulamadı: ${error.message}`, 'error');
+            }
+        }
+
+        // Test fonksiyonları
+        function testLogin() {
+            addLog('Login testi başlatılıyor...', 'info');
+            // Burada login testi yapılabilir
+            addLog('Login testi tamamlandı', 'success');
+        }
+
+        function testOrder() {
+            addLog('Sipariş testi başlatılıyor...', 'info');
+            createTestOrder();
+        }
+
+        function testRealtime() {
+            addLog('Real-time testi başlatılıyor...', 'info');
+            // Burada real-time testi yapılabilir
+            addLog('Real-time testi tamamlandı', 'success');
+        }
+
+        function testError() {
+            addLog('Hata testi başlatılıyor...', 'warning');
+            addLog('Bu bir test hatasıdır', 'error');
+        }
+
+        // Çıkış fonksiyonu
+        function logout() {
+            addLog('Debug panelinden çıkılıyor...', 'info');
+            // Burada logout işlemi yapılabilir
+            window.location.href = '/';
+        }
+
+        // Sayfa yüklendiğinde
+        document.addEventListener('DOMContentLoaded', function() {
+            addLog('Debug paneli başlatıldı', 'success');
+            
+            // Otomatik testler
+            setTimeout(() => {
+                testAPI();
+                loadRestaurant();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

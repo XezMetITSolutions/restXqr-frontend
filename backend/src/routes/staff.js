@@ -860,6 +860,15 @@ router.post('/create-aksaray', async (req, res) => {
     const staffMembers = [
       {
         restaurantId: aksarayRestaurant.id,
+        username: 'elma',
+        password: '123456',
+        name: 'Elma Garson',
+        email: 'elma@aksaray.com',
+        role: 'waiter',
+        status: 'active'
+      },
+      {
+        restaurantId: aksarayRestaurant.id,
         username: 'portakal',
         password: '123456',
         name: 'Portakal Mutfak',
