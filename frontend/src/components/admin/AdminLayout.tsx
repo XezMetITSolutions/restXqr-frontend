@@ -24,7 +24,8 @@ import {
   FaDatabase,
   FaFileAlt,
   FaCrown,
-  FaRocket
+  FaRocket,
+  FaHeadset
 } from 'react-icons/fa';
 
 interface AdminLayoutProps {
@@ -170,6 +171,19 @@ export default function AdminLayout({
                       <FaCreditCard className="text-lg" />
                     </div>
                     <span className="font-medium">Abonelik Yönetimi</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link 
+                    href="/admin/support" 
+                    className={`group flex items-center p-4 rounded-xl hover:bg-white/10 text-blue-100 hover:text-white transition-all duration-200 ${
+                      title === 'Destek Talepleri' ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg' : ''
+                    }`}
+                  >
+                    <div className={`p-2 rounded-lg mr-4 transition-all ${title === 'Destek Talepleri' ? 'bg-white/20' : 'bg-white/5 group-hover:bg-white/10'}`}>
+                      <FaHeadset className="text-lg" />
+                    </div>
+                    <span className="font-medium">Destek Talepleri</span>
                   </Link>
                 </li>
                 {/* Ödeme Hataları, Kullanıcı Onayları, Sistem Yönetimi, Dokümantasyon - Kaldırıldı */}

@@ -110,31 +110,49 @@ export default function SupportPage() {
     router.push('/login');
   };
 
-  const handleCreateTicket = () => {
+  const handleCreateTicket = async () => {
     if (!newTicket.subject.trim() || !newTicket.description.trim()) {
       alert('Lütfen tüm zorunlu alanları doldurun!');
       return;
     }
 
-    const ticket: SupportTicket = {
-      id: Date.now(),
-      subject: newTicket.subject,
-      category: newTicket.category,
-      priority: newTicket.priority,
-      status: 'open',
-      description: newTicket.description,
-      createdAt: new Date().toISOString().replace('T', ' ').slice(0, 16),
-      updatedAt: new Date().toISOString().replace('T', ' ').slice(0, 16)
-    };
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
+      
+      const response = await fetch(`${API_URL}/support`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          restaurantId: authenticatedRestaurant?.id,
+          name: displayName,
+          email: displayEmail,
+          phone: authenticatedRestaurant?.phone || '',
+          subject: newTicket.subject,
+          message: newTicket.description,
+          priority: newTicket.priority
+        })
+      });
 
-    setTickets(prev => [ticket, ...prev]);
-    setShowNewTicketModal(false);
-    setNewTicket({
-      subject: '',
-      category: 'technical',
-      priority: 'normal',
-      description: ''
-    });
+      const data = await response.json();
+
+      if (data.success) {
+        alert('✅ Destek talebiniz başarıyla gönderildi! En kısa sürede size dönüş yapılacaktır.');
+        setShowNewTicketModal(false);
+        setNewTicket({
+          subject: '',
+          category: 'technical',
+          priority: 'normal',
+          description: ''
+        });
+      } else {
+        alert('❌ Hata: ' + data.message);
+      }
+    } catch (error) {
+      console.error('Destek talebi oluşturulamadı:', error);
+      alert('❌ Destek talebi gönderilirken bir hata oluştu!');
+    }
   };
 
   const getPriorityColor = (priority: string) => {
