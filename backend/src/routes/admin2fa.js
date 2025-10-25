@@ -49,9 +49,9 @@ const adminData = {
   name: 'XezMet Super Admin',
   role: 'super_admin',
   status: 'active',
-  twoFactorSecret: null, // İlk kurulumda null
-  backupCodes: [],
-  twoFactorEnabled: false
+  twoFactorSecret: 'JBSWY3DPEHPK3PXP', // Demo secret aktif
+  backupCodes: ['ABC12345', 'DEF67890', 'GHI13579', 'JKL24680', 'MNO97531'], // Demo backup kodları
+  twoFactorEnabled: true // 2FA aktif
 };
 
 // POST /api/admin/2fa/setup - 2FA kurulumu başlat
