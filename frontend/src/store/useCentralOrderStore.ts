@@ -22,12 +22,13 @@ export interface CentralOrder {
   status: 'pending' | 'preparing' | 'ready' | 'served' | 'completed' | 'cancelled';
   orderTime: string;
   estimatedTime: number;
-  priority: 'low' | 'normal' | 'high';
+  priority: 'low' | 'normal' | 'high' | 'medium';
   totalAmount: number;
   guests: number;
   createdAt: string;
   paymentStatus: 'pending' | 'paid' | 'refunded';
   customerNotes?: string;
+  customerName?: string;
   waiterId?: string;
   kitchenId?: string;
   cashierId?: string;
@@ -58,7 +59,9 @@ interface CentralOrderState {
   initializeDemoData: () => void;
 }
 
-const useCentralOrderStore = create<CentralOrderState>()((set, get) => ({
+const useCentralOrderStore = create<CentralOrderState>()(
+  persist(
+    (set, get) => ({
       orders: [],
       
       addOrder: (order) => {
@@ -849,6 +852,9 @@ const useCentralOrderStore = create<CentralOrderState>()((set, get) => ({
         // Test verilerini kullanmıyoruz, sadece subdomain test verilerini kullan
         // set({ orders: demoOrders });
       }
-}));
+    }),
+    createPersistOptions('central-orders')
+  )
+);
 
 export default useCentralOrderStore;
