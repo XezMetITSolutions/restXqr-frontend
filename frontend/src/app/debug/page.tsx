@@ -28,6 +28,8 @@ export default function DebugPage() {
   const [tableNumber, setTableNumber] = useState(5);
   const [realtimeEvents, setRealtimeEvents] = useState<any[]>([]);
   const [isRealtimeConnected, setIsRealtimeConnected] = useState(false);
+  const [kitchenApiStatus, setKitchenApiStatus] = useState<any>(null);
+  const [cashierApiStatus, setCashierApiStatus] = useState<any>(null);
 
   // Real-time bildirim izleme
   const { isConnected } = useRealtime({
@@ -127,6 +129,110 @@ export default function DebugPage() {
       addDetailedLog('Menü Exception', `Menü çekme hatası`, error);
     } finally {
       setIsLoadingMenu(false);
+    }
+  };
+
+  // Mutfak paneli API test et
+  const testKitchenAPI = async () => {
+    addDetailedLog('Mutfak API Test', 'Mutfak paneli API endpoint\'i test ediliyor...');
+    
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
+      
+      // Önce restoran ID'sini bul
+      const restaurantResponse = await fetch(`${apiUrl}/restaurants`);
+      if (!restaurantResponse.ok) {
+        setKitchenApiStatus({ success: false, error: 'Restoran listesi alınamadı' });
+        return;
+      }
+      
+      const restaurantData = await restaurantResponse.json();
+      const aksarayRestaurant = restaurantData.data?.find((r: any) => r.username === 'aksaray');
+      
+      if (!aksarayRestaurant) {
+        setKitchenApiStatus({ success: false, error: 'Aksaray restoranı bulunamadı' });
+        return;
+      }
+      
+      // Mutfak panelinin çektiği endpoint'i test et
+      const ordersResponse = await fetch(`${apiUrl}/restaurants/${aksarayRestaurant.id}/orders?status=pending`);
+      addDetailedLog('Mutfak API Yanıt', `Status: ${ordersResponse.status}`);
+      
+      if (ordersResponse.ok) {
+        const ordersData = await ordersResponse.json();
+        addDetailedLog('Mutfak API Veri', `Pending siparişler`, ordersData);
+        
+        setKitchenApiStatus({ 
+          success: true, 
+          endpoint: `${apiUrl}/restaurants/${aksarayRestaurant.id}/orders?status=pending`,
+          orderCount: ordersData.data?.length || 0,
+          data: ordersData
+        });
+        addResult('Mutfak API Test', true, `Mutfak API çalışıyor! ${ordersData.data?.length || 0} pending sipariş bulundu`);
+      } else {
+        const errorText = await ordersResponse.text();
+        setKitchenApiStatus({ 
+          success: false, 
+          endpoint: `${apiUrl}/restaurants/${aksarayRestaurant.id}/orders?status=pending`,
+          error: errorText 
+        });
+        addResult('Mutfak API Test', false, `Mutfak API hatası: ${ordersResponse.status}`);
+      }
+    } catch (error: any) {
+      setKitchenApiStatus({ success: false, error: error.message });
+      addResult('Mutfak API Test', false, `Mutfak API test hatası: ${error.message}`);
+    }
+  };
+
+  // Kasa paneli API test et
+  const testCashierAPI = async () => {
+    addDetailedLog('Kasa API Test', 'Kasa paneli API endpoint\'i test ediliyor...');
+    
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
+      
+      // Önce restoran ID'sini bul
+      const restaurantResponse = await fetch(`${apiUrl}/restaurants`);
+      if (!restaurantResponse.ok) {
+        setCashierApiStatus({ success: false, error: 'Restoran listesi alınamadı' });
+        return;
+      }
+      
+      const restaurantData = await restaurantResponse.json();
+      const aksarayRestaurant = restaurantData.data?.find((r: any) => r.username === 'aksaray');
+      
+      if (!aksarayRestaurant) {
+        setCashierApiStatus({ success: false, error: 'Aksaray restoranı bulunamadı' });
+        return;
+      }
+      
+      // Kasa panelinin çektiği endpoint'i test et
+      const ordersResponse = await fetch(`${apiUrl}/restaurants/${aksarayRestaurant.id}/orders?status=pending`);
+      addDetailedLog('Kasa API Yanıt', `Status: ${ordersResponse.status}`);
+      
+      if (ordersResponse.ok) {
+        const ordersData = await ordersResponse.json();
+        addDetailedLog('Kasa API Veri', `Pending siparişler`, ordersData);
+        
+        setCashierApiStatus({ 
+          success: true, 
+          endpoint: `${apiUrl}/restaurants/${aksarayRestaurant.id}/orders?status=pending`,
+          orderCount: ordersData.data?.length || 0,
+          data: ordersData
+        });
+        addResult('Kasa API Test', true, `Kasa API çalışıyor! ${ordersData.data?.length || 0} pending sipariş bulundu`);
+      } else {
+        const errorText = await ordersResponse.text();
+        setCashierApiStatus({ 
+          success: false, 
+          endpoint: `${apiUrl}/restaurants/${aksarayRestaurant.id}/orders?status=pending`,
+          error: errorText 
+        });
+        addResult('Kasa API Test', false, `Kasa API hatası: ${ordersResponse.status}`);
+      }
+    } catch (error: any) {
+      setCashierApiStatus({ success: false, error: error.message });
+      addResult('Kasa API Test', false, `Kasa API test hatası: ${error.message}`);
     }
   };
 
@@ -672,29 +778,43 @@ export default function DebugPage() {
             </div>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-300">Durum:</span>
-                <span className="text-orange-300">Aktif</span>
-              </div>
-              <div className="flex justify-between text-sm">
                 <span className="text-gray-300">Real-time:</span>
                 <span className={isRealtimeConnected ? 'text-green-300' : 'text-red-300'}>
                   {isRealtimeConnected ? 'Bağlı' : 'Bağlantısız'}
                 </span>
               </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-300">API:</span>
+                <span className={kitchenApiStatus?.success ? 'text-green-300' : kitchenApiStatus ? 'text-red-300' : 'text-gray-400'}>
+                  {kitchenApiStatus?.success ? `${kitchenApiStatus.orderCount} sipariş` : kitchenApiStatus ? 'Hata' : 'Test edilmedi'}
+                </span>
+              </div>
+              <button
+                onClick={testKitchenAPI}
+                className="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 px-3 rounded text-sm transition-colors"
+              >
+                API Test Et
+              </button>
               <a 
                 href="https://aksaray.restxqr.com/kitchen/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="block w-full text-center bg-orange-600 hover:bg-orange-700 text-white py-2 px-3 rounded text-sm transition-colors mt-3"
+                className="block w-full text-center bg-orange-500 hover:bg-orange-600 text-white py-2 px-3 rounded text-sm transition-colors"
               >
                 Mutfak Panelini Aç
               </a>
-              <p className="text-gray-400 text-xs text-center mt-2">
-                Yeni siparişler burada görünecek
-              </p>
               <div className="mt-2 p-2 bg-orange-500/10 border border-orange-500/20 rounded text-xs">
                 <div className="text-orange-300 font-medium">Login: portakal / 123456</div>
               </div>
+              {kitchenApiStatus && (
+                <div className="mt-2 p-2 bg-gray-500/10 border border-gray-500/20 rounded text-xs">
+                  <div className="text-gray-300 font-medium mb-1">API Endpoint:</div>
+                  <div className="text-gray-400 break-all">{kitchenApiStatus.endpoint}</div>
+                  {kitchenApiStatus.error && (
+                    <div className="text-red-300 mt-1">Hata: {kitchenApiStatus.error}</div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
@@ -706,29 +826,43 @@ export default function DebugPage() {
             </div>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-300">Durum:</span>
-                <span className="text-green-300">Aktif</span>
-              </div>
-              <div className="flex justify-between text-sm">
                 <span className="text-gray-300">Real-time:</span>
                 <span className={isRealtimeConnected ? 'text-green-300' : 'text-red-300'}>
                   {isRealtimeConnected ? 'Bağlı' : 'Bağlantısız'}
                 </span>
               </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-300">API:</span>
+                <span className={cashierApiStatus?.success ? 'text-green-300' : cashierApiStatus ? 'text-red-300' : 'text-gray-400'}>
+                  {cashierApiStatus?.success ? `${cashierApiStatus.orderCount} sipariş` : cashierApiStatus ? 'Hata' : 'Test edilmedi'}
+                </span>
+              </div>
+              <button
+                onClick={testCashierAPI}
+                className="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-3 rounded text-sm transition-colors"
+              >
+                API Test Et
+              </button>
               <a 
                 href="https://aksaray.restxqr.com/cashier/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="block w-full text-center bg-green-600 hover:bg-green-700 text-white py-2 px-3 rounded text-sm transition-colors mt-3"
+                className="block w-full text-center bg-green-500 hover:bg-green-600 text-white py-2 px-3 rounded text-sm transition-colors"
               >
                 Kasa Panelini Aç
               </a>
-              <p className="text-gray-400 text-xs text-center mt-2">
-                Ödeme bekleyen siparişler burada görünecek
-              </p>
               <div className="mt-2 p-2 bg-green-500/10 border border-green-500/20 rounded text-xs">
                 <div className="text-green-300 font-medium">Login: armut / 123456</div>
               </div>
+              {cashierApiStatus && (
+                <div className="mt-2 p-2 bg-gray-500/10 border border-gray-500/20 rounded text-xs">
+                  <div className="text-gray-300 font-medium mb-1">API Endpoint:</div>
+                  <div className="text-gray-400 break-all">{cashierApiStatus.endpoint}</div>
+                  {cashierApiStatus.error && (
+                    <div className="text-red-300 mt-1">Hata: {cashierApiStatus.error}</div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
