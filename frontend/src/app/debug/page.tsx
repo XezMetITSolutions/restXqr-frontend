@@ -30,6 +30,7 @@ export default function DebugPage() {
   const [isRealtimeConnected, setIsRealtimeConnected] = useState(false);
   const [kitchenApiStatus, setKitchenApiStatus] = useState<any>(null);
   const [cashierApiStatus, setCashierApiStatus] = useState<any>(null);
+  const [panelLoginStatus, setPanelLoginStatus] = useState<any>({});
 
   // Real-time bildirim izleme
   const { isConnected } = useRealtime({
@@ -233,6 +234,41 @@ export default function DebugPage() {
     } catch (error: any) {
       setCashierApiStatus({ success: false, error: error.message });
       addResult('Kasa API Test', false, `Kasa API test hatası: ${error.message}`);
+    }
+  };
+
+  // Panel login durumu kontrol et
+  const checkPanelLoginStatus = () => {
+    addDetailedLog('Panel Login Kontrol', 'Panel login durumları kontrol ediliyor...');
+    
+    // LocalStorage'dan login durumlarını kontrol et
+    const kitchenLogin = localStorage.getItem('kitchen_staff_info');
+    const cashierLogin = localStorage.getItem('cashier_staff_info');
+    
+    const status = {
+      kitchen: {
+        isLoggedIn: !!kitchenLogin,
+        staffInfo: kitchenLogin ? JSON.parse(kitchenLogin) : null
+      },
+      cashier: {
+        isLoggedIn: !!cashierLogin,
+        staffInfo: cashierLogin ? JSON.parse(cashierLogin) : null
+      }
+    };
+    
+    setPanelLoginStatus(status);
+    
+    addDetailedLog('Mutfak Login', `Mutfak paneli login durumu: ${status.kitchen.isLoggedIn ? 'Giriş yapılmış' : 'Giriş yapılmamış'}`, status.kitchen.staffInfo);
+    addDetailedLog('Kasa Login', `Kasa paneli login durumu: ${status.cashier.isLoggedIn ? 'Giriş yapılmış' : 'Giriş yapılmamış'}`, status.cashier.staffInfo);
+    
+    if (!status.kitchen.isLoggedIn) {
+      addResult('Panel Login Kontrol', false, 'Mutfak paneline giriş yapılmamış! Bu yüzden siparişler görünmüyor.');
+    }
+    if (!status.cashier.isLoggedIn) {
+      addResult('Panel Login Kontrol', false, 'Kasa paneline giriş yapılmamış! Bu yüzden siparişler görünmüyor.');
+    }
+    if (status.kitchen.isLoggedIn && status.cashier.isLoggedIn) {
+      addResult('Panel Login Kontrol', true, 'Her iki panele de giriş yapılmış. Siparişler görünmeli.');
     }
   };
 
@@ -514,6 +550,12 @@ export default function DebugPage() {
                   API Çalışıyor Mu?
                 </button>
                 <button
+                  onClick={checkPanelLoginStatus}
+                  className="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white py-3 px-4 rounded-lg font-semibold hover:from-purple-700 hover:to-purple-800 transition-all duration-200"
+                >
+                  Panel Login Kontrol Et
+                </button>
+                <button
                   onClick={createTestOrder}
                   disabled={isRunning || restaurantMenu.length === 0}
                   className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 px-4 rounded-lg font-semibold hover:from-green-700 hover:to-green-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
@@ -789,6 +831,12 @@ export default function DebugPage() {
                   {kitchenApiStatus?.success ? `${kitchenApiStatus.orderCount} sipariş` : kitchenApiStatus ? 'Hata' : 'Test edilmedi'}
                 </span>
               </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-300">Login:</span>
+                <span className={panelLoginStatus?.kitchen?.isLoggedIn ? 'text-green-300' : 'text-red-300'}>
+                  {panelLoginStatus?.kitchen?.isLoggedIn ? 'Giriş yapılmış' : 'Giriş yapılmamış'}
+                </span>
+              </div>
               <button
                 onClick={testKitchenAPI}
                 className="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 px-3 rounded text-sm transition-colors"
@@ -835,6 +883,12 @@ export default function DebugPage() {
                 <span className="text-gray-300">API:</span>
                 <span className={cashierApiStatus?.success ? 'text-green-300' : cashierApiStatus ? 'text-red-300' : 'text-gray-400'}>
                   {cashierApiStatus?.success ? `${cashierApiStatus.orderCount} sipariş` : cashierApiStatus ? 'Hata' : 'Test edilmedi'}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-300">Login:</span>
+                <span className={panelLoginStatus?.cashier?.isLoggedIn ? 'text-green-300' : 'text-red-300'}>
+                  {panelLoginStatus?.cashier?.isLoggedIn ? 'Giriş yapılmış' : 'Giriş yapılmamış'}
                 </span>
               </div>
               <button
