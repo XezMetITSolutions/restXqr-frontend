@@ -2,9 +2,9 @@ services:
   - type: web
     name: restxqr-backend
     env: node
-    rootDir: ./backend
-    buildCommand: npm install
-    startCommand: npm start
+    rootDir: /
+    buildCommand: npm run render-build
+    startCommand: npm run render-start
     envVars:
       - key: NODE_ENV
         value: production
