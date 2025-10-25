@@ -195,6 +195,8 @@ export default function DebugPage() {
             }
           };
           
+          addDetailedLog('Bildirim Payload', `Gönderilecek bildirim verisi`, notificationPayload);
+          
           const notificationResponse = await fetch(`${apiUrl}/debug/publish-notification`, {
             method: 'POST',
             headers: {
@@ -205,10 +207,13 @@ export default function DebugPage() {
 
           addDetailedLog('Test Bildirim Yanıtı', `Status: ${notificationResponse.status}`);
           
+          const notificationResult = await notificationResponse.json();
+          addDetailedLog('Test Bildirim Sonucu', `API'den dönen veri`, notificationResult);
+          
           if (notificationResponse.ok) {
-            addResult('Test Mutfak Bildirimi', true, 'Mutfak paneline test bildirimi gönderildi!');
+            addResult('Test Mutfak Bildirimi', true, 'Mutfak paneline test bildirimi gönderildi!', notificationResult);
           } else {
-            addResult('Test Mutfak Bildirimi', false, 'Test bildirimi gönderilemedi');
+            addResult('Test Mutfak Bildirimi', false, `Test bildirimi gönderilemedi: ${notificationResult.message}`, notificationResult);
           }
         } catch (error: any) {
           addDetailedLog('Test Bildirim Exception', `Test bildirim hatası`, error);
