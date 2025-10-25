@@ -239,6 +239,7 @@
     <div class="header">
         <h1>Mutfak Arayüzü</h1>
         <div>
+            <button class="btn" onclick="toggleDebug()">Debug</button>
             <button class="btn">Bildirimler</button>
             <button class="btn">Çıkış</button>
         </div>
@@ -254,88 +255,20 @@
         </div>
         
         <div class="cards-container">
-            <!-- Masa 1 -->
-            <div class="card priority">
-                <div class="card-header">
-                    <div class="table-number">Masa 1</div>
-                    <div class="priority-badge">Öncelikli</div>
-                </div>
-                <div class="order-time urgent">25 dk önce</div>
-                <div class="order-items">
-                    <div class="order-item">
-                        <div class="item-name">
-                            Karışık Pizza
-                            <div class="item-notes">Ekstra peynir, soğansız</div>
-                        </div>
-                        <div class="item-quantity">x2</div>
-                        <button class="btn btn-success">Hazır</button>
-                    </div>
-                    <div class="order-item">
-                        <div class="item-name">Tiramisu</div>
-                        <div class="item-quantity">x2</div>
-                        <button class="btn btn-primary">Hazırla</button>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <div>Garson: Ahmet</div>
-                </div>
+            <!-- Siparişler burada dinamik olarak yüklenecek -->
+        </div>
+        
+        <!-- Debug Panel -->
+        <div id="debugPanel" style="display: none; margin-top: 2rem; padding: 1rem; background: #f0f0f0; border-radius: 8px;">
+            <h3 style="margin-top: 0; color: #e53935;">🐛 Debug Paneli</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                <button class="btn" onclick="debugLogin()">Login Test</button>
+                <button class="btn" onclick="debugAPI()">API Test</button>
+                <button class="btn" onclick="debugOrders()">Sipariş Test</button>
+                <button class="btn" onclick="debugRealtime()">Real-time Test</button>
             </div>
-            
-            <!-- Masa 2 -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="table-number">Masa 2</div>
-                </div>
-                <div class="order-time">10 dk önce</div>
-                <div class="order-items">
-                    <div class="order-item">
-                        <div class="item-name">
-                            Izgara Köfte
-                            <div class="item-notes">Orta pişmiş</div>
-                        </div>
-                        <div class="item-quantity">x1</div>
-                        <button class="btn btn-success">Hazır</button>
-                    </div>
-                    <div class="order-item">
-                        <div class="item-name">
-                            Tavuk Şiş
-                        </div>
-                        <div class="item-quantity">x1</div>
-                        <button class="btn btn-success">Hazır</button>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <div>Garson: Mehmet</div>
-                </div>
-            </div>
-            
-            <!-- Masa 3 -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="table-number">Masa 3</div>
-                </div>
-                <div class="order-time">5 dk önce</div>
-                <div class="order-items">
-                    <div class="order-item">
-                        <div class="item-name">
-                            Salata
-                            <div class="item-notes">Soğansız, ekstra zeytinyağı</div>
-                        </div>
-                        <div class="item-quantity">x1</div>
-                        <button class="btn btn-primary">Hazırla</button>
-                    </div>
-                    <div class="order-item">
-                        <div class="item-name">
-                            Makarna
-                            <div class="item-notes">Bolonez sos</div>
-                        </div>
-                        <div class="item-quantity">x1</div>
-                        <button class="btn btn-primary">Hazırla</button>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <div>Garson: Ayşe</div>
-                </div>
+            <div id="debugLog" style="background: #000; color: #0f0; padding: 1rem; border-radius: 4px; font-family: monospace; font-size: 0.8rem; max-height: 300px; overflow-y: auto;">
+                Debug logları burada görünecek...<br>
             </div>
         </div>
     </div>
@@ -550,6 +483,131 @@
         function logout() {
             localStorage.removeItem('kitchen_staff');
             location.reload();
+        }
+
+        // Debug fonksiyonları
+        function toggleDebug() {
+            const panel = document.getElementById('debugPanel');
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function debugLog(message) {
+            const logDiv = document.getElementById('debugLog');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${timestamp}] ${message}<br>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(`🐛 DEBUG: ${message}`);
+        }
+
+        async function debugLogin() {
+            debugLog('=== LOGIN TEST BAŞLADI ===');
+            debugLog(`API URL: ${API_URL}`);
+            debugLog(`LocalStorage kitchen_staff: ${localStorage.getItem('kitchen_staff')}`);
+            debugLog(`isLoggedIn: ${isLoggedIn}`);
+            debugLog(`staffInfo: ${JSON.stringify(staffInfo)}`);
+            
+            try {
+                const response = await fetch(`${API_URL}/staff/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: 'portakal', password: '123456', subdomain: 'aksaray' }),
+                });
+                
+                debugLog(`Login Response Status: ${response.status}`);
+                const result = await response.json();
+                debugLog(`Login Response: ${JSON.stringify(result)}`);
+                
+                if (response.ok && result.success) {
+                    debugLog('✅ Login başarılı!');
+                } else {
+                    debugLog(`❌ Login başarısız: ${result.message}`);
+                }
+            } catch (error) {
+                debugLog(`❌ Login hatası: ${error.message}`);
+            }
+        }
+
+        async function debugAPI() {
+            debugLog('=== API TEST BAŞLADI ===');
+            debugLog(`API URL: ${API_URL}`);
+            
+            try {
+                // Health check
+                const healthResponse = await fetch(`${API_URL.replace('/api', '')}/health`);
+                debugLog(`Health Check Status: ${healthResponse.status}`);
+                const healthData = await healthResponse.json();
+                debugLog(`Health Data: ${JSON.stringify(healthData)}`);
+                
+                // Restaurants endpoint
+                const restaurantsResponse = await fetch(`${API_URL}/restaurants`);
+                debugLog(`Restaurants Status: ${restaurantsResponse.status}`);
+                const restaurantsData = await restaurantsResponse.json();
+                debugLog(`Restaurants Data: ${JSON.stringify(restaurantsData)}`);
+                
+            } catch (error) {
+                debugLog(`❌ API hatası: ${error.message}`);
+            }
+        }
+
+        async function debugOrders() {
+            debugLog('=== SİPARİŞ TEST BAŞLADI ===');
+            debugLog(`API URL: ${API_URL}`);
+            debugLog(`isLoggedIn: ${isLoggedIn}`);
+            
+            try {
+                const response = await fetch(`${API_URL}/orders?restaurantId=aksaray&status=pending`);
+                debugLog(`Orders Response Status: ${response.status}`);
+                debugLog(`Orders Response Headers: ${JSON.stringify([...response.headers.entries()])}`);
+                
+                const result = await response.json();
+                debugLog(`Orders Response: ${JSON.stringify(result)}`);
+                
+                if (result.success && result.data) {
+                    debugLog(`✅ ${result.data.length} sipariş bulundu`);
+                    result.data.forEach((order, index) => {
+                        debugLog(`Sipariş ${index + 1}: Masa ${order.tableNumber}, ${order.items?.length || 0} ürün, ₺${order.totalAmount}`);
+                    });
+                } else {
+                    debugLog(`❌ Sipariş verisi alınamadı: ${result.message}`);
+                }
+            } catch (error) {
+                debugLog(`❌ Sipariş hatası: ${error.message}`);
+            }
+        }
+
+        async function debugRealtime() {
+            debugLog('=== REAL-TIME TEST BAŞLADI ===');
+            debugLog(`Realtime Connection: ${realtimeConnection ? 'Mevcut' : 'Yok'}`);
+            
+            if (realtimeConnection) {
+                debugLog(`Realtime State: ${realtimeConnection.readyState}`);
+                debugLog(`Realtime URL: ${realtimeConnection.url}`);
+            }
+            
+            try {
+                const baseUrl = API_URL.replace('/api', '');
+                const testConnection = new EventSource(`${baseUrl}/api/events/orders`);
+                
+                testConnection.onopen = () => {
+                    debugLog('✅ Real-time bağlantı açıldı');
+                };
+                
+                testConnection.onmessage = (event) => {
+                    debugLog(`📨 Real-time mesaj: ${event.data}`);
+                };
+                
+                testConnection.onerror = (error) => {
+                    debugLog(`❌ Real-time hata: ${error}`);
+                };
+                
+                setTimeout(() => {
+                    testConnection.close();
+                    debugLog('🔒 Test bağlantısı kapatıldı');
+                }, 5000);
+                
+            } catch (error) {
+                debugLog(`❌ Real-time test hatası: ${error.message}`);
+            }
         }
 
         // Sayfa yüklendiğinde

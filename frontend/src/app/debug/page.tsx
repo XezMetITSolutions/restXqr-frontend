@@ -714,6 +714,59 @@ export default function DebugPage() {
                   Aksaray Staff Oluştur
                 </button>
                 <button
+                  onClick={async () => {
+                    addDetailedLog('Sipariş Analizi', 'Siparişlerin nasıl kaydedildiği analiz ediliyor...');
+                    try {
+                      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
+                      
+                      // Restoran ID'sini bul
+                      const restaurantResponse = await fetch(`${apiUrl}/restaurants`);
+                      const restaurantData = await restaurantResponse.json();
+                      const aksarayRestaurant = restaurantData.data?.find((r: any) => r.username === 'aksaray');
+                      
+                      if (aksarayRestaurant) {
+                        addDetailedLog('Restoran Bulundu', `Aksaray restoran ID: ${aksarayRestaurant.id}`, aksarayRestaurant);
+                        
+                        // Siparişleri çek
+                        const ordersResponse = await fetch(`${apiUrl}/orders?restaurantId=${aksarayRestaurant.id}&status=pending`);
+                        const ordersData = await ordersResponse.json();
+                        
+                        addDetailedLog('Sipariş Analizi', `Toplam ${ordersData.data?.length || 0} pending sipariş`, ordersData);
+                        
+                        if (ordersData.data && ordersData.data.length > 0) {
+                          // İlk siparişin detaylarını analiz et
+                          const firstOrder = ordersData.data[0];
+                          addDetailedLog('Sipariş Yapısı', 'İlk siparişin yapısı:', {
+                            id: firstOrder.id,
+                            restaurantId: firstOrder.restaurantId,
+                            tableNumber: firstOrder.tableNumber,
+                            status: firstOrder.status,
+                            items: firstOrder.items?.map((item: any) => ({
+                              id: item.id,
+                              name: item.name,
+                              quantity: item.quantity,
+                              price: item.price
+                            })),
+                            totalAmount: firstOrder.totalAmount,
+                            createdAt: firstOrder.createdAt
+                          });
+                          
+                          addResult('Sipariş Analizi', true, `Siparişler doğru şekilde kaydedilmiş! ${ordersData.data.length} sipariş bulundu`);
+                        } else {
+                          addResult('Sipariş Analizi', false, 'Hiç sipariş bulunamadı!');
+                        }
+                      } else {
+                        addResult('Sipariş Analizi', false, 'Aksaray restoranı bulunamadı!');
+                      }
+                    } catch (error) {
+                      addResult('Sipariş Analizi', false, `Analiz hatası: ${error}`);
+                    }
+                  }}
+                  className="w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white py-3 px-4 rounded-lg font-semibold hover:from-teal-700 hover:to-teal-800 transition-all duration-200"
+                >
+                  Sipariş Analizi
+                </button>
+                <button
                   onClick={createTestOrder}
                   disabled={isRunning || restaurantMenu.length === 0}
                   className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 px-4 rounded-lg font-semibold hover:from-green-700 hover:to-green-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
