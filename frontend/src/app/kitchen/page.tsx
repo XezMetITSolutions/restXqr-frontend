@@ -12,7 +12,9 @@ import {
   FaSignOutAlt,
   FaChartLine,
   FaUser,
-  FaLock
+  FaLock,
+  FaBug,
+  FaInfoCircle
 } from 'react-icons/fa';
 import useCentralOrderStore from '@/store/useCentralOrderStore';
 import apiService from '@/services/api';
@@ -47,6 +49,8 @@ export default function StandaloneKitchenPage() {
   });
   const [loginError, setLoginError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showDebugInfo, setShowDebugInfo] = useState(false);
+  const [debugInfo, setDebugInfo] = useState<any>(null);
 
   // Real-time connection
   const { isConnected: isRealtimeConnected } = useRealtime({
@@ -187,6 +191,74 @@ export default function StandaloneKitchenPage() {
     setIsLoggedIn(false);
     setStaffInfo(null);
     localStorage.removeItem('kitchen_staff');
+  };
+
+  // Debug bilgilerini topla
+  const collectDebugInfo = async () => {
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
+      
+      // Restoran bilgisini al
+      const restaurantResponse = await fetch(`${apiUrl}/restaurants`);
+      const restaurantData = await restaurantResponse.json();
+      const aksarayRestaurant = restaurantData.data?.find((r: any) => r.username === 'aksaray');
+      
+      // Sipariş verilerini al
+      let ordersData = null;
+      let ordersError = null;
+      
+      if (aksarayRestaurant) {
+        try {
+          const ordersResponse = await fetch(`${apiUrl}/orders?restaurantId=${aksarayRestaurant.id}&status=pending`);
+          if (ordersResponse.ok) {
+            ordersData = await ordersResponse.json();
+          } else {
+            ordersError = `HTTP ${ordersResponse.status}: ${ordersResponse.statusText}`;
+          }
+        } catch (error: any) {
+          ordersError = error.message;
+        }
+      }
+      
+      // Local storage'dan siparişleri al
+      const localOrders = JSON.parse(localStorage.getItem('central-orders') || '[]');
+      
+      const debugData = {
+        timestamp: new Date().toLocaleString(),
+        apiUrl,
+        restaurant: aksarayRestaurant,
+        apiOrders: {
+          success: !!ordersData,
+          count: ordersData?.data?.length || 0,
+          data: ordersData,
+          error: ordersError,
+          endpoint: aksarayRestaurant ? `${apiUrl}/orders?restaurantId=${aksarayRestaurant.id}&status=pending` : 'N/A'
+        },
+        localStorage: {
+          count: localOrders.length,
+          orders: localOrders
+        },
+        realtime: {
+          connected: isRealtimeConnected,
+          url: process.env.NEXT_PUBLIC_SSE_URL || 'https://masapp-backend.onrender.com/events'
+        },
+        currentUser: staffInfo,
+        filters: {
+          activeFilter,
+          sortBy,
+          searchTerm
+        }
+      };
+      
+      setDebugInfo(debugData);
+      setShowDebugInfo(true);
+    } catch (error: any) {
+      setDebugInfo({
+        error: error.message,
+        timestamp: new Date().toLocaleString()
+      });
+      setShowDebugInfo(true);
+    }
   };
 
   // Sadece değişiklik bildirimlerini dinle
@@ -715,6 +787,14 @@ export default function StandaloneKitchenPage() {
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
             <button
+              onClick={collectDebugInfo}
+              className="px-2 sm:px-4 py-2 bg-blue-500 bg-opacity-80 rounded-lg hover:bg-opacity-100 transition-colors flex items-center gap-1 sm:gap-2 text-sm sm:text-base text-white"
+              title="Debug bilgilerini göster"
+            >
+              <FaBug className="text-sm sm:text-base" />
+              <span className="hidden sm:inline">Debug</span>
+            </button>
+            <button
               onClick={handleLogout}
               className="px-2 sm:px-4 py-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-colors flex items-center gap-1 sm:gap-2 text-sm sm:text-base"
             >
@@ -941,6 +1021,101 @@ export default function StandaloneKitchenPage() {
           </div>
         )}
       </div>
+
+      {/* Debug Modal */}
+      {showDebugInfo && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+                  <FaBug className="text-blue-500" />
+                  Debug Bilgileri
+                </h3>
+                <button
+                  onClick={() => setShowDebugInfo(false)}
+                  className="text-gray-500 hover:text-gray-700 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+              
+              {debugInfo?.error ? (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                  <strong>Hata:</strong> {debugInfo.error}
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {/* Genel Bilgiler */}
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-gray-800 mb-2 flex items-center gap-2">
+                      <FaInfoCircle className="text-blue-500" />
+                      Genel Bilgiler
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div><strong>Zaman:</strong> {debugInfo?.timestamp}</div>
+                      <div><strong>API URL:</strong> {debugInfo?.apiUrl}</div>
+                      <div><strong>Restoran ID:</strong> {debugInfo?.restaurant?.id || 'Bulunamadı'}</div>
+                      <div><strong>Restoran Adı:</strong> {debugInfo?.restaurant?.name || 'Bulunamadı'}</div>
+                      <div><strong>Real-time:</strong> 
+                        <span className={`ml-2 px-2 py-1 rounded text-xs ${debugInfo?.realtime?.connected ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                          {debugInfo?.realtime?.connected ? 'Bağlı' : 'Bağlantısız'}
+                        </span>
+                      </div>
+                      <div><strong>Kullanıcı:</strong> {debugInfo?.currentUser?.name || 'Giriş yapılmamış'}</div>
+                    </div>
+                  </div>
+
+                  {/* API Siparişleri */}
+                  <div className="bg-blue-50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-gray-800 mb-2">API'den Çekilen Siparişler</h4>
+                    <div className="text-sm space-y-2">
+                      <div><strong>Endpoint:</strong> <code className="bg-gray-200 px-2 py-1 rounded text-xs">{debugInfo?.apiOrders?.endpoint}</code></div>
+                      <div><strong>Durum:</strong> 
+                        <span className={`ml-2 px-2 py-1 rounded text-xs ${debugInfo?.apiOrders?.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                          {debugInfo?.apiOrders?.success ? 'Başarılı' : 'Hatalı'}
+                        </span>
+                      </div>
+                      <div><strong>Sipariş Sayısı:</strong> {debugInfo?.apiOrders?.count}</div>
+                      {debugInfo?.apiOrders?.error && (
+                        <div className="bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded">
+                          <strong>Hata:</strong> {debugInfo.apiOrders.error}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* LocalStorage Siparişleri */}
+                  <div className="bg-yellow-50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-gray-800 mb-2">LocalStorage'daki Siparişler</h4>
+                    <div className="text-sm">
+                      <div><strong>Sipariş Sayısı:</strong> {debugInfo?.localStorage?.count}</div>
+                    </div>
+                  </div>
+
+                  {/* Filtreler */}
+                  <div className="bg-green-50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-gray-800 mb-2">Aktif Filtreler</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                      <div><strong>Filtre:</strong> {debugInfo?.filters?.activeFilter}</div>
+                      <div><strong>Sıralama:</strong> {debugInfo?.filters?.sortBy}</div>
+                      <div><strong>Arama:</strong> {debugInfo?.filters?.searchTerm || 'Yok'}</div>
+                    </div>
+                  </div>
+
+                  {/* Raw Data */}
+                  <details className="bg-gray-100 p-4 rounded-lg">
+                    <summary className="font-semibold text-gray-800 cursor-pointer">Ham Veri (Geliştiriciler İçin)</summary>
+                    <pre className="mt-2 text-xs bg-white p-3 rounded border overflow-x-auto">
+                      {JSON.stringify(debugInfo, null, 2)}
+                    </pre>
+                  </details>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
