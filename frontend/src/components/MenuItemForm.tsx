@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { FaPlus, FaTrash, FaTimes } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaTimes, FaVideo, FaLock } from 'react-icons/fa';
 import ImageUpload from './ImageUpload';
+import { useFeature } from '@/hooks/useFeature';
 
 interface MenuItemFormProps {
   formData: any;
@@ -21,6 +22,7 @@ export default function MenuItemForm({
 }: MenuItemFormProps) {
   const [newIngredient, setNewIngredient] = useState('');
   const [newAllergen, setNewAllergen] = useState('');
+  const hasVideoMenu = useFeature('video_menu');
 
   const addIngredient = () => {
     if (newIngredient.trim()) {
@@ -218,6 +220,102 @@ export default function MenuItemForm({
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Video Yönetimi */}
+      <div className="bg-gray-50 p-4 rounded-lg">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold flex items-center gap-2">
+            <FaVideo className="text-purple-600" />
+            Video Menü
+          </h3>
+          {!hasVideoMenu && (
+            <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full flex items-center gap-1">
+              <FaLock className="text-xs" />
+              Premium Özellik
+            </span>
+          )}
+        </div>
+        
+        {hasVideoMenu ? (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Video URL
+              </label>
+              <input
+                type="url"
+                value={formData.videoUrl || ''}
+                onChange={(e) => setFormData({
+                  ...formData,
+                  videoUrl: e.target.value
+                })}
+                placeholder="https://youtube.com/watch?v=..."
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              />
+              <p className="text-xs text-gray-500 mt-1">YouTube, Vimeo veya doğrudan video linki</p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Video Önizleme Resmi
+              </label>
+              <input
+                type="url"
+                value={formData.videoThumbnail || ''}
+                onChange={(e) => setFormData({
+                  ...formData,
+                  videoThumbnail: e.target.value
+                })}
+                placeholder="https://..."
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Video Süresi
+              </label>
+              <input
+                type="text"
+                value={formData.videoDuration || ''}
+                onChange={(e) => setFormData({
+                  ...formData,
+                  videoDuration: e.target.value
+                })}
+                placeholder="0:45"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              />
+              <p className="text-xs text-gray-500 mt-1">Örnek: 0:45, 1:30, 2:15</p>
+            </div>
+
+            {formData.videoUrl && (
+              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-blue-800 flex items-center gap-2">
+                  <FaVideo />
+                  Video eklendi - Müşteriler ürününüzü video ile görebilecek
+                </p>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="text-center py-8 px-4 bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg border-2 border-dashed border-purple-200">
+            <FaVideo className="text-4xl text-purple-300 mx-auto mb-3" />
+            <h4 className="font-semibold text-gray-800 mb-2">Video Menü Özelliği</h4>
+            <p className="text-sm text-gray-600 mb-4">
+              Ürünlerinize video ekleyerek müşterilerinize daha iyi bir deneyim sunun. 
+              Yemeklerin hazırlanışını, sunumunu ve detaylarını videolarla gösterin.
+            </p>
+            <button
+              type="button"
+              onClick={() => window.open('/business/settings', '_blank')}
+              className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all shadow-md flex items-center gap-2 mx-auto"
+            >
+              <FaLock />
+              Premium'a Yükselt
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Beslenme Bilgileri */}

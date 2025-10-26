@@ -42,6 +42,24 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       field: 'image_url'
     },
+    videoUrl: {
+      type: DataTypes.STRING(500),
+      allowNull: true,
+      field: 'video_url',
+      comment: 'Video menu URL'
+    },
+    videoThumbnail: {
+      type: DataTypes.STRING(500),
+      allowNull: true,
+      field: 'video_thumbnail',
+      comment: 'Video thumbnail image URL'
+    },
+    videoDuration: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+      field: 'video_duration',
+      comment: 'Video duration (e.g., "0:45")'
+    },
     isAvailable: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
