@@ -42,6 +42,8 @@ export default function MutfakPanel() {
   const [showMenuModal, setShowMenuModal] = useState(false);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [menuLoading, setMenuLoading] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [showOrderModal, setShowOrderModal] = useState(false);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
 
@@ -168,18 +170,8 @@ export default function MutfakPanel() {
   };
 
   const showOrderDetails = (order: Order) => {
-    const details = `
-Sipariş Detayları:
--------------------
-Masa: ${order.tableNumber}
-Durum: ${order.status}
-Toplam: ${parseFloat(order.totalAmount.toString()).toFixed(2)}₺
-Tarih: ${formatDate(order.created_at)}
-
-Ürünler:
-${order.items.map(item => `  - ${item.quantity}x ${item.name} - ${parseFloat(item.price.toString()).toFixed(2)}₺`).join('\n')}
-    `;
-    alert(details);
+    setSelectedOrder(order);
+    setShowOrderModal(true);
   };
 
   // Menü yönetimi
@@ -541,6 +533,151 @@ ${order.items.map(item => `  - ${item.quantity}x ${item.name} - ${parseFloat(ite
                   ))}
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Sipariş Detay Modal */}
+      {showOrderModal && selectedOrder && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowOrderModal(false)}
+        >
+          <div 
+            className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="sticky top-0 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-4 rounded-t-2xl">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold">Sipariş Detayları</h2>
+                  <p className="text-purple-100 text-sm mt-1">#{selectedOrder.id.slice(0, 8)}</p>
+                </div>
+                <button 
+                  onClick={() => setShowOrderModal(false)}
+                  className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 space-y-6">
+              {/* Genel Bilgiler */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-4 border border-orange-200">
+                  <div className="text-orange-600 text-sm font-medium mb-1">Masa Numarası</div>
+                  <div className="text-2xl font-bold text-orange-900">#{selectedOrder.tableNumber}</div>
+                </div>
+                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 border border-green-200">
+                  <div className="text-green-600 text-sm font-medium mb-1">Toplam Tutar</div>
+                  <div className="text-2xl font-bold text-green-900">{parseFloat(selectedOrder.totalAmount.toString()).toFixed(2)}₺</div>
+                </div>
+              </div>
+
+              {/* Durum ve Tarih */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                  <div className="text-gray-600 text-sm font-medium mb-2">Sipariş Durumu</div>
+                  <div 
+                    className="inline-block px-4 py-2 rounded-full text-sm font-bold"
+                    style={{ 
+                      backgroundColor: getStatusColor(selectedOrder.status).bg,
+                      color: getStatusColor(selectedOrder.status).color
+                    }}
+                  >
+                    {getStatusColor(selectedOrder.status).text}
+                  </div>
+                </div>
+                <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                  <div className="text-gray-600 text-sm font-medium mb-2">Sipariş Zamanı</div>
+                  <div className="text-gray-900 font-semibold">{formatDate(selectedOrder.created_at)}</div>
+                </div>
+              </div>
+
+              {/* Ürünler */}
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <span className="text-2xl">🍽️</span>
+                  Sipariş Ürünleri
+                </h3>
+                <div className="space-y-3">
+                  {selectedOrder.items.map((item, index) => (
+                    <div 
+                      key={index}
+                      className="bg-gradient-to-r from-gray-50 to-white rounded-xl p-4 border border-gray-200 hover:shadow-md transition-shadow"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="bg-purple-100 text-purple-700 rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg">
+                            {item.quantity}x
+                          </div>
+                          <div>
+                            <div className="font-semibold text-gray-900">{item.name}</div>
+                            {item.notes && (
+                              <div className="text-sm text-gray-500 mt-1">
+                                💬 {item.notes}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-lg font-bold text-gray-900">
+                            {parseFloat(item.price.toString()).toFixed(2)}₺
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            Birim: {(parseFloat(item.price.toString()) / item.quantity).toFixed(2)}₺
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Notlar */}
+              {selectedOrder.notes && (
+                <div className="bg-yellow-50 rounded-xl p-4 border border-yellow-200">
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl">📝</span>
+                    <div>
+                      <div className="font-semibold text-yellow-900 mb-1">Sipariş Notu</div>
+                      <div className="text-yellow-800">{selectedOrder.notes}</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Özet */}
+              <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-4 border-2 border-purple-200">
+                <div className="flex items-center justify-between">
+                  <div className="text-gray-700 font-medium">Toplam Ürün Sayısı</div>
+                  <div className="text-xl font-bold text-purple-700">
+                    {selectedOrder.items.reduce((sum, item) => sum + item.quantity, 0)} Adet
+                  </div>
+                </div>
+                <div className="flex items-center justify-between mt-3 pt-3 border-t border-purple-200">
+                  <div className="text-gray-900 font-bold text-lg">Toplam Tutar</div>
+                  <div className="text-2xl font-bold text-purple-700">
+                    {parseFloat(selectedOrder.totalAmount.toString()).toFixed(2)}₺
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="sticky bottom-0 bg-gray-50 px-6 py-4 rounded-b-2xl border-t">
+              <button
+                onClick={() => setShowOrderModal(false)}
+                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-xl font-semibold hover:from-purple-700 hover:to-blue-700 transition-all shadow-lg"
+              >
+                Kapat
+              </button>
             </div>
           </div>
         </div>
