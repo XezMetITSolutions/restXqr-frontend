@@ -319,6 +319,224 @@ class ApiService {
     });
   }
 
+  // Branch endpoints
+  async getBranches(restaurantId: string) {
+    return this.request<any>(`/branches?restaurantId=${restaurantId}`);
+  }
+
+  async createBranch(data: any) {
+    return this.request<any>('/branches', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateBranch(id: string, data: any) {
+    return this.request<any>(`/branches/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteBranch(id: string) {
+    return this.request<any>(`/branches/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // API Key endpoints
+  async getApiKeys(restaurantId: string) {
+    return this.request<any>(`/apikeys?restaurantId=${restaurantId}`);
+  }
+
+  async createApiKey(data: any) {
+    return this.request<any>('/apikeys', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateApiKey(id: string, data: any) {
+    return this.request<any>(`/apikeys/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteApiKey(id: string) {
+    return this.request<any>(`/apikeys/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async regenerateApiKey(id: string) {
+    return this.request<any>(`/apikeys/${id}/regenerate`, {
+      method: 'POST',
+    });
+  }
+
+  // Delivery endpoints
+  async getDeliveries(restaurantId: string) {
+    return this.request<any>(`/deliveries?restaurantId=${restaurantId}`);
+  }
+
+  async createDelivery(data: any) {
+    return this.request<any>('/deliveries', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateDelivery(id: string, data: any) {
+    return this.request<any>(`/deliveries/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteDelivery(id: string) {
+    return this.request<any>(`/deliveries/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // POS Device endpoints
+  async getPOSDevices(restaurantId: string) {
+    return this.request<any>(`/pos?restaurantId=${restaurantId}`);
+  }
+
+  async createPOSDevice(data: any) {
+    return this.request<any>('/pos', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updatePOSDevice(id: string, data: any) {
+    return this.request<any>(`/pos/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deletePOSDevice(id: string) {
+    return this.request<any>(`/pos/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async syncPOSDevice(id: string) {
+    return this.request<any>(`/pos/${id}/sync`, {
+      method: 'POST',
+    });
+  }
+
+  // Transaction endpoints
+  async getTransactions(restaurantId: string) {
+    return this.request<any>(`/transactions?restaurantId=${restaurantId}`);
+  }
+
+  async createTransaction(data: any) {
+    return this.request<any>('/transactions', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateTransaction(id: string, data: any) {
+    return this.request<any>(`/transactions/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteTransaction(id: string) {
+    return this.request<any>(`/transactions/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // AI Recommendation endpoints
+  async getAIRecommendations(restaurantId: string) {
+    return this.request<any>(`/ai?restaurantId=${restaurantId}`);
+  }
+
+  async createAIRecommendation(data: any) {
+    return this.request<any>('/ai', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateAIRecommendation(id: string, data: any) {
+    return this.request<any>(`/ai/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteAIRecommendation(id: string) {
+    return this.request<any>(`/ai/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Video Menu endpoints
+  async getVideoMenuItems(restaurantId: string) {
+    return this.request<any>(`/videomenu?restaurantId=${restaurantId}`);
+  }
+
+  async createVideoMenuItem(data: any) {
+    return this.request<any>('/videomenu', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateVideoMenuItem(id: string, data: any) {
+    return this.request<any>(`/videomenu/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteVideoMenuItem(id: string) {
+    return this.request<any>(`/videomenu/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async incrementVideoView(id: string) {
+    return this.request<any>(`/videomenu/${id}/view`, {
+      method: 'POST',
+    });
+  }
+
+  // Event endpoints
+  async getEvents(restaurantId: string) {
+    return this.request<any>(`/events?restaurantId=${restaurantId}`);
+  }
+
+  async createEvent(data: any) {
+    return this.request<any>('/events', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateEvent(id: string, data: any) {
+    return this.request<any>(`/events/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteEvent(id: string) {
+    return this.request<any>(`/events/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
 }
 
 export const apiService = new ApiService();

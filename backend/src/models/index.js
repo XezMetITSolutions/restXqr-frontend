@@ -33,6 +33,14 @@ const OrderItem = require('./OrderItem')(sequelize, Sequelize.DataTypes);
 const Feature = require('./Feature')(sequelize, Sequelize.DataTypes);
 const QRToken = require('./QRToken')(sequelize, Sequelize.DataTypes);
 const Staff = require('./Staff')(sequelize, Sequelize.DataTypes);
+const Branch = require('./Branch');
+const ApiKey = require('./ApiKey');
+const Delivery = require('./Delivery');
+const POSDevice = require('./POSDevice');
+const Transaction = require('./Transaction');
+const AIRecommendation = require('./AIRecommendation');
+const VideoMenuItem = require('./VideoMenuItem');
+const Event = require('./Event');
 
 // Define associations
 Restaurant.hasMany(MenuCategory, { foreignKey: 'restaurantId', as: 'categories' });
@@ -60,6 +68,38 @@ QRToken.belongsTo(Restaurant, { foreignKey: 'restaurantId', as: 'Restaurant' });
 // Staff associations
 Restaurant.hasMany(Staff, { foreignKey: 'restaurantId', as: 'staff' });
 Staff.belongsTo(Restaurant, { foreignKey: 'restaurantId', as: 'restaurant' });
+
+// Branch associations
+Restaurant.hasMany(Branch, { foreignKey: 'restaurantId', as: 'branches' });
+Branch.belongsTo(Restaurant, { foreignKey: 'restaurantId', as: 'restaurant' });
+
+// ApiKey associations
+Restaurant.hasMany(ApiKey, { foreignKey: 'restaurantId', as: 'apiKeys' });
+ApiKey.belongsTo(Restaurant, { foreignKey: 'restaurantId', as: 'restaurant' });
+
+// Delivery associations
+Restaurant.hasMany(Delivery, { foreignKey: 'restaurantId', as: 'deliveries' });
+Delivery.belongsTo(Restaurant, { foreignKey: 'restaurantId', as: 'restaurant' });
+
+// POSDevice associations
+Restaurant.hasMany(POSDevice, { foreignKey: 'restaurantId', as: 'posDevices' });
+POSDevice.belongsTo(Restaurant, { foreignKey: 'restaurantId', as: 'restaurant' });
+
+// Transaction associations
+Restaurant.hasMany(Transaction, { foreignKey: 'restaurantId', as: 'transactions' });
+Transaction.belongsTo(Restaurant, { foreignKey: 'restaurantId', as: 'restaurant' });
+
+// AIRecommendation associations
+Restaurant.hasMany(AIRecommendation, { foreignKey: 'restaurantId', as: 'aiRecommendations' });
+AIRecommendation.belongsTo(Restaurant, { foreignKey: 'restaurantId', as: 'restaurant' });
+
+// VideoMenuItem associations
+Restaurant.hasMany(VideoMenuItem, { foreignKey: 'restaurantId', as: 'videoMenuItems' });
+VideoMenuItem.belongsTo(Restaurant, { foreignKey: 'restaurantId', as: 'restaurant' });
+
+// Event associations
+Restaurant.hasMany(Event, { foreignKey: 'restaurantId', as: 'events' });
+Event.belongsTo(Restaurant, { foreignKey: 'restaurantId', as: 'restaurant' });
 
 // Test connection
 const connectDB = async () => {
@@ -99,5 +139,13 @@ module.exports = {
   OrderItem,
   Feature,
   QRToken,
-  Staff
+  Staff,
+  Branch,
+  ApiKey,
+  Delivery,
+  POSDevice,
+  Transaction,
+  AIRecommendation,
+  VideoMenuItem,
+  Event
 };

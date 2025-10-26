@@ -121,6 +121,15 @@ app.use('/api/waiter', require('./routes/waiter')); // Waiter calls
 app.use('/api/admin/2fa', require('./routes/admin2fa')); // Admin 2FA
 app.use('/api/plans', require('./routes/plans')); // Plan management
 app.use('/api/support', require('./routes/support')); // Support tickets
+// Feature routes
+app.use('/api/branches', require('./routes/branches')); // Branch management
+app.use('/api/apikeys', require('./routes/apikeys')); // API key management
+app.use('/api/deliveries', require('./routes/deliveries')); // Delivery management
+app.use('/api/pos', require('./routes/pos')); // POS device management
+app.use('/api/transactions', require('./routes/transactions')); // Transaction management
+app.use('/api/ai', require('./routes/ai')); // AI recommendations
+app.use('/api/videomenu', require('./routes/videomenu')); // Video menu
+app.use('/api/events', require('./routes/events')); // Event management
 // File upload routes - Gerçek dosya yükleme sistemi
 const multer = require('multer');
 const sharp = require('sharp');

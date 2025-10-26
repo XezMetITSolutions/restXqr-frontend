@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import BusinessSidebar from '@/components/BusinessSidebar';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useFeature } from '@/hooks/useFeature';
+import { apiService } from '@/services/api';
 import { 
   FaStore, 
   FaPlus, 
@@ -37,74 +38,84 @@ interface Branch {
 
 export default function BranchesPage() {
   const router = useRouter();
-  const { isAuthenticated, logout } = useAuthStore();
+  const { isAuthenticated, logout, user } = useAuthStore();
   const hasMultiBranch = useFeature('multi_branch');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [showAddModal, setShowAddModal] = useState(false);
-
-  // Demo data
-  const [branches, setBranches] = useState<Branch[]>([
-    {
-      id: '1',
-      name: 'Merkez Şube',
-      address: 'Atatürk Caddesi No:123',
-      city: 'İstanbul',
-      phone: '+90 212 555 0001',
-      manager: 'Ahmet Yılmaz',
-      status: 'active',
-      openingHours: '09:00 - 22:00',
-      employeeCount: 25,
-      monthlyRevenue: 450000,
-      createdAt: '2024-01-15'
-    },
-    {
-      id: '2',
-      name: 'Kadıköy Şubesi',
-      address: 'Bahariye Caddesi No:45',
-      city: 'İstanbul',
-      phone: '+90 216 555 0002',
-      manager: 'Ayşe Demir',
-      status: 'active',
-      openingHours: '10:00 - 23:00',
-      employeeCount: 18,
-      monthlyRevenue: 320000,
-      createdAt: '2024-03-20'
-    },
-    {
-      id: '3',
-      name: 'Ankara Şubesi',
-      address: 'Tunalı Hilmi Caddesi No:67',
-      city: 'Ankara',
-      phone: '+90 312 555 0003',
-      manager: 'Mehmet Kaya',
-      status: 'active',
-      openingHours: '09:00 - 22:00',
-      employeeCount: 20,
-      monthlyRevenue: 380000,
-      createdAt: '2024-05-10'
-    },
-    {
-      id: '4',
-      name: 'İzmir Şubesi',
-      address: 'Alsancak Kordon No:89',
-      city: 'İzmir',
-      phone: '+90 232 555 0004',
-      manager: 'Fatma Şahin',
-      status: 'inactive',
-      openingHours: '10:00 - 22:00',
-      employeeCount: 15,
-      monthlyRevenue: 0,
-      createdAt: '2024-07-01'
-    }
-  ]);
+  const [branches, setBranches] = useState<Branch[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editingBranch, setEditingBranch] = useState<Branch | null>(null);
 
   useEffect(() => {
     if (!isAuthenticated()) {
       router.push('/business/login');
+    } else {
+      fetchBranches();
     }
   }, [isAuthenticated, router]);
+
+  const fetchBranches = async () => {
+    try {
+      setLoading(true);
+      const restaurantId = user?.id;
+      if (!restaurantId) return;
+      
+      const response = await apiService.getBranches(restaurantId);
+      if (response.success && response.data) {
+        setBranches(response.data);
+      }
+    } catch (error) {
+      console.error('Şubeler yüklenirken hata:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddBranch = async (branchData: Partial<Branch>) => {
+    try {
+      const restaurantId = user?.id;
+      if (!restaurantId) return;
+
+      const response = await apiService.createBranch({
+        ...branchData,
+        restaurantId
+      });
+      
+      if (response.success) {
+        await fetchBranches();
+        setShowAddModal(false);
+      }
+    } catch (error) {
+      console.error('Şube eklenirken hata:', error);
+    }
+  };
+
+  const handleUpdateBranch = async (id: string, branchData: Partial<Branch>) => {
+    try {
+      const response = await apiService.updateBranch(id, branchData);
+      if (response.success) {
+        await fetchBranches();
+        setEditingBranch(null);
+      }
+    } catch (error) {
+      console.error('Şube güncellenirken hata:', error);
+    }
+  };
+
+  const handleDeleteBranch = async (id: string) => {
+    if (!confirm('Bu şubeyi silmek istediğinizden emin misiniz?')) return;
+    
+    try {
+      const response = await apiService.deleteBranch(id);
+      if (response.success) {
+        await fetchBranches();
+      }
+    } catch (error) {
+      console.error('Şube silinirken hata:', error);
+    }
+  };
 
   // Özellik kontrolü
   if (!hasMultiBranch) {
@@ -309,11 +320,17 @@ export default function BranchesPage() {
                   </div>
 
                   <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-200">
-                    <button className="flex-1 px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 flex items-center justify-center gap-2">
+                    <button 
+                      onClick={() => setEditingBranch(branch)}
+                      className="flex-1 px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 flex items-center justify-center gap-2"
+                    >
                       <FaEdit />
                       Düzenle
                     </button>
-                    <button className="px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100">
+                    <button 
+                      onClick={() => handleDeleteBranch(branch.id)}
+                      className="px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100"
+                    >
                       <FaTrash />
                     </button>
                   </div>
@@ -322,12 +339,16 @@ export default function BranchesPage() {
             ))}
           </div>
 
-          {filteredBranches.length === 0 && (
+          {loading ? (
+            <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
+              <p className="text-gray-600">Yükleniyor...</p>
+            </div>
+          ) : filteredBranches.length === 0 ? (
             <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
               <FaStore className="text-5xl text-gray-300 mx-auto mb-4" />
               <p className="text-gray-600">Şube bulunamadı</p>
             </div>
-          )}
+          ) : null}
         </div>
       </div>
     </div>
