@@ -38,11 +38,16 @@ export default function LoginPage() {
         setSubdomain(currentSubdomain);
         
         // Subdomain'e göre restoran bilgilerini ayarla
-        const restaurantData = {
+        const restaurantData: Record<string, any> = {
           'aksaray': {
             name: 'Aksaray Restaurant',
             description: 'Geleneksel Türk Mutfağı',
             logo: '🍽️'
+          },
+          'safran': {
+            name: 'Safran Restaurant',
+            description: 'Özel Lezzetler',
+            logo: '🌟'
           },
           'lezzet': {
             name: 'Lezzet Restaurant',
@@ -66,7 +71,8 @@ export default function LoginPage() {
           }
         };
         
-        setRestaurantInfo(restaurantData[currentSubdomain as keyof typeof restaurantData] || {
+        // Subdomain'e göre restoran bilgisi bul veya dinamik oluştur
+        setRestaurantInfo(restaurantData[currentSubdomain] || {
           name: `${currentSubdomain.charAt(0).toUpperCase() + currentSubdomain.slice(1)} Restaurant`,
           description: 'İşletme Paneli',
           logo: '🍽️'
