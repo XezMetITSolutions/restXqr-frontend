@@ -13,7 +13,18 @@ import {
   FaSignOutAlt,
   FaBars,
   FaRocket,
-  FaSparkles
+  FaSparkles,
+  FaTruck,
+  FaCashRegister,
+  FaCalculator,
+  FaRobot,
+  FaVideo,
+  FaCalendarAlt,
+  FaBox,
+  FaGlobe,
+  FaCreditCard,
+  FaBuilding,
+  FaCode
 } from 'react-icons/fa';
 import { useFeature } from '@/hooks/useFeature';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -36,11 +47,30 @@ export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout 
     accent: '#F59E0B'
   });
   
-  // Feature kontrolü
+  // Feature kontrolü - Temel
   const hasQrMenu = useFeature('qr_menu');
   const hasTableManagement = useFeature('table_management');
   const hasBasicReports = useFeature('basic_reports');
+  
+  // Premium özellikler
   const hasAdvancedAnalytics = useFeature('advanced_analytics');
+  const hasInventoryManagement = useFeature('inventory_management');
+  const hasMultiLanguage = useFeature('multi_language');
+  const hasPaymentIntegration = useFeature('payment_integration');
+  
+  // Enterprise özellikler
+  const hasMultiBranch = useFeature('multi_branch');
+  const hasFranchiseManagement = useFeature('franchise_management');
+  const hasApiAccess = useFeature('api_access');
+  const hasDataExport = useFeature('data_export');
+  
+  // Özel özellikler
+  const hasDeliveryIntegration = useFeature('delivery_integration');
+  const hasPosIntegration = useFeature('pos_integration');
+  const hasAccountingSoftware = useFeature('accounting_software');
+  const hasAiRecommendations = useFeature('ai_recommendations');
+  const hasVideoMenu = useFeature('video_menu');
+  const hasEventManagement = useFeature('event_management');
 
   // Brand renklerini ayarla
   useEffect(() => {
@@ -142,6 +172,81 @@ export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout 
       label: 'Destek',
       active: pathname === '/business/support',
       visible: true // Her zaman görünür
+    },
+    // Premium Özellikler
+    {
+      href: '/business/inventory',
+      icon: FaBox,
+      label: 'Stok Yönetimi',
+      active: pathname === '/business/inventory',
+      visible: hasInventoryManagement,
+      badge: 'Premium'
+    },
+    // Enterprise Özellikler
+    {
+      href: '/business/branches',
+      icon: FaBuilding,
+      label: 'Şube Yönetimi',
+      active: pathname === '/business/branches',
+      visible: hasMultiBranch,
+      badge: 'Enterprise'
+    },
+    {
+      href: '/business/api',
+      icon: FaCode,
+      label: 'API Yönetimi',
+      active: pathname === '/business/api',
+      visible: hasApiAccess,
+      badge: 'Enterprise'
+    },
+    // Özel Özellikler
+    {
+      href: '/business/delivery',
+      icon: FaTruck,
+      label: 'Paket Servis',
+      active: pathname === '/business/delivery',
+      visible: hasDeliveryIntegration,
+      badge: 'Özel'
+    },
+    {
+      href: '/business/pos',
+      icon: FaCashRegister,
+      label: 'POS Entegrasyonu',
+      active: pathname === '/business/pos',
+      visible: hasPosIntegration,
+      badge: 'Özel'
+    },
+    {
+      href: '/business/accounting',
+      icon: FaCalculator,
+      label: 'Muhasebe',
+      active: pathname === '/business/accounting',
+      visible: hasAccountingSoftware,
+      badge: 'Özel'
+    },
+    {
+      href: '/business/ai',
+      icon: FaRobot,
+      label: 'AI Önerileri',
+      active: pathname === '/business/ai',
+      visible: hasAiRecommendations,
+      badge: 'Özel'
+    },
+    {
+      href: '/business/video-menu',
+      icon: FaVideo,
+      label: 'Video Menü',
+      active: pathname === '/business/video-menu',
+      visible: hasVideoMenu,
+      badge: 'Özel'
+    },
+    {
+      href: '/business/events',
+      icon: FaCalendarAlt,
+      label: 'Etkinlikler',
+      active: pathname === '/business/events',
+      visible: hasEventManagement,
+      badge: 'Özel'
     }
   ];
 
@@ -229,7 +334,16 @@ export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout 
                 }`}>
                   {item.label}
                 </span>
-                {item.active && (
+                {item.badge && (
+                  <span className={`ml-auto px-2 py-1 text-xs font-bold rounded-full ${
+                    item.badge === 'Premium' ? 'bg-yellow-500/20 text-yellow-300' :
+                    item.badge === 'Enterprise' ? 'bg-purple-500/20 text-purple-300' :
+                    'bg-blue-500/20 text-blue-300'
+                  }`}>
+                    {item.badge}
+                  </span>
+                )}
+                {item.active && !item.badge && (
                   <div 
                     className="ml-auto w-2 h-2 rounded-full animate-pulse"
                     style={{ backgroundColor: brandColors.accent }}
