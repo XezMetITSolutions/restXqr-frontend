@@ -118,62 +118,6 @@ export default function DeliveryPage() {
     }
   };
 
-  // Eski demo data kaldırıldı
-  const oldDemoData = [
-    {
-      id: '1',
-      orderNumber: '#12345',
-      customerName: 'Ahmet Yılmaz',
-      customerPhone: '+90 532 555 0001',
-      address: 'Atatürk Caddesi No:123, Kadıköy, İstanbul',
-      items: 3,
-      totalAmount: 285,
-      status: 'on_way',
-      deliveryPerson: 'Mehmet Kurye',
-      estimatedTime: '15 dk',
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: '2',
-      orderNumber: '#12346',
-      customerName: 'Ayşe Demir',
-      customerPhone: '+90 533 555 0002',
-      address: 'Bağdat Caddesi No:456, Maltepe, İstanbul',
-      items: 2,
-      totalAmount: 195,
-      status: 'preparing',
-      deliveryPerson: '-',
-      estimatedTime: '25 dk',
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: '3',
-      orderNumber: '#12347',
-      customerName: 'Mehmet Kaya',
-      customerPhone: '+90 534 555 0003',
-      address: 'İstiklal Caddesi No:789, Beyoğlu, İstanbul',
-      items: 5,
-      totalAmount: 420,
-      status: 'pending',
-      deliveryPerson: '-',
-      estimatedTime: '30 dk',
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: '4',
-      orderNumber: '#12344',
-      customerName: 'Fatma Şahin',
-      customerPhone: '+90 535 555 0004',
-      address: 'Cumhuriyet Caddesi No:321, Şişli, İstanbul',
-      items: 4,
-      totalAmount: 350,
-      status: 'delivered',
-      deliveryPerson: 'Ali Kurye',
-      estimatedTime: '-',
-      createdAt: new Date(Date.now() - 3600000).toISOString()
-    }
-  ]; // Demo data kaldırıldı
-
   // Özellik kontrolü
   if (!hasDeliveryIntegration) {
     return (

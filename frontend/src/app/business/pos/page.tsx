@@ -125,53 +125,6 @@ export default function POSPage() {
     }
   };
 
-  const oldDemoData = [
-    {
-      id: '1',
-      name: 'Kasa 1 - Ana Salon',
-      deviceId: 'POS-001',
-      location: 'Ana Salon',
-      status: 'online',
-      lastSync: new Date().toISOString(),
-      todayTransactions: 145,
-      todayRevenue: 12450,
-      battery: 85
-    },
-    {
-      id: '2',
-      name: 'Kasa 2 - Bahçe',
-      deviceId: 'POS-002',
-      location: 'Bahçe Alanı',
-      status: 'online',
-      lastSync: new Date(Date.now() - 300000).toISOString(),
-      todayTransactions: 89,
-      todayRevenue: 7820,
-      battery: 92
-    },
-    {
-      id: '3',
-      name: 'Kasa 3 - Üst Kat',
-      deviceId: 'POS-003',
-      location: 'Üst Kat',
-      status: 'syncing',
-      lastSync: new Date(Date.now() - 600000).toISOString(),
-      todayTransactions: 67,
-      todayRevenue: 5940,
-      battery: 45
-    },
-    {
-      id: '4',
-      name: 'Kasa 4 - Paket Servis',
-      deviceId: 'POS-004',
-      location: 'Paket Servis',
-      status: 'offline',
-      lastSync: new Date(Date.now() - 3600000).toISOString(),
-      todayTransactions: 0,
-      todayRevenue: 0,
-      battery: 12
-    }
-  ]);
-
   useEffect(() => {
     if (!isAuthenticated()) {
       router.push('/business/login');

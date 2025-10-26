@@ -113,58 +113,6 @@ export default function AccountingPage() {
     }
   };
 
-  const oldDemoData = [
-    {
-      id: '1',
-      date: new Date().toISOString(),
-      description: 'Günlük Satış Geliri',
-      category: 'Satış',
-      type: 'income',
-      amount: 12450,
-      paymentMethod: 'Kredi Kartı',
-      invoiceNumber: 'INV-2024-001'
-    },
-    {
-      id: '2',
-      date: new Date().toISOString(),
-      description: 'Kira Ödemesi',
-      category: 'Sabit Giderler',
-      type: 'expense',
-      amount: 15000,
-      paymentMethod: 'Banka Transferi',
-      invoiceNumber: 'EXP-2024-001'
-    },
-    {
-      id: '3',
-      date: new Date(Date.now() - 86400000).toISOString(),
-      description: 'Malzeme Alımı',
-      category: 'Stok',
-      type: 'expense',
-      amount: 8500,
-      paymentMethod: 'Nakit',
-      invoiceNumber: 'EXP-2024-002'
-    },
-    {
-      id: '4',
-      date: new Date(Date.now() - 86400000).toISOString(),
-      description: 'Paket Servis Geliri',
-      category: 'Satış',
-      type: 'income',
-      amount: 3200,
-      paymentMethod: 'Nakit'
-    },
-    {
-      id: '5',
-      date: new Date(Date.now() - 172800000).toISOString(),
-      description: 'Elektrik Faturası',
-      category: 'Sabit Giderler',
-      type: 'expense',
-      amount: 2800,
-      paymentMethod: 'Banka Transferi',
-      invoiceNumber: 'EXP-2024-003'
-    }
-  ]);
-
   useEffect(() => {
     if (!isAuthenticated()) {
       router.push('/business/login');

@@ -118,65 +118,6 @@ export default function EventsPage() {
     }
   };
 
-  const oldDemoData = [
-    {
-      id: '1',
-      title: 'Canlı Müzik Gecesi',
-      description: 'Ünlü sanatçımız ile unutulmaz bir akşam',
-      date: new Date(Date.now() + 86400000 * 3).toISOString(),
-      startTime: '20:00',
-      endTime: '23:00',
-      location: 'Ana Salon',
-      capacity: 100,
-      registered: 75,
-      status: 'upcoming',
-      type: 'concert',
-      price: 150
-    },
-    {
-      id: '2',
-      title: 'Şef Menüsü Akşam Yemeği',
-      description: 'Özel hazırlanmış 7 çeşit menü',
-      date: new Date(Date.now() + 86400000 * 7).toISOString(),
-      startTime: '19:00',
-      endTime: '22:00',
-      location: 'VIP Salon',
-      capacity: 40,
-      registered: 32,
-      status: 'upcoming',
-      type: 'dinner',
-      price: 350
-    },
-    {
-      id: '3',
-      title: 'Yılbaşı Partisi',
-      description: 'Yeni yıla özel eğlence ve lezzetler',
-      date: new Date(Date.now() + 86400000 * 60).toISOString(),
-      startTime: '21:00',
-      endTime: '03:00',
-      location: 'Tüm Mekan',
-      capacity: 200,
-      registered: 145,
-      status: 'upcoming',
-      type: 'party',
-      price: 500
-    },
-    {
-      id: '4',
-      title: 'İtalyan Mutfağı Workshop',
-      description: 'Profesyonel şeflerden pasta yapımı',
-      date: new Date(Date.now() - 86400000).toISOString(),
-      startTime: '14:00',
-      endTime: '17:00',
-      location: 'Mutfak',
-      capacity: 15,
-      registered: 15,
-      status: 'completed',
-      type: 'workshop',
-      price: 200
-    }
-  ]);
-
   useEffect(() => {
     if (!isAuthenticated()) {
       router.push('/business/login');

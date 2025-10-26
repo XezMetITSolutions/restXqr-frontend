@@ -75,57 +75,6 @@ export default function AIPage() {
     }
   };
 
-  const oldDemoData = [
-    {
-      id: '1',
-      type: 'menu',
-      title: 'Yeni Menü Öğesi Önerisi',
-      description: 'Müşteri tercihlerine göre "Avokadolu Somon Salata" menünüze eklenmeli. Benzer restoranlar %35 daha fazla satış elde ediyor.',
-      impact: 'high',
-      confidence: 92,
-      potentialRevenue: 15000,
-      actionRequired: 'Menüye ekle ve test et'
-    },
-    {
-      id: '2',
-      type: 'pricing',
-      title: 'Fiyat Optimizasyonu',
-      description: 'Pizza fiyatlarınız pazar ortalamasının %8 altında. Fiyatları ₺5-7 artırarak karlılığı artırabilirsiniz.',
-      impact: 'high',
-      confidence: 88,
-      potentialRevenue: 12000,
-      actionRequired: 'Fiyatları güncelle'
-    },
-    {
-      id: '3',
-      type: 'inventory',
-      title: 'Stok Tahmini',
-      description: 'Hafta sonu için domates stoğunuz yetersiz olabilir. 25kg ek sipariş önerilir.',
-      impact: 'medium',
-      confidence: 85,
-      actionRequired: 'Tedarikçi ile iletişime geç'
-    },
-    {
-      id: '4',
-      type: 'marketing',
-      title: 'Kampanya Önerisi',
-      description: 'Salı günleri %30 daha az yoğun. "Salı İndirimi" kampanyası ile doluluk oranını artırabilirsiniz.',
-      impact: 'medium',
-      confidence: 78,
-      potentialRevenue: 8000,
-      actionRequired: 'Kampanya oluştur'
-    },
-    {
-      id: '5',
-      type: 'operations',
-      title: 'Personel Planlaması',
-      description: 'Cuma akşamları 2 ek garson almanız önerilir. Müşteri memnuniyeti %15 artabilir.',
-      impact: 'low',
-      confidence: 72,
-      actionRequired: 'Vardiya planını güncelle'
-    }
-  ]);
-
   useEffect(() => {
     if (!isAuthenticated()) {
       router.push('/business/login');
