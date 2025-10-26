@@ -14,10 +14,10 @@ export default function LoginPage() {
     
     if (!mainDomains.includes(subdomain) && hostname.includes('.')) {
       // Subdomain varsa business login'e yönlendir
-      router.replace('/business/login');
+      router.replace('/isletme-giris');
     } else {
       // Ana domain ise business login'e yönlendir
-      router.replace('/business/login');
+      router.replace('/isletme-giris');
     }
   }, [router]);
 

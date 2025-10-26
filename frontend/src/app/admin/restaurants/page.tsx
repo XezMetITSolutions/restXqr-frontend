@@ -284,7 +284,7 @@ export default function RestaurantsManagement() {
                     </button>
                   </div>
                   <button
-                    onClick={() => window.open(`https://${restaurant.username}.restxqr.com/business/login?superadmin=true`, '_blank')}
+                    onClick={() => window.open(`https://${restaurant.username}.restxqr.com/isletme-giris?superadmin=true`, '_blank')}
                     className="w-full py-2 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-lg hover:from-red-600 hover:to-orange-600 transition-all flex items-center justify-center gap-2 font-bold shadow-md"
                     title="Süper Admin olarak bu restoranın paneline giriş yap"
                   >

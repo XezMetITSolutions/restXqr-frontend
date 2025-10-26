@@ -226,7 +226,7 @@ export default function CreateRestaurant() {
 • Şifre: 01528797Mb##
 
 🌐 Giriş URL'leri:
-• Restoran: https://${formData.subdomain}.restxqr.com/business/login
+• Restoran: https://${formData.subdomain}.restxqr.com/isletme-giris
 • Staff Login: https://${formData.subdomain}.restxqr.com/staff-login
         `;
         

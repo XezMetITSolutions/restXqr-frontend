@@ -217,7 +217,7 @@ export default function DebugLoginPage() {
             <a className="px-3 py-2 bg-blue-600 text-white rounded" href={`/cashier/`} target="_blank" rel="noreferrer">Kasa Paneli</a>
             <a className="px-3 py-2 bg-blue-600 text-white rounded" href={`/waiter/`} target="_blank" rel="noreferrer">Garson Paneli</a>
             <a className="px-3 py-2 bg-blue-600 text-white rounded" href={`/kitchen/`} target="_blank" rel="noreferrer">Mutfak Paneli</a>
-            <a className="px-3 py-2 bg-purple-600 text-white rounded" href={`/business/login/`} target="_blank" rel="noreferrer">Business Login</a>
+            <a className="px-3 py-2 bg-purple-600 text-white rounded" href={`/isletme-giris/`} target="_blank" rel="noreferrer">Business Login</a>
           </div>
         </div>
       </div>

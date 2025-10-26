@@ -31,7 +31,7 @@ export function middleware(request: NextRequest) {
   if (((!mainDomains.includes(subdomain) && hostname.includes('.')) || querySubdomain) && !pathname.startsWith('/business')) {
     // Subdomain-based routing
     if (pathname === '/login') {
-      return NextResponse.rewrite(new URL('/business/login', request.url));
+      return NextResponse.rewrite(new URL('/isletme-giris', request.url));
     }
     if (pathname === '/mutfak') {
       return NextResponse.rewrite(new URL('/business/kitchen', request.url));

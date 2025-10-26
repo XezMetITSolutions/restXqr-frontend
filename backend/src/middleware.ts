@@ -14,7 +14,7 @@ export function middleware(request: NextRequest) {
   // Business sayfalarını koru
   if (pathname.startsWith('/business')) {
     // Login sayfası hariç
-    if (pathname === '/business/login') {
+    if (pathname === '/isletme-giris') {
       return NextResponse.next();
     }
     
@@ -22,7 +22,7 @@ export function middleware(request: NextRequest) {
     const accessToken = request.cookies.get('accessToken')?.value;
     
     if (!accessToken) {
-      return NextResponse.redirect(new URL('/business/login', request.url));
+      return NextResponse.redirect(new URL('/isletme-giris', request.url));
     }
     
     // Demo token kontrolü (business paneli için)
@@ -34,12 +34,12 @@ export function middleware(request: NextRequest) {
     const payload = verifyToken(accessToken);
     if (!payload) {
       console.log('Business token verification failed for route:', pathname);
-      return NextResponse.redirect(new URL('/business/login', request.url));
+      return NextResponse.redirect(new URL('/isletme-giris', request.url));
     }
     
     // Business rolü kontrolü
     if (!['restaurant_owner', 'restaurant_admin', 'waiter', 'kitchen', 'cashier'].includes(payload.role)) {
-      return NextResponse.redirect(new URL('/business/login', request.url));
+      return NextResponse.redirect(new URL('/isletme-giris', request.url));
     }
   }
   
