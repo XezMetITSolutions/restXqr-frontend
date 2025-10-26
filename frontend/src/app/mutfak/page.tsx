@@ -138,6 +138,21 @@ export default function MutfakPanel() {
     }
   };
 
+  const showOrderDetails = (order: Order) => {
+    const details = `
+Sipariş Detayları:
+-------------------
+Masa: ${order.tableNumber}
+Durum: ${order.status}
+Toplam: ${parseFloat(order.totalAmount.toString()).toFixed(2)}₺
+Tarih: ${formatDate(order.created_at)}
+
+Ürünler:
+${order.items.map(item => `  - ${item.quantity}x ${item.name} - ${parseFloat(item.price.toString()).toFixed(2)}₺`).join('\n')}
+    `;
+    alert(details);
+  };
+
   // Filtrelenmiş siparişler
   const filteredOrders = orders.filter(order => {
     // Durum filtresi
@@ -196,7 +211,7 @@ export default function MutfakPanel() {
           {/* Search Bar */}
           <input
             type="text"
-            placeholder="🔍 Oda numarası veya ürün ara..."
+            placeholder="🔍 Masa numarası veya ürün ara..."
             className="w-full mb-6 px-6 py-4 border border-gray-300 rounded-xl text-base focus:outline-none focus:border-green-500"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -281,7 +296,7 @@ export default function MutfakPanel() {
                       <div>
                         <div className="flex items-start justify-between mb-4">
                           <div>
-                            <div className="text-2xl font-bold text-gray-800">Oda {order.tableNumber}</div>
+                            <div className="text-2xl font-bold text-gray-800">Masa {order.tableNumber}</div>
                             <div className="text-sm text-gray-500 mt-1">{formatDate(order.created_at)}</div>
                           </div>
                           <div
@@ -344,10 +359,13 @@ export default function MutfakPanel() {
                             onClick={() => updateOrderStatus(order.id, 'ready')}
                             className="px-6 py-4 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition-colors flex items-center gap-2 justify-center"
                           >
-                            ✅ Hazırla
+                            ✅ Hazır
                           </button>
                         )}
-                        <button className="px-6 py-4 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition-colors flex items-center gap-2 justify-center">
+                        <button 
+                          onClick={() => showOrderDetails(order)}
+                          className="px-6 py-4 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition-colors flex items-center gap-2 justify-center"
+                        >
                           👁 Detaylar
                         </button>
                       </div>
