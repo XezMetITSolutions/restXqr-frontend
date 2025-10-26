@@ -272,13 +272,13 @@
             font-size: 1.3rem;
             font-weight: 700;
             color: #28a745;
-            text-align: center;
-        }
+                text-align: center;
+            }
 
         .order-actions {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
+                display: flex;
+                gap: 0.5rem;
+                flex-wrap: wrap;
         }
 
         .waiter-call {
@@ -286,7 +286,7 @@
             color: #212529;
             padding: 0.5rem 1rem;
             border-radius: 6px;
-            font-size: 0.9rem;
+                font-size: 0.9rem;
             font-weight: 600;
             margin-bottom: 1rem;
             text-align: center;
@@ -320,8 +320,8 @@
             padding: 0.75rem;
             border-radius: 6px;
             margin-bottom: 1rem;
-            font-size: 0.9rem;
-        }
+                font-size: 0.9rem;
+            }
 
         .customer-name {
             font-weight: 600;
@@ -358,27 +358,27 @@
             <button class="btn btn-danger" onclick="logout()">🚪 Çıkış</button>
         </div>
     </div>
-
+    
     <div class="container">
         <!-- İstatistikler -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-number" id="totalOrders">0</div>
                 <div class="stat-label">Toplam Sipariş</div>
-            </div>
+        </div>
             <div class="stat-card">
                 <div class="stat-number" id="activeTables">0</div>
                 <div class="stat-label">Aktif Masa</div>
-            </div>
+                </div>
             <div class="stat-card">
                 <div class="stat-number" id="totalAmount">0₺</div>
                 <div class="stat-label">Toplam Tutar</div>
-            </div>
+                    </div>
             <div class="stat-card">
                 <div class="stat-number" id="waiterCalls">0</div>
                 <div class="stat-label">Garson Çağrısı</div>
-            </div>
-        </div>
+                    </div>
+                </div>
 
         <!-- Filtreler -->
         <div class="filters">
@@ -395,10 +395,10 @@
             <div class="loading">
                 <h3>📋 Siparişler yükleniyor...</h3>
                 <p>Lütfen bekleyin...</p>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-
+            
     <script>
         // API Configuration
         const API_URL = 'https://masapp-backend.onrender.com/api';
@@ -437,11 +437,11 @@
                         <div style="margin-bottom: 1rem;">
                             <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Kullanıcı Adı:</label>
                             <input type="text" id="username" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;">
-                        </div>
+                </div>
                         <div style="margin-bottom: 1.5rem;">
                             <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Şifre:</label>
                             <input type="password" id="password" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;">
-                        </div>
+                    </div>
                         <button type="submit" style="width: 100%; padding: 0.75rem; background: #667eea; color: white; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600;">
                             🍽️ Garson Olarak Giriş Yap
                         </button>
@@ -583,8 +583,8 @@
                         <div class="table-number">Masa ${order.tableNumber}</div>
                         <div class="order-time ${getTimeAgo(order.createdAt) > 20 ? 'urgent' : ''}">${getTimeAgo(order.createdAt)} dk önce</div>
                         ${order.priority === 'high' ? '<div class="priority-badge">Öncelikli</div>' : ''}
-                    </div>
-                    
+            </div>
+            
                     ${order.customerName ? `
                         <div class="customer-info">
                             <div class="customer-name">👤 ${order.customerName}</div>
@@ -594,20 +594,20 @@
                     ${order.waiterCall ? `
                         <div class="waiter-call">
                             📞 GARSON ÇAĞRISI: ${order.waiterCall}
-                        </div>
+                </div>
                     ` : ''}
                     
-                    <div class="order-items">
+                <div class="order-items">
                         ${order.items.map(item => `
-                            <div class="order-item">
+                    <div class="order-item">
                                 <div class="item-info">
                                     <div class="item-name">${item.name}</div>
                                     ${item.notes ? `<div class="item-notes">📝 ${item.notes}</div>` : ''}
-                                </div>
-                                <div class="item-quantity">x${item.quantity}</div>
-                            </div>
-                        `).join('')}
                     </div>
+                                <div class="item-quantity">x${item.quantity}</div>
+                    </div>
+                        `).join('')}
+                </div>
                     
                     <div class="order-total">
                         <div class="total-amount">💰 ${parseFloat(order.totalAmount || 0).toFixed(2)}₺</div>
@@ -616,15 +616,15 @@
                     ${order.notes ? `
                         <div style="background: #fff3cd; padding: 0.75rem; border-radius: 6px; margin-bottom: 1rem; font-size: 0.9rem;">
                             <strong>📝 Sipariş Notu:</strong> ${order.notes}
-                        </div>
+                </div>
                     ` : ''}
                     
                     <div class="order-actions">
                         <button class="btn btn-success" onclick="markOrderAsReady('${order.id}')">✅ Hazır</button>
                         <button class="btn btn-primary" onclick="callWaiter('${order.id}')">📞 Garson Çağır</button>
                         <button class="btn btn-warning" onclick="addNote('${order.id}')">📝 Not Ekle</button>
-                    </div>
-                </div>
+            </div>
+        </div>
             `).join('');
         }
 
@@ -646,7 +646,7 @@
             }
         }
 
-        // Filtre butonları
+            // Filtre butonları
         function filterOrders(filter) {
             currentFilter = filter;
             

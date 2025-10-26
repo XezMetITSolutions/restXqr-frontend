@@ -393,19 +393,19 @@
             <button class="btn btn-secondary" onclick="logout()">🚪 Çıkış</button>
         </div>
     </div>
-
+    
     <div class="main-container">
         <div class="content-box">
             <input type="text" class="search-bar" placeholder="🔍 Oda numarası veya ürün ara..." id="searchInput" onkeyup="filterOrders()">
 
-            <div class="filters">
+        <div class="filters">
                 <button class="filter-btn active" onclick="setFilter('all')">Tümü (0)</button>
                 <button class="filter-btn" onclick="setFilter('pending')">Bekleyen (0)</button>
                 <button class="filter-btn" onclick="setFilter('preparing')">Hazırlanan (0)</button>
                 <button class="filter-btn" onclick="setFilter('ready')">Teslim Edilen (0)</button>
                 <button class="filter-btn" onclick="setFilter('cancelled')">İptal Edilen (0)</button>
-            </div>
-
+        </div>
+        
             <div class="orders-container" id="ordersContainer">
                 <div class="no-orders">
                     <h3>👨‍🍳 Henüz sipariş yok</h3>
@@ -423,8 +423,8 @@
         let orders = [];
         let realtimeConnection = null;
         let currentFilter = 'all';
-
-        // Login kontrolü
+            
+            // Login kontrolü
         function checkLogin() {
             console.log('🔍 Mutfak login kontrolü yapılıyor...');
             const kitchenStaff = localStorage.getItem('kitchen_staff');
@@ -434,8 +434,8 @@
                 staffInfo = JSON.parse(kitchenStaff);
                 isLoggedIn = true;
                 console.log('✅ Login başarılı, siparişler yükleniyor...');
-                loadOrders();
-                connectRealtime();
+            loadOrders();
+            connectRealtime();
             } else {
                 console.log('❌ Login yok, login formu gösteriliyor...');
                 showLoginForm();
@@ -459,7 +459,7 @@
                         </div>
                         <button type="submit" style="width: 100%; padding: 0.75rem; background: #28a745; color: white; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600;">
                             👨‍🍳 Mutfak Olarak Giriş Yap
-                        </button>
+                    </button>
                     </form>
                     <div id="loginError" style="margin-top: 1rem; color: #dc3545; text-align: center; display: none;"></div>
                     <div style="margin-top: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 8px; font-size: 0.9rem;">
@@ -539,7 +539,7 @@
                     orders = result.data;
                     console.log(`✅ ${orders.length} sipariş yüklendi, render ediliyor...`);
                     updateFilterCounts();
-                    renderOrders();
+                renderOrders();
                 } else {
                     console.log('❌ API başarısız:', result);
                 }
@@ -662,7 +662,7 @@
                                 <div class="info-row">
                                     <span class="info-label">Tahmini Süre:</span>
                                     <span class="info-value">${calculateEstimatedTime(order.createdAt)} dk</span>
-                                </div>
+                                    </div>
                                 <div class="info-row">
                                     <span class="info-label">Ödeme Durumu:</span>
                                     <span class="payment-status">${order.paymentStatus === 'paid' ? 'ÖDENDİ' : 'BEKLEMEDE'}</span>
@@ -722,7 +722,7 @@
                 if (response.ok) {
                     loadOrders();
                 }
-            } catch (error) { 
+            } catch (error) {
                 console.error('Sipariş durumu güncellenemedi:', error); 
             }
         }
@@ -737,8 +737,8 @@
                 });
                 if (response.ok) {
                     loadOrders();
-                }
-            } catch (error) { 
+                        }
+                    } catch (error) {
                 console.error('Sipariş durumu güncellenemedi:', error); 
             }
         }
