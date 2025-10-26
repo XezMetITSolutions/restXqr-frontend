@@ -241,7 +241,12 @@ export default function ReportsPage() {
 
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-40" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+      }}></div>
+      
       <BusinessSidebar 
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
@@ -249,82 +254,87 @@ export default function ReportsPage() {
       />
 
       {/* Main Content */}
-      <div className="ml-0 lg:ml-64">
+      <div className="ml-0 lg:ml-72 relative z-10">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b">
-          <div className="px-3 sm:px-6 lg:px-8 py-3 sm:py-4 flex justify-between items-center">
-            <div className="flex items-center gap-3">
+        <header className="bg-white/90 backdrop-blur-xl shadow-2xl border-b border-white/20 sticky top-0 z-30">
+          <div className="px-6 lg:px-8 py-6 flex justify-between items-center">
+            <div className="flex items-center gap-6">
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="lg:hidden p-4 hover:bg-gray-100 rounded-2xl transition-all duration-300 hover:scale-110"
               >
-                <FaBars className="text-lg text-gray-600" />
+                <FaBars className="text-xl text-gray-600" />
               </button>
-              <div>
-                <h2 className="text-lg sm:text-2xl font-semibold text-gray-800">Raporlar</h2>
-                <p className="text-xs sm:text-sm text-gray-500 mt-1 hidden sm:block">İşletme performans analizi ve raporları</p>
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-xl">
+                  <FaChartBar className="text-2xl text-white" />
+                </div>
+                <div>
+                  <h2 className="text-3xl font-black bg-gradient-to-r from-gray-900 via-blue-800 to-indigo-800 bg-clip-text text-transparent">
+                    İşletme Raporları
+                  </h2>
+                  <p className="text-gray-600 text-lg font-semibold mt-1">Performans analizi ve detaylı raporlar</p>
+                </div>
               </div>
             </div>
-            <div className="flex gap-1 sm:gap-2">
+            <div className="flex gap-3">
               <button 
                 onClick={handleExcelExport}
-                className="flex items-center gap-2 px-2 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-xs sm:text-sm"
+                className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all shadow-lg hover:shadow-xl hover:scale-105 font-bold"
               >
-                📥 <span className="hidden sm:inline">Excel İndir</span>
-                <span className="sm:hidden">Excel</span>
+                📥 <span>Excel İndir</span>
               </button>
               <button 
                 onClick={handlePrint}
-                className="flex items-center gap-2 px-2 sm:px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-xs sm:text-sm"
+                className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all shadow-lg hover:shadow-xl hover:scale-105 font-bold"
               >
-                🖨️ <span className="hidden sm:inline">Yazdır</span>
-                <span className="sm:hidden">Yazdır</span>
+                🖨️ <span>Yazdır</span>
               </button>
             </div>
           </div>
         </header>
 
-        <div id="report-content" className="p-3 sm:p-6">
+        <div id="report-content" className="p-6 lg:p-12">
         {/* Tab Navigation */}
-        <div className="mb-6">
-          <div className="overflow-x-auto -mx-3 sm:mx-0">
-            <div className="inline-flex whitespace-nowrap space-x-1 bg-gray-100 p-1 rounded-lg min-w-max sm:min-w-0">
+        <div className="mb-8">
+          <div className="overflow-x-auto">
+            <div className="inline-flex whitespace-nowrap space-x-2 bg-white/80 backdrop-blur-lg p-2 rounded-2xl shadow-xl border border-white/20">
             <button
               onClick={() => setActiveTab('overview')}
-              className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-sm rounded-md transition-colors ${
+              className={`flex items-center gap-2 px-6 py-4 rounded-xl text-base font-bold transition-all duration-300 ${
                 activeTab === 'overview' 
-                  ? 'bg-white text-blue-600 shadow-sm' 
-                  : 'text-gray-600 hover:text-gray-800'
+                  ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg scale-105' 
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
               }`}
             >
               📊 Genel Bakış
             </button>
             <button
               onClick={() => setActiveTab('products')}
-              className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-sm rounded-md transition-colors ${
+              className={`flex items-center gap-2 px-6 py-4 rounded-xl text-base font-bold transition-all duration-300 ${
                 activeTab === 'products' 
-                  ? 'bg-white text-blue-600 shadow-sm' 
-                  : 'text-gray-600 hover:text-gray-800'
+                  ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg scale-105' 
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
               }`}
             >
               🍽️ Ürün Performansı
             </button>
             <button
               onClick={() => setActiveTab('revenue')}
-              className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-sm rounded-md transition-colors ${
+              className={`flex items-center gap-2 px-6 py-4 rounded-xl text-base font-bold transition-all duration-300 ${
                 activeTab === 'revenue' 
-                  ? 'bg-white text-blue-600 shadow-sm' 
-                  : 'text-gray-600 hover:text-gray-800'
+                  ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg scale-105' 
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
               }`}
             >
               💰 Ciro Analizi
             </button>
             <button
               onClick={() => setActiveTab('hours')}
-              className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-sm rounded-md transition-colors ${
+              className={`flex items-center gap-2 px-6 py-4 rounded-xl text-base font-bold transition-all duration-300 ${
                 activeTab === 'hours' 
-                  ? 'bg-white text-blue-600 shadow-sm' 
-                  : 'text-gray-600 hover:text-gray-800'
+                  ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg scale-105' 
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
               }`}
             >
               ⏰ Saat Analizi

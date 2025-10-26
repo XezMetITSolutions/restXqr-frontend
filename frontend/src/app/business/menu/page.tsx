@@ -503,7 +503,12 @@ export default function MenuManagement() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-40" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+      }}></div>
+      
       <BusinessSidebar 
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
@@ -511,35 +516,94 @@ export default function MenuManagement() {
       />
 
       {/* Main Content */}
-      <div className="ml-0 lg:ml-64">
+      <div className="ml-0 lg:ml-72 relative z-10">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b">
-          <div className="px-3 sm:px-6 lg:px-8 py-3 sm:py-4 flex justify-between items-center">
-            <div className="flex items-center gap-3">
+        <header className="bg-white/90 backdrop-blur-xl shadow-2xl border-b border-white/20 sticky top-0 z-30">
+          <div className="px-6 lg:px-8 py-6 flex justify-between items-center">
+            <div className="flex items-center gap-6">
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="lg:hidden p-4 hover:bg-gray-100 rounded-2xl transition-all duration-300 hover:scale-110"
               >
-                <FaBars className="text-lg text-gray-600" />
+                <FaBars className="text-xl text-gray-600" />
               </button>
-            <div>
-                <h2 className="text-lg sm:text-2xl font-semibold text-gray-800">Menü</h2>
-                <p className="text-xs sm:text-sm text-gray-500 mt-1 hidden sm:block">restXqr</p>
-            </div>
-            </div>
-            <div className="flex items-center gap-2 sm:gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-xl">
+                  <FaUtensils className="text-2xl text-white" />
+                </div>
+                <div>
+                  <h2 className="text-3xl font-black bg-gradient-to-r from-gray-900 via-purple-800 to-pink-800 bg-clip-text text-transparent">
+                    Menü Yönetimi
+                  </h2>
+                  <p className="text-gray-600 text-lg font-semibold mt-1">Restoran menünüzü yönetin ve düzenleyin</p>
+                </div>
+              </div>
             </div>
           </div>
         </header>
 
         {/* Content */}
-        <div className="p-3 sm:p-6 lg:p-8">
-      {/* Header */}
+        <div className="p-6 lg:p-12">
+      {/* Tabs Section */}
       <div className="mb-8">
-        <div className="flex justify-between items-center mb-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Menü Yönetimi</h1>
-            <p className="text-gray-600 mt-2">Restoran menünüzü yönetin ve düzenleyin</p>
+        <div className="flex space-x-1 bg-white/80 backdrop-blur-lg rounded-2xl p-2 shadow-xl border border-white/20 w-fit">
+          <button
+            onClick={() => setActiveTab('items')}
+            className={`px-6 py-4 rounded-xl text-base font-bold transition-all duration-300 flex items-center gap-2 ${
+              activeTab === 'items'
+                ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-lg scale-105'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+            }`}
+          >
+            <FaUtensils />
+            Ürünler ({items.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('categories')}
+            className={`px-6 py-4 rounded-xl text-base font-bold transition-all duration-300 flex items-center gap-2 ${
+              activeTab === 'categories'
+                ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-lg scale-105'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+            }`}
+          >
+            <FaTag />
+            Kategoriler ({categories.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('stats')}
+            className={`px-6 py-4 rounded-xl text-base font-bold transition-all duration-300 flex items-center gap-2 ${
+              activeTab === 'stats'
+                ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-lg scale-105'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+            }`}
+          >
+            <FaChartBar />
+            İstatistikler
+          </button>
+      </div>
+
+      {error && (
+        <div className="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-xl backdrop-blur-sm">
+          {error}
+        </div>
+      )}
+
+        {/* Action Buttons */}
+        <div className="flex gap-4 mt-6 flex-wrap">
+          {/* Toplu Fiyat Düzenle */}
+              <button 
+                onClick={() => setShowBulkPriceModal(true)}
+            className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all shadow-lg hover:shadow-xl hover:scale-105 font-bold"
+              >
+            <span className="text-white text-xl">%</span>
+            <span className="font-bold">Toplu Fiyat Düzenle</span>
+              </button>
+
+          {/* Toplu İçe Aktar (AI) */}
+              <button 
+                onClick={() => setShowBulkImport(true)}
+            className="relative flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:from-blue-600 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl hover:scale-105 font-bold"
+          >
             {error && (
               <div className="mt-2 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
                 Hata: {error}
