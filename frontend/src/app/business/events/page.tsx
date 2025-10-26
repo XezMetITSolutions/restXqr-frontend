@@ -174,7 +174,7 @@ export default function EventsPage() {
       status: 'completed',
       type: 'workshop',
       price: 200
-    },
+    }
   ]);
 
   useEffect(() => {

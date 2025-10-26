@@ -169,7 +169,7 @@ export default function POSPage() {
       todayTransactions: 0,
       todayRevenue: 0,
       battery: 12
-    },
+    }
   ]);
 
   useEffect(() => {

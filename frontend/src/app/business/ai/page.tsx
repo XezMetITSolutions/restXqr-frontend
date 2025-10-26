@@ -123,7 +123,7 @@ export default function AIPage() {
       impact: 'low',
       confidence: 72,
       actionRequired: 'Vardiya planını güncelle'
-    },
+    }
   ]);
 
   useEffect(() => {

@@ -162,7 +162,7 @@ export default function AccountingPage() {
       amount: 2800,
       paymentMethod: 'Banka Transferi',
       invoiceNumber: 'EXP-2024-003'
-    },
+    }
   ]);
 
   useEffect(() => {
