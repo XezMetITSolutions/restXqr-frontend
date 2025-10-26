@@ -719,142 +719,24 @@ export default function SettingsPage() {
                       {/* Çalışma Saatleri */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-4">
-                          Çalışma Saatleri
+                          Çalışma Saatleri (7 Gün)
                         </label>
-                        
-                        {/* Working Hours Parser */}
-                        {(() => {
-                          const parseWorkingHours = (hoursString: string) => {
-                            const hours: any = {
-                              monday: { from: '09:00', to: '21:00', closed: false },
-                              tuesday: { from: '09:00', to: '21:00', closed: false },
-                              wednesday: { from: '09:00', to: '21:00', closed: false },
-                              thursday: { from: '09:00', to: '21:00', closed: false },
-                              friday: { from: '09:00', to: '21:00', closed: false },
-                              saturday: { from: '09:00', to: '21:00', closed: false },
-                              sunday: { from: '09:00', to: '21:00', closed: false },
-                            };
-
-                            if (hoursString) {
-                              const lines = hoursString.split('\n');
-                              const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-                              lines.forEach((line, index) => {
-                                if (index < 7 && line.includes(':')) {
-                                  const match = line.match(/(\d{2}):(\d{2})\s*-\s*(\d{2}):(\d{2})/);
-                                  if (match) {
-                                    hours[days[index]].from = `${match[1]}:${match[2]}`;
-                                    hours[days[index]].to = `${match[3]}:${match[4]}`;
-                                    hours[days[index]].closed = false;
-                                  } else if (line.toLowerCase().includes('kapalı') || line.toLowerCase().includes('closed')) {
-                                    hours[days[index]].closed = true;
-                                  }
-                                }
-                              });
-                            }
-
-                            return hours;
-                          };
-
-                          const formatWorkingHours = (hours: any) => {
-                            const days = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'];
-                            return days.map((dayName, index) => {
-                              const dayKeys = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-                              const day = hours[dayKeys[index]];
-                              return day.closed 
-                                ? `${dayName}: Kapalı` 
-                                : `${dayName}: ${day.from} - ${day.to}`;
-                            }).join('\n');
-                          };
-
-                          const [localHours, setLocalHours] = useState(() => parseWorkingHours(settings.basicInfo.workingHours || ''));
-
-                          useEffect(() => {
-                            setLocalHours(parseWorkingHours(settings.basicInfo.workingHours || ''));
-                          }, [settings.basicInfo.workingHours]);
-
-                          const handleSaveHours = () => {
-                            const formatted = formatWorkingHours(localHours);
-                            handleSaveField('workingHours', formatted);
-                          };
-
-                          const timeOptions = Array.from({ length: 24 * 2 }, (_, i) => {
-                            const hours = Math.floor(i / 2);
-                            const minutes = (i % 2) * 30;
-                            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-                          });
-
-                          return (
-                            <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
-                              <div className="space-y-4">
-                                {[
-                                  { key: 'monday', label: 'Pazartesi', icon: '📅' },
-                                  { key: 'tuesday', label: 'Salı', icon: '📅' },
-                                  { key: 'wednesday', label: 'Çarşamba', icon: '📅' },
-                                  { key: 'thursday', label: 'Perşembe', icon: '📅' },
-                                  { key: 'friday', label: 'Cuma', icon: '📅' },
-                                  { key: 'saturday', label: 'Cumartesi', icon: '📅' },
-                                  { key: 'sunday', label: 'Pazar', icon: '📅' },
-                                ].map(({ key, label, icon }) => (
-                                  <div key={key} className="flex items-center gap-4 p-4 bg-gradient-to-r from-gray-50 to-purple-50 rounded-xl hover:shadow-md transition-shadow">
-                                    <div className="flex-shrink-0 w-24 font-bold text-gray-700">
-                                      {icon} {label}
-                                    </div>
-                                    <div className="flex items-center gap-2 flex-1">
-                                      <input
-                                        type="checkbox"
-                                        checked={!localHours[key].closed}
-                                        onChange={(e) => setLocalHours({
-                                          ...localHours,
-                                          [key]: { ...localHours[key], closed: !e.target.checked }
-                                        })}
-                                        className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
-                                      />
-                                      <span className="text-sm text-gray-600">Açık</span>
-                                    </div>
-                                    {!localHours[key].closed && (
-                                      <>
-                                        <select
-                                          value={localHours[key].from}
-                                          onChange={(e) => setLocalHours({
-                                            ...localHours,
-                                            [key]: { ...localHours[key], from: e.target.value }
-                                          })}
-                                          className="px-4 py-2 border-2 border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white font-semibold"
-                                        >
-                                          {timeOptions.map(time => (
-                                            <option key={time} value={time}>{time}</option>
-                                          ))}
-                                        </select>
-                                        <span className="text-gray-500 font-bold">-</span>
-                                        <select
-                                          value={localHours[key].to}
-                                          onChange={(e) => setLocalHours({
-                                            ...localHours,
-                                            [key]: { ...localHours[key], to: e.target.value }
-                                          })}
-                                          className="px-4 py-2 border-2 border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white font-semibold"
-                                        >
-                                          {timeOptions.map(time => (
-                                            <option key={time} value={time}>{time}</option>
-                                          ))}
-                                        </select>
-                                      </>
-                                    )}
-                                    {localHours[key].closed && (
-                                      <span className="text-red-600 font-bold px-4 py-2 bg-red-50 rounded-lg">KAPALI</span>
-                                    )}
-                                  </div>
-                                ))}
-                              </div>
-                              <button
-                                onClick={handleSaveHours}
-                                className="mt-6 w-full px-6 py-4 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-xl hover:from-purple-600 hover:to-pink-700 transition-all shadow-lg hover:shadow-xl hover:scale-105 font-bold text-lg"
-                              >
-                                💾 Çalışma Saatlerini Kaydet
-                              </button>
-                            </div>
-                          );
-                        })()}
+                        <div className="flex gap-2">
+                        <textarea
+                          value={settings.basicInfo.workingHours || ''}
+                          onChange={(e) => updateBasicInfo({ workingHours: e.target.value })}
+                          rows={7}
+                          placeholder="Pazartesi: 08:00 - 22:00&#10;Salı: 08:00 - 22:00&#10;Çarşamba: 08:00 - 22:00&#10;Perşembe: 08:00 - 22:00&#10;Cuma: 08:00 - 23:00&#10;Cumartesi: 09:00 - 23:00&#10;Pazar: 09:00 - 22:00"
+                            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                          />
+                          <button
+                            onClick={() => handleSaveField('workingHours', settings.basicInfo.workingHours)}
+                            className="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                            title="Çalışma Saatlerini Kaydet"
+                          >
+                            <FaSave size={14} />
+                          </button>
+                        </div>
                         
                         <div className="mt-6 flex items-center gap-2 p-4 bg-blue-50 rounded-xl">
                           <input
