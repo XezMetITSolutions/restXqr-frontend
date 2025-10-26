@@ -265,30 +265,44 @@ export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout 
 
       {/* Sidebar */}
       <div 
-        className={`fixed inset-y-0 left-0 w-72 bg-gradient-to-br from-slate-800 to-slate-900 text-white transform transition-all duration-500 ease-in-out z-50 shadow-2xl flex flex-col ${
+        className={`fixed inset-y-0 left-0 w-72 text-white transform transition-all duration-500 ease-in-out z-50 shadow-2xl flex flex-col ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0`}
+        style={{
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+        }}
       >
+        {/* Animated Background Pattern */}
+        <div className="absolute inset-0 opacity-5" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%239C92AC' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E")`,
+          animation: 'float 20s ease-in-out infinite',
+        }}></div>
+
         {/* Header */}
-        <div className="p-6 border-b border-white/10 backdrop-blur-sm">
+        <div className="relative z-10 p-6 border-b border-white/10 backdrop-blur-sm bg-gradient-to-r from-white/5 to-transparent">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div 
-                className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg"
-                style={{ background: `linear-gradient(135deg, ${brandColors.primary}, ${brandColors.secondary})` }}
+                className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-2xl transform hover:scale-110 transition-transform duration-300 cursor-pointer"
+                style={{ 
+                  background: `linear-gradient(135deg, ${brandColors.primary}, ${brandColors.secondary})`,
+                  boxShadow: `0 10px 30px -10px ${brandColors.primary}50`
+                }}
               >
-                <FaRocket className="text-white text-xl" />
+                <FaRocket className="text-white text-2xl animate-pulse" />
               </div>
               <div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
+                <h1 className="text-2xl font-black bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent tracking-tight">
                   {restaurantName}
                 </h1>
-                <p className="text-white/70 text-sm font-medium">Yönetim Paneli</p>
+                <p className="text-white/60 text-xs font-semibold uppercase tracking-wider">Yönetim Paneli</p>
               </div>
             </div>
             <button
               onClick={() => setSidebarOpen(false)}
-              className="lg:hidden p-3 hover:bg-white/10 rounded-xl transition-all duration-300 hover:scale-110"
+              className="lg:hidden p-3 hover:bg-white/10 rounded-xl transition-all duration-300 hover:scale-110 hover:rotate-90"
             >
               <FaBars className="text-lg" />
             </button>
@@ -296,57 +310,62 @@ export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout 
         </div>
 
         {/* Navigation */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-2">
-          {menuItems.map((item) => {
+        <div className="relative z-10 flex-1 overflow-y-auto p-4 space-y-2">
+          {menuItems.map((item, index) => {
             const Icon = item.icon;
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`group flex items-center gap-4 px-4 py-4 rounded-2xl transition-all duration-300 hover:scale-105 ${
+                className={`group flex items-center gap-4 px-4 py-4 rounded-2xl transition-all duration-300 hover:scale-105 hover:translate-x-1 ${
                   item.active
-                    ? 'shadow-lg'
-                    : 'hover:shadow-md'
+                    ? 'shadow-2xl'
+                    : 'hover:shadow-xl'
                 }`}
                 style={{
                   background: item.active 
-                    ? `linear-gradient(135deg, ${brandColors.primary}20, ${brandColors.secondary}20)` 
+                    ? `linear-gradient(135deg, ${brandColors.primary}20, ${brandColors.secondary}20, ${brandColors.primary}10)` 
                     : 'transparent',
-                  borderLeft: item.active ? `4px solid ${brandColors.accent}` : '4px solid transparent'
+                  borderLeft: item.active ? `4px solid ${brandColors.accent}` : '4px solid transparent',
+                  animationDelay: `${index * 50}ms`
                 }}
               >
                 <div 
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 ${
-                    item.active ? 'shadow-lg' : 'group-hover:shadow-md'
+                  className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:rotate-6 ${
+                    item.active ? 'shadow-2xl transform scale-110' : 'group-hover:shadow-xl'
                   }`}
                   style={{
                     background: item.active 
                       ? `linear-gradient(135deg, ${brandColors.primary}, ${brandColors.secondary})`
-                      : 'rgba(255, 255, 255, 0.1)'
+                      : 'rgba(255, 255, 255, 0.05)',
+                    boxShadow: item.active ? `0 8px 20px -5px ${brandColors.primary}40` : 'none'
                   }}
                 >
-                  <Icon className={`text-lg transition-all duration-300 ${
-                    item.active ? 'text-white' : 'text-white/70 group-hover:text-white'
+                  <Icon className={`text-xl transition-all duration-300 ${
+                    item.active ? 'text-white' : 'text-white/60 group-hover:text-white'
                   }`} />
                 </div>
-                <span className={`font-medium transition-all duration-300 ${
-                  item.active ? 'text-white font-bold' : 'text-white/80 group-hover:text-white'
+                <span className={`text-base font-bold transition-all duration-300 ${
+                  item.active ? 'text-white' : 'text-white/70 group-hover:text-white'
                 }`}>
                   {item.label}
                 </span>
                 {item.badge && (
-                  <span className={`ml-auto px-2 py-1 text-xs font-bold rounded-full ${
-                    item.badge === 'Premium' ? 'bg-yellow-500/20 text-yellow-300' :
-                    item.badge === 'Enterprise' ? 'bg-purple-500/20 text-purple-300' :
-                    'bg-blue-500/20 text-blue-300'
+                  <span className={`ml-auto px-3 py-1 text-xs font-black rounded-full backdrop-blur-sm ${
+                    item.badge === 'Premium' ? 'bg-gradient-to-r from-yellow-500/30 to-orange-500/30 text-yellow-300 border border-yellow-500/50' :
+                    item.badge === 'Enterprise' ? 'bg-gradient-to-r from-purple-500/30 to-pink-500/30 text-purple-300 border border-purple-500/50' :
+                    'bg-gradient-to-r from-blue-500/30 to-cyan-500/30 text-blue-300 border border-blue-500/50'
                   }`}>
                     {item.badge}
                   </span>
                 )}
                 {item.active && !item.badge && (
                   <div 
-                    className="ml-auto w-2 h-2 rounded-full animate-pulse"
-                    style={{ backgroundColor: brandColors.accent }}
+                    className="ml-auto w-3 h-3 rounded-full animate-pulse shadow-lg"
+                    style={{ 
+                      backgroundColor: brandColors.accent,
+                      boxShadow: `0 0 10px ${brandColors.accent}`
+                    }}
                   />
                 )}
               </Link>
@@ -355,28 +374,31 @@ export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout 
         </div>
 
         {/* Bottom Section */}
-        <div className="p-6 border-t border-white/10 backdrop-blur-sm">
+        <div className="relative z-10 p-6 border-t border-white/10 backdrop-blur-sm bg-gradient-to-r from-transparent to-white/5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div 
-                className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg"
-                style={{ background: `linear-gradient(135deg, ${brandColors.secondary}, ${brandColors.accent})` }}
+                className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-2xl transform hover:scale-110 transition-transform duration-300 cursor-pointer"
+                style={{ 
+                  background: `linear-gradient(135deg, ${brandColors.secondary}, ${brandColors.accent})`,
+                  boxShadow: `0 10px 30px -10px ${brandColors.accent}50`
+                }}
               >
-                <span className="text-white font-bold text-lg">
+                <span className="text-white font-black text-xl">
                   {restaurantName.charAt(0).toUpperCase()}
                 </span>
               </div>
               <div>
-                <p className="text-white font-bold">{restaurantName}</p>
-                <p className="text-white/60 text-sm">{restaurantEmail}</p>
+                <p className="text-white font-black text-sm">{restaurantName}</p>
+                <p className="text-white/50 text-xs font-semibold">{restaurantEmail}</p>
               </div>
             </div>
             <button
               onClick={onLogout}
-              className="p-3 hover:bg-red-500/20 rounded-xl transition-all duration-300 hover:scale-110 group"
+              className="p-3 hover:bg-red-500/30 rounded-xl transition-all duration-300 hover:scale-110 group border border-transparent hover:border-red-500/50"
               title="Çıkış Yap"
             >
-              <FaSignOutAlt className="text-lg text-white/70 group-hover:text-red-400 transition-colors duration-300" />
+              <FaSignOutAlt className="text-xl text-white/60 group-hover:text-red-400 transition-all duration-300 transform group-hover:rotate-12" />
             </button>
           </div>
         </div>
