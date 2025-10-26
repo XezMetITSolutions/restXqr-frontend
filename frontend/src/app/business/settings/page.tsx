@@ -758,6 +758,87 @@ export default function SettingsPage() {
                         </p>
                       </div>
 
+                      {/* Menü Özel İçerik */}
+                      <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border-2 border-purple-200">
+                        <h4 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                          <span className="text-2xl">🎉</span>
+                          Menü Özel İçerikler
+                        </h4>
+                        <p className="text-sm text-gray-600 mb-6">Müşteri menüsünde gösterilen günlük duyurular ve özel içerikler</p>
+                        
+                        {/* Bugüne Özel Duyuru */}
+                        <div className="mb-6">
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            🎉 Bugüne Özel Başlık
+                          </label>
+                          <input
+                            type="text"
+                            value={settings.basicInfo.dailySpecialTitle || 'Bugüne Özel!'}
+                            onChange={(e) => updateBasicInfo({ dailySpecialTitle: e.target.value })}
+                            placeholder="Bugüne Özel!"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                          />
+                          <div className="mt-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Detaylı Açıklama
+                            </label>
+                            <input
+                              type="text"
+                              value={settings.basicInfo.dailySpecialDesc || 'Tüm tatlılarda %20 indirim - Sadece bugün geçerli'}
+                              onChange={(e) => updateBasicInfo({ dailySpecialDesc: e.target.value })}
+                              placeholder="Tüm tatlılarda %20 indirim - Sadece bugün geçerli"
+                              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            />
+                          </div>
+                          <button
+                            onClick={() => handleSaveField('dailySpecialTitle', settings.basicInfo.dailySpecialTitle)}
+                            className="mt-3 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                          >
+                            <FaSave size={14} className="inline mr-2" />
+                            Kaydet
+                          </button>
+                        </div>
+
+                        {/* Günün Çorbası */}
+                        <div className="mb-6 bg-white p-4 rounded-lg">
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            🍲 Günün Çorbası Başlık
+                          </label>
+                          <input
+                            type="text"
+                            value={settings.basicInfo.soupOfDayTitle || 'Günün Çorbası'}
+                            onChange={(e) => updateBasicInfo({ soupOfDayTitle: e.target.value })}
+                            placeholder="Günün Çorbası"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                          />
+                          <div className="mt-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Çorba İsmi ve Açıklama
+                            </label>
+                            <input
+                              type="text"
+                              value={settings.basicInfo.soupOfDayDesc || 'Ezogelin çorbası - Ev yapımı lezzet'}
+                              onChange={(e) => updateBasicInfo({ soupOfDayDesc: e.target.value })}
+                              placeholder="Ezogelin çorbası - Ev yapımı lezzet"
+                              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            />
+                          </div>
+                          <button
+                            onClick={() => handleSaveField('soupOfDayTitle', settings.basicInfo.soupOfDayTitle)}
+                            className="mt-3 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                          >
+                            <FaSave size={14} className="inline mr-2" />
+                            Kaydet
+                          </button>
+                        </div>
+
+                        <div className="bg-blue-100 border border-blue-300 rounded-lg p-4">
+                          <p className="text-sm text-blue-800">
+                            💡 Bu içerikler müşteri menüsünün en üstünde slider olarak gösterilecektir.
+                          </p>
+                        </div>
+                      </div>
+
                       {/* Sosyal Medya Linkleri */}
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
