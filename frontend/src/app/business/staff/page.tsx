@@ -127,6 +127,9 @@ export default function StaffPage() {
   useEffect(() => {
     let filtered = [...staff];
 
+    // Admin rolündeki personelleri FİLTRELE - sadece kasiyer, garson, mutfak göster
+    filtered = filtered.filter(member => member.role !== 'admin');
+
     // Rol filtresi
     if (roleFilter !== 'all') {
       filtered = filtered.filter(member => member.role === roleFilter);
@@ -207,15 +210,18 @@ export default function StaffPage() {
     }
   };
 
+  // Adminleri filtrele - sadece operasyonel personel
+  const operationalStaff = staff.filter(s => s.role !== 'admin');
+  
   const stats = {
-    total: staff.length,
-    active: staff.filter(s => s.status === 'active').length,
-    inactive: staff.filter(s => s.status === 'inactive').length,
-    onLeave: staff.filter(s => s.status === 'on_leave').length,
-    managers: staff.filter(s => s.role === 'manager').length,
-    waiters: staff.filter(s => s.role === 'waiter').length,
-    chefs: staff.filter(s => s.role === 'chef').length,
-    avgRating: staff.length > 0 ? (staff.reduce((acc, s) => acc + s.rating, 0) / staff.length).toFixed(1) : 0
+    total: operationalStaff.length,
+    active: operationalStaff.filter(s => s.status === 'active').length,
+    inactive: operationalStaff.filter(s => s.status === 'inactive').length,
+    onLeave: operationalStaff.filter(s => s.status === 'on_leave').length,
+    managers: operationalStaff.filter(s => s.role === 'manager').length,
+    waiters: operationalStaff.filter(s => s.role === 'waiter').length,
+    chefs: operationalStaff.filter(s => s.role === 'chef').length,
+    avgRating: operationalStaff.length > 0 ? (operationalStaff.reduce((acc, s) => acc + (s.rating || 0), 0) / operationalStaff.length).toFixed(1) : 0
   };
 
   const handleAddStaff = async () => {
@@ -526,7 +532,7 @@ export default function StaffPage() {
                   <option value="chef">Aşçı</option>
                   <option value="waiter">Garson</option>
                   <option value="cashier">Kasiyer</option>
-                  <option value="admin">Admin</option>
+                  {/* Admin seçeneği kaldırıldı */}
                 </select>
               </div>
 
@@ -845,7 +851,7 @@ export default function StaffPage() {
                       <option value="waiter">Garson</option>
                       <option value="chef">Aşçı</option>
                       <option value="cashier">Kasiyer</option>
-                      <option value="manager">Yönetici</option>
+                      {/* Yönetici seçeneği kaldırıldı - sadece operasyonel personel */}
                     </select>
                   </div>
 
@@ -957,7 +963,7 @@ export default function StaffPage() {
                       <option value="waiter">Garson</option>
                       <option value="chef">Aşçı</option>
                       <option value="cashier">Kasiyer</option>
-                      <option value="manager">Yönetici</option>
+                      {/* Yönetici seçeneği kaldırıldı - sadece operasyonel personel */}
                     </select>
                   </div>
 
