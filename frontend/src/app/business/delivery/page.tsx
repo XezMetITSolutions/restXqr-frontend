@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import BusinessSidebar from '@/components/BusinessSidebar';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useFeature } from '@/hooks/useFeature';
+import { apiService } from '@/services/api';
 import { 
   FaTruck, 
   FaPlus, 
@@ -38,15 +39,87 @@ interface Delivery {
 
 export default function DeliveryPage() {
   const router = useRouter();
-  const { isAuthenticated, logout } = useAuthStore();
+  const { isAuthenticated, logout, user } = useAuthStore();
   const hasDeliveryIntegration = useFeature('delivery_integration');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [deliveries, setDeliveries] = useState<Delivery[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editingDelivery, setEditingDelivery] = useState<Delivery | null>(null);
 
-  // Demo data
-  const [deliveries, setDeliveries] = useState<Delivery[]>([
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      router.push('/business/login');
+    } else {
+      fetchDeliveries();
+    }
+  }, [isAuthenticated, router]);
+
+  const fetchDeliveries = async () => {
+    try {
+      setLoading(true);
+      const restaurantId = user?.id;
+      if (!restaurantId) return;
+      
+      const response = await apiService.getDeliveries(restaurantId);
+      if (response.success && response.data) {
+        setDeliveries(response.data);
+      }
+    } catch (error) {
+      console.error('Teslimatlar yüklenirken hata:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddDelivery = async (deliveryData: Partial<Delivery>) => {
+    try {
+      const restaurantId = user?.id;
+      if (!restaurantId) return;
+
+      const response = await apiService.createDelivery({
+        ...deliveryData,
+        restaurantId
+      });
+      
+      if (response.success) {
+        await fetchDeliveries();
+        setShowAddModal(false);
+      }
+    } catch (error) {
+      console.error('Teslimat eklenirken hata:', error);
+    }
+  };
+
+  const handleUpdateDelivery = async (id: string, deliveryData: Partial<Delivery>) => {
+    try {
+      const response = await apiService.updateDelivery(id, deliveryData);
+      if (response.success) {
+        await fetchDeliveries();
+        setEditingDelivery(null);
+      }
+    } catch (error) {
+      console.error('Teslimat güncellenirken hata:', error);
+    }
+  };
+
+  const handleDeleteDelivery = async (id: string) => {
+    if (!confirm('Bu teslimati silmek istediğinizden emin misiniz?')) return;
+    
+    try {
+      const response = await apiService.deleteDelivery(id);
+      if (response.success) {
+        await fetchDeliveries();
+      }
+    } catch (error) {
+      console.error('Teslimat silinirken hata:', error);
+    }
+  };
+
+  // Eski demo data kaldırıldı
+  const oldDemoData = [
     {
       id: '1',
       orderNumber: '#12345',
@@ -99,13 +172,7 @@ export default function DeliveryPage() {
       estimatedTime: '-',
       createdAt: new Date(Date.now() - 3600000).toISOString()
     }
-  ]);
-
-  useEffect(() => {
-    if (!isAuthenticated()) {
-      router.push('/business/login');
-    }
-  }, [isAuthenticated, router]);
+  ]; // Demo data kaldırıldı
 
   // Özellik kontrolü
   if (!hasDeliveryIntegration) {

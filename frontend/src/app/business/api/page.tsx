@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import BusinessSidebar from '@/components/BusinessSidebar';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useFeature } from '@/hooks/useFeature';
+import { apiService } from '@/services/api';
 import { 
   FaCode, 
   FaPlus, 
@@ -36,67 +37,98 @@ interface ApiKey {
 
 export default function ApiPage() {
   const router = useRouter();
-  const { isAuthenticated, logout } = useAuthStore();
+  const { isAuthenticated, logout, user } = useAuthStore();
   const hasApiAccess = useFeature('api_access');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [showAddModal, setShowAddModal] = useState(false);
   const [visibleKeys, setVisibleKeys] = useState<Set<string>>(new Set());
-
-  // Demo data
-  const [apiKeys, setApiKeys] = useState<ApiKey[]>([
-    {
-      id: '1',
-      name: 'Production API',
-      key: 'rxqr_live_prod_api_key_1234567890abcdef',
-      status: 'active',
-      permissions: ['read', 'write', 'delete'],
-      requestCount: 15420,
-      lastUsed: '2024-10-26T10:30:00',
-      createdAt: '2024-01-15',
-      expiresAt: '2025-01-15'
-    },
-    {
-      id: '2',
-      name: 'Mobile App API',
-      key: 'rxqr_live_mobile_api_key_abcdef1234567890',
-      status: 'active',
-      permissions: ['read', 'write'],
-      requestCount: 8920,
-      lastUsed: '2024-10-26T09:15:00',
-      createdAt: '2024-03-20',
-      expiresAt: '2025-03-20'
-    },
-    {
-      id: '3',
-      name: 'Development API',
-      key: 'rxqr_test_dev_api_key_0987654321fedcba',
-      status: 'active',
-      permissions: ['read'],
-      requestCount: 3240,
-      lastUsed: '2024-10-25T16:45:00',
-      createdAt: '2024-05-10',
-      expiresAt: '2025-05-10'
-    },
-    {
-      id: '4',
-      name: 'Old Integration',
-      key: 'rxqr_live_old_api_key_fedcba0987654321',
-      status: 'inactive',
-      permissions: ['read', 'write'],
-      requestCount: 0,
-      lastUsed: '2024-08-15T12:00:00',
-      createdAt: '2024-02-01',
-      expiresAt: '2024-09-01'
-    }
-  ]);
+  const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editingKey, setEditingKey] = useState<ApiKey | null>(null);
 
   useEffect(() => {
     if (!isAuthenticated()) {
       router.push('/business/login');
+    } else {
+      fetchApiKeys();
     }
   }, [isAuthenticated, router]);
+
+  const fetchApiKeys = async () => {
+    try {
+      setLoading(true);
+      const restaurantId = user?.id;
+      if (!restaurantId) return;
+      
+      const response = await apiService.getApiKeys(restaurantId);
+      if (response.success && response.data) {
+        setApiKeys(response.data);
+      }
+    } catch (error) {
+      console.error('API keys yüklenirken hata:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddApiKey = async (keyData: Partial<ApiKey>) => {
+    try {
+      const restaurantId = user?.id;
+      if (!restaurantId) return;
+
+      const response = await apiService.createApiKey({
+        ...keyData,
+        restaurantId
+      });
+      
+      if (response.success) {
+        await fetchApiKeys();
+        setShowAddModal(false);
+      }
+    } catch (error) {
+      console.error('API key eklenirken hata:', error);
+    }
+  };
+
+  const handleUpdateApiKey = async (id: string, keyData: Partial<ApiKey>) => {
+    try {
+      const response = await apiService.updateApiKey(id, keyData);
+      if (response.success) {
+        await fetchApiKeys();
+        setEditingKey(null);
+      }
+    } catch (error) {
+      console.error('API key güncellenirken hata:', error);
+    }
+  };
+
+  const handleDeleteApiKey = async (id: string) => {
+    if (!confirm('Bu API key\'i silmek istediğinizden emin misiniz?')) return;
+    
+    try {
+      const response = await apiService.deleteApiKey(id);
+      if (response.success) {
+        await fetchApiKeys();
+      }
+    } catch (error) {
+      console.error('API key silinirken hata:', error);
+    }
+  };
+
+  const handleRegenerateApiKey = async (id: string) => {
+    if (!confirm('Bu API key\'i yenilemek istediğinizden emin misiniz? Eski key çalışmayacak.')) return;
+    
+    try {
+      const response = await apiService.regenerateApiKey(id);
+      if (response.success) {
+        await fetchApiKeys();
+      }
+    } catch (error) {
+      console.error('API key yenilenirken hata:', error);
+    }
+  };
 
   // Özellik kontrolü
   if (!hasApiAccess) {
