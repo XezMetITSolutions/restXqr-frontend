@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../lib/database');
 
-const Delivery = sequelize.define('Delivery', {
+module.exports = (sequelize, DataTypes) => {
+  const Delivery = sequelize.define('Delivery', {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
@@ -57,4 +57,5 @@ const Delivery = sequelize.define('Delivery', {
   timestamps: true
 });
 
-module.exports = Delivery;
+  return Delivery;
+};

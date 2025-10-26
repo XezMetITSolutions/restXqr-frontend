@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../lib/database');
 
-const VideoMenuItem = sequelize.define('VideoMenuItem', {
+module.exports = (sequelize, DataTypes) => {
+  const VideoMenuItem = sequelize.define('VideoMenuItem', {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
@@ -52,4 +52,5 @@ const VideoMenuItem = sequelize.define('VideoMenuItem', {
   timestamps: true
 });
 
-module.exports = VideoMenuItem;
+  return VideoMenuItem;
+};

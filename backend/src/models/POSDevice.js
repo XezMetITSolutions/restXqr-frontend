@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../lib/database');
 
-const POSDevice = sequelize.define('POSDevice', {
+module.exports = (sequelize, DataTypes) => {
+  const POSDevice = sequelize.define('POSDevice', {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
@@ -53,4 +53,5 @@ const POSDevice = sequelize.define('POSDevice', {
   timestamps: true
 });
 
-module.exports = POSDevice;
+  return POSDevice;
+};

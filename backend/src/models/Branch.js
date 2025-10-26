@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../lib/database');
 
-const Branch = sequelize.define('Branch', {
+module.exports = (sequelize, DataTypes) => {
+  const Branch = sequelize.define('Branch', {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
@@ -56,4 +56,5 @@ const Branch = sequelize.define('Branch', {
   timestamps: true
 });
 
-module.exports = Branch;
+  return Branch;
+};

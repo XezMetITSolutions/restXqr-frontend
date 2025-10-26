@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../lib/database');
 
-const ApiKey = sequelize.define('ApiKey', {
+module.exports = (sequelize, DataTypes) => {
+  const ApiKey = sequelize.define('ApiKey', {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
@@ -49,4 +49,5 @@ const ApiKey = sequelize.define('ApiKey', {
   timestamps: true
 });
 
-module.exports = ApiKey;
+  return ApiKey;
+};

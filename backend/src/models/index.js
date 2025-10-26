@@ -33,14 +33,14 @@ const OrderItem = require('./OrderItem')(sequelize, Sequelize.DataTypes);
 const Feature = require('./Feature')(sequelize, Sequelize.DataTypes);
 const QRToken = require('./QRToken')(sequelize, Sequelize.DataTypes);
 const Staff = require('./Staff')(sequelize, Sequelize.DataTypes);
-const Branch = require('./Branch');
-const ApiKey = require('./ApiKey');
-const Delivery = require('./Delivery');
-const POSDevice = require('./POSDevice');
-const Transaction = require('./Transaction');
-const AIRecommendation = require('./AIRecommendation');
-const VideoMenuItem = require('./VideoMenuItem');
-const Event = require('./Event');
+const Branch = require('./Branch')(sequelize, Sequelize.DataTypes);
+const ApiKey = require('./ApiKey')(sequelize, Sequelize.DataTypes);
+const Delivery = require('./Delivery')(sequelize, Sequelize.DataTypes);
+const POSDevice = require('./POSDevice')(sequelize, Sequelize.DataTypes);
+const Transaction = require('./Transaction')(sequelize, Sequelize.DataTypes);
+const AIRecommendation = require('./AIRecommendation')(sequelize, Sequelize.DataTypes);
+const VideoMenuItem = require('./VideoMenuItem')(sequelize, Sequelize.DataTypes);
+const Event = require('./Event')(sequelize, Sequelize.DataTypes);
 
 // Define associations
 Restaurant.hasMany(MenuCategory, { foreignKey: 'restaurantId', as: 'categories' });

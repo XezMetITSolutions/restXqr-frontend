@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../lib/database');
 
-const Event = sequelize.define('Event', {
+module.exports = (sequelize, DataTypes) => {
+  const Event = sequelize.define('Event', {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
@@ -60,4 +60,5 @@ const Event = sequelize.define('Event', {
   timestamps: true
 });
 
-module.exports = Event;
+  return Event;
+};

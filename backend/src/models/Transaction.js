@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../lib/database');
 
-const Transaction = sequelize.define('Transaction', {
+module.exports = (sequelize, DataTypes) => {
+  const Transaction = sequelize.define('Transaction', {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
@@ -49,4 +49,5 @@ const Transaction = sequelize.define('Transaction', {
   timestamps: true
 });
 
-module.exports = Transaction;
+  return Transaction;
+};
