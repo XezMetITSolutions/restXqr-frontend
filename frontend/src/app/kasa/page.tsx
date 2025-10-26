@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FaMoneyBillWave, FaUtensils, FaCheckCircle, FaCreditCard, FaReceipt, FaPrint } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
+import { FaMoneyBillWave, FaUtensils, FaCheckCircle, FaCreditCard, FaReceipt, FaPrint, FaSignOutAlt } from 'react-icons/fa';
 
 interface OrderItem {
   id: string;
@@ -25,6 +26,7 @@ interface Order {
 }
 
 export default function KasaPanel() {
+  const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [restaurantId, setRestaurantId] = useState<string>('');
@@ -32,6 +34,30 @@ export default function KasaPanel() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
+
+  // Login kontrolü
+  useEffect(() => {
+    const checkAuth = () => {
+      const user = localStorage.getItem('staff_user');
+      const token = localStorage.getItem('staff_token');
+      
+      if (!user || !token) {
+        router.push('/staff-login');
+        return;
+      }
+      
+      const parsedUser = JSON.parse(user);
+      
+      // Sadece kasiyer ve yöneticiler erişebilir
+      if (parsedUser.role !== 'cashier' && parsedUser.role !== 'manager' && parsedUser.role !== 'admin') {
+        alert('Bu panele erişim yetkiniz yok!');
+        router.push('/staff-login');
+        return;
+      }
+    };
+    
+    checkAuth();
+  }, [router]);
 
   // Restoran ID'sini al
   useEffect(() => {

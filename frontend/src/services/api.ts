@@ -537,6 +537,14 @@ class ApiService {
     });
   }
 
+  // Staff Login
+  async staffLogin(credentials: { username: string; password: string }) {
+    return this.request<any>('/staff/login', {
+      method: 'POST',
+      body: JSON.stringify(credentials),
+    });
+  }
+
 }
 
 export const apiService = new ApiService();

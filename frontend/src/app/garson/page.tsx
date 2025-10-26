@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FaUser, FaUtensils, FaBell, FaCheckCircle, FaClock, FaMoneyBillWave, FaEdit, FaEye, FaTimes, FaChartBar } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
+import { FaUser, FaUtensils, FaBell, FaCheckCircle, FaClock, FaMoneyBillWave, FaEdit, FaEye, FaTimes, FaChartBar, FaSignOutAlt } from 'react-icons/fa';
 
 interface OrderItem {
   id: string;
@@ -25,14 +26,41 @@ interface Order {
 }
 
 export default function GarsonPanel() {
+  const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [restaurantId, setRestaurantId] = useState<string>('');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [activeFilter, setActiveFilter] = useState<string>('all');
+  const [staffUser, setStaffUser] = useState<any>(null);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
+
+  // Login kontrolü
+  useEffect(() => {
+    const checkAuth = () => {
+      const user = localStorage.getItem('staff_user');
+      const token = localStorage.getItem('staff_token');
+      
+      if (!user || !token) {
+        router.push('/staff-login');
+        return;
+      }
+      
+      const parsedUser = JSON.parse(user);
+      setStaffUser(parsedUser);
+      
+      // Sadece garson ve yöneticiler erişebilir
+      if (parsedUser.role !== 'waiter' && parsedUser.role !== 'manager' && parsedUser.role !== 'admin') {
+        alert('Bu panele erişim yetkiniz yok!');
+        router.push('/staff-login');
+        return;
+      }
+    };
+    
+    checkAuth();
+  }, [router]);
 
   // Restoran ID'sini al
   useEffect(() => {
@@ -169,12 +197,25 @@ export default function GarsonPanel() {
                 <p className="text-sm text-purple-200">Aksaray Restoran • Canlı Durum</p>
               </div>
             </div>
-            <button
-              onClick={fetchOrders}
-              className="bg-yellow-400 text-purple-900 px-4 py-2 rounded-lg font-bold hover:bg-yellow-300 transition-colors text-sm"
-            >
-              YENİLE
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={fetchOrders}
+                className="bg-yellow-400 text-purple-900 px-4 py-2 rounded-lg font-bold hover:bg-yellow-300 transition-colors text-sm"
+              >
+                YENİLE
+              </button>
+              <button
+                onClick={() => {
+                  localStorage.removeItem('staff_user');
+                  localStorage.removeItem('staff_token');
+                  router.push('/staff-login');
+                }}
+                className="bg-red-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-red-600 transition-colors text-sm flex items-center gap-2"
+              >
+                <FaSignOutAlt />
+                <span className="hidden sm:inline">Çıkış</span>
+              </button>
+            </div>
           </div>
         </div>
 

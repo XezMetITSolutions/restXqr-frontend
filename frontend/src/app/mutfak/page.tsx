@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface OrderItem {
   id: string;
@@ -34,6 +35,7 @@ interface MenuItem {
 }
 
 export default function MutfakPanel() {
+  const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [restaurantId, setRestaurantId] = useState<string>('');
@@ -46,6 +48,30 @@ export default function MutfakPanel() {
   const [showOrderModal, setShowOrderModal] = useState(false);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
+
+  // Login kontrolü
+  useEffect(() => {
+    const checkAuth = () => {
+      const user = localStorage.getItem('staff_user');
+      const token = localStorage.getItem('staff_token');
+      
+      if (!user || !token) {
+        router.push('/staff-login');
+        return;
+      }
+      
+      const parsedUser = JSON.parse(user);
+      
+      // Sadece aşçı ve yöneticiler erişebilir
+      if (parsedUser.role !== 'chef' && parsedUser.role !== 'manager' && parsedUser.role !== 'admin') {
+        alert('Bu panele erişim yetkiniz yok!');
+        router.push('/staff-login');
+        return;
+      }
+    };
+    
+    checkAuth();
+  }, [router]);
 
   // Restoran ID'sini al
   useEffect(() => {
