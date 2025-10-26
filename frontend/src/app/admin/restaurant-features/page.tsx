@@ -44,7 +44,6 @@ const availableFeatures: Feature[] = [
   // ============================================
   // PREMIUM ÖZELLİKLER
   // ============================================
-  { id: 'customer_reviews', name: '⭐ Müşteri Yorumları', description: 'Yorum ve değerlendirme sistemi', category: 'premium', icon: '⭐' },
   { id: 'advanced_analytics', name: '📈 Gelişmiş Analitik', description: 'Detaylı satış ve müşteri analizleri', category: 'premium', icon: '📈' },
   { id: 'inventory_management', name: '📦 Stok Yönetimi', description: 'Ürün stok takibi ve uyarıları', category: 'premium', icon: '📦' },
   { id: 'multi_language', name: '🌐 Çoklu Dil Desteği', description: 'Türkçe, İngilizce, Arapça vb.', category: 'premium', icon: '🌐' },
@@ -62,11 +61,9 @@ const availableFeatures: Feature[] = [
   // ============================================
   // ÖZEL ÖZELLİKLER (Aktif edildiğinde sidebar'da görünür)
   // ============================================
-  { id: 'whatsapp_ordering', name: '💬 WhatsApp Sipariş', description: 'WhatsApp üzerinden sipariş alma', category: 'custom', icon: '💬' },
   { id: 'delivery_integration', name: '🚗 Paket Servis', description: 'Yemeksepeti, Getir, Trendyol entegrasyonu', category: 'custom', icon: '🚗' },
   { id: 'pos_integration', name: '💰 POS Entegrasyonu', description: 'Kasa sistemine bağlantı', category: 'custom', icon: '💰' },
   { id: 'accounting_software', name: '📊 Muhasebe Yazılımı', description: 'Logo, Netsis, Mikro entegrasyonu', category: 'custom', icon: '📊' },
-  { id: 'google_my_business', name: '🗺️ Google My Business', description: 'Google harita ve yorum entegrasyonu', category: 'custom', icon: '🗺️' },
   { id: 'ai_recommendations', name: '🤖 AI Önerileri', description: 'Yapay zeka ile ürün önerisi', category: 'custom', icon: '🤖' },
   { id: 'video_menu', name: '🎥 Video Menü', description: 'Ürünlerde video gösterimi', category: 'custom', icon: '🎥' },
   { id: 'event_management', name: '🎉 Etkinlik Yönetimi', description: 'Özel günler ve etkinlikler', category: 'custom', icon: '🎉' },
