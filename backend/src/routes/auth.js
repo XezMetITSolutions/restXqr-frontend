@@ -64,8 +64,26 @@ router.post('/login', async (req, res) => {
       });
     }
     
-    // Password kontrolü - plain text karşılaştırma
-    if (restaurant.password !== password) {
+    // Password kontrolü (support both plain text and bcrypt hashed)
+    let passwordValid = false;
+    if (restaurant.password === password) {
+      // Plain text password match (legacy)
+      passwordValid = true;
+      console.log('✅ Password matched (plain text)');
+    } else {
+      // Try bcrypt comparison
+      try {
+        passwordValid = await bcrypt.compare(password, restaurant.password);
+        if (passwordValid) {
+          console.log('✅ Password matched (bcrypt)');
+        }
+      } catch (bcryptError) {
+        console.log('⚠️ Bcrypt comparison failed');
+        passwordValid = false;
+      }
+    }
+
+    if (!passwordValid) {
       console.log('❌ Password mismatch');
       return res.status(401).json({
         success: false,

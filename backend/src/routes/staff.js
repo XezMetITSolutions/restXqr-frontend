@@ -497,18 +497,45 @@ router.post('/login', async (req, res) => {
       referer: req.headers.referer
     });
 
-    // Find staff member by username and password
+    // Find staff member by username (not password yet - we need to check hash)
     console.log('🔍 Looking for staff:', { username });
     const staff = await Staff.findOne({
       where: {
         username: username,
-        password: password,
         status: 'active'
       }
     });
 
     if (!staff) {
-      console.log('❌ Staff not found or invalid credentials');
+      console.log('❌ Staff not found');
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid credentials'
+      });
+    }
+
+    // Check password (support both plain text and bcrypt hashed passwords)
+    let passwordValid = false;
+    if (staff.password === password) {
+      // Plain text password match (legacy)
+      passwordValid = true;
+      console.log('✅ Password matched (plain text)');
+    } else {
+      // Try bcrypt comparison
+      const bcrypt = require('bcryptjs');
+      try {
+        passwordValid = await bcrypt.compare(password, staff.password);
+        if (passwordValid) {
+          console.log('✅ Password matched (bcrypt)');
+        }
+      } catch (bcryptError) {
+        console.log('⚠️ Bcrypt comparison failed, assuming plain text');
+        passwordValid = false;
+      }
+    }
+
+    if (!passwordValid) {
+      console.log('❌ Password mismatch');
       return res.status(401).json({
         success: false,
         message: 'Invalid credentials'
