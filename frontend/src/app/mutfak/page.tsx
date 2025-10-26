@@ -100,7 +100,7 @@ export default function MutfakPanel() {
 
     try {
       if (showLoading) {
-        setLoading(true);
+      setLoading(true);
       }
       const response = await fetch(`${API_URL}/orders?restaurantId=${restaurantId}`);
       const data = await response.json();
@@ -112,7 +112,7 @@ export default function MutfakPanel() {
       console.error('Siparişler alınamadı:', error);
     } finally {
       if (showLoading) {
-        setLoading(false);
+      setLoading(false);
       }
     }
   };
@@ -286,25 +286,25 @@ export default function MutfakPanel() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
+        {/* Header */}
       <div className="bg-white shadow-sm px-8 py-6 mb-4">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center text-white text-2xl">
               👨‍🍳
             </div>
-            <div>
+              <div>
               <h1 className="text-2xl font-bold text-gray-800">Mutfak Paneli</h1>
               <p className="text-gray-600 text-sm">Oda servisi siparişlerini ve menü ürünlerini yönetin</p>
             </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <button 
+            </div>
+            <div className="flex items-center gap-4">
+              <button
               onClick={handleMenuManagement}
               className="px-4 py-2 bg-yellow-400 text-gray-900 rounded-lg font-semibold hover:bg-yellow-500 transition-colors"
-            >
+              >
               + Menü Yönetimi
-            </button>
+              </button>
             <div className="px-4 py-2 border border-gray-300 rounded-lg text-sm cursor-pointer hover:bg-gray-50">
               TR Türkçe ↓
             </div>
@@ -376,21 +376,21 @@ export default function MutfakPanel() {
             >
               İptal Edilen ({orderCounts.cancelled})
             </button>
-          </div>
+        </div>
 
           {/* Orders */}
-          {loading ? (
-            <div className="text-center py-12">
+        {loading ? (
+          <div className="text-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-green-500 mx-auto mb-4"></div>
               <p className="text-gray-600">Siparişler yükleniyor...</p>
-            </div>
+          </div>
           ) : filteredOrders.length === 0 ? (
             <div className="text-center py-12 bg-white rounded-xl">
               <div className="text-6xl mb-4">👨‍🍳</div>
               <h3 className="text-xl font-semibold text-gray-800 mb-2">Henüz sipariş yok</h3>
               <p className="text-gray-600">Yeni siparişler geldiğinde burada görünecek.</p>
-            </div>
-          ) : (
+          </div>
+        ) : (
             <div className="space-y-4">
               {filteredOrders.map((order) => {
                 const statusInfo = getStatusInfo(order.status);
@@ -419,16 +419,16 @@ export default function MutfakPanel() {
                             {order.items.map((item, index) => (
                               <div key={index} className="text-gray-600">
                                 <div>{item.quantity}x {item.name}</div>
-                                {item.notes && (
+                        {item.notes && (
                                   <div className="text-xs text-yellow-700 italic ml-4">
                                     📝 {item.notes}
-                                  </div>
-                                )}
-                              </div>
-                            ))}
                           </div>
-                        </div>
+                        )}
                       </div>
+                    ))}
+                          </div>
+                  </div>
+                </div>
 
                       {/* Orta Sütun - Sipariş Bilgileri */}
                       <div>
@@ -449,17 +449,17 @@ export default function MutfakPanel() {
 
                       {/* Sağ Sütun - Aksiyon Butonları */}
                       <div className="flex flex-col gap-3">
-                        {order.status === 'pending' && (
-                          <button
-                            onClick={() => updateOrderStatus(order.id, 'preparing')}
+                  {order.status === 'pending' && (
+                    <button
+                      onClick={() => updateOrderStatus(order.id, 'preparing')}
                             className="px-6 py-4 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 transition-colors flex items-center gap-2 justify-center"
-                          >
+                    >
                             ▶ Hazırlığa Başla
-                          </button>
-                        )}
-                        {order.status === 'preparing' && (
-                          <button
-                            onClick={() => updateOrderStatus(order.id, 'ready')}
+                    </button>
+                  )}
+                  {order.status === 'preparing' && (
+                    <button
+                      onClick={() => updateOrderStatus(order.id, 'ready')}
                             className="px-6 py-4 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition-colors flex items-center gap-2 justify-center"
                           >
                             ✅ Hazır
@@ -551,15 +551,15 @@ export default function MutfakPanel() {
                               className="px-6 py-3 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition-colors"
                             >
                               ✓ Mevcut
-                            </button>
-                          )}
+                    </button>
+                  )}
                         </div>
-                      </div>
-                    </div>
-                  ))}
                 </div>
-              )}
-            </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
           </div>
         </div>
       )}
