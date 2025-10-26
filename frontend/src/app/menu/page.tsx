@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FaShoppingCart, FaBell, FaArrowLeft, FaStar, FaPlus, FaInfo, FaUtensils, FaFilter, FaBug, FaGlassWater, FaFileInvoiceDollar, FaSprayCan, FaHandHoldingHand } from 'react-icons/fa6';
+import { FaShoppingCart, FaBell, FaArrowLeft, FaStar, FaPlus, FaInfo, FaUtensils, FaFilter, FaBug, FaGlassWhiskey, FaFileInvoiceDollar, FaSprayCan, FaHandHolding } from 'react-icons/fa';
 import useRestaurantStore from '@/store/useRestaurantStore';
 import { useCartStore } from '@/store';
 import AnnouncementPopup from '@/components/AnnouncementPopup';
@@ -804,7 +804,7 @@ function MenuPageContent() {
                     className="flex flex-col items-center justify-center gap-2 py-5 rounded-xl shadow-sm hover:shadow-md active:scale-95 transition-all duration-200"
                     style={{ backgroundColor: primary, color: 'white' }}
                   >
-                    <FaGlassWater size={28} />
+                    <FaGlassWhiskey size={28} />
                     <span className="text-sm font-semibold">Su Getir</span>
                   </button>
                   <button 
@@ -828,7 +828,7 @@ function MenuPageContent() {
                     className="flex flex-col items-center justify-center gap-2 py-5 rounded-xl shadow-sm hover:shadow-md active:scale-95 transition-all duration-200"
                     style={{ backgroundColor: primary, color: 'white' }}
                   >
-                    <FaHandHoldingHand size={28} />
+                    <FaHandHolding size={28} />
                     <span className="text-sm font-semibold">Yardım Gerekiyor</span>
                   </button>
                 </div>
