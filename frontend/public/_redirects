@@ -1,0 +1,3 @@
+# Redirect /business/login to /isletme-giris
+/business/login  /isletme-giris  301
+
