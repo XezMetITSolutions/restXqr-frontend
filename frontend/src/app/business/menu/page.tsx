@@ -604,13 +604,20 @@ export default function MenuManagement() {
                 onClick={() => setShowBulkImport(true)}
             className="relative flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:from-blue-600 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl hover:scale-105 font-bold"
           >
-            {error && (
-              <div className="mt-2 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-                Hata: {error}
-              </div>
-            )}
+            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            <span>Toplu İçe Aktar</span>
+          </button>
           </div>
         </div>
+
+        {/* Error Display */}
+        {error && (
+          <div className="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-xl backdrop-blur-sm">
+            {error}
+          </div>
+        )}
 
         {/* Tabs */}
         <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-fit">
