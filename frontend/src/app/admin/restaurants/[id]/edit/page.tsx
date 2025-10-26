@@ -12,6 +12,7 @@ interface Restaurant {
   email: string;
   phone?: string;
   address?: string;
+  password?: string; // Admin şifresini göstermek için
   subscriptionPlan: string;
   maxTables: number;
   maxMenuItems: number;
@@ -36,6 +37,11 @@ export default function EditRestaurantPage() {
     maxTables: 10,
     maxMenuItems: 50,
     maxStaff: 3,
+  });
+  const [showPasswordSection, setShowPasswordSection] = useState(false);
+  const [passwordData, setPasswordData] = useState({
+    newPassword: '',
+    confirmPassword: '',
   });
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
@@ -129,6 +135,46 @@ export default function EditRestaurantPage() {
       subscriptionPlan: plan,
       ...limits
     }));
+  };
+
+  const handlePasswordChange = async () => {
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      alert('Şifreler eşleşmiyor!');
+      return;
+    }
+
+    if (passwordData.newPassword.length < 6) {
+      alert('Şifre en az 6 karakter olmalıdır!');
+      return;
+    }
+
+    try {
+      setSaving(true);
+      const response = await fetch(`${API_URL}/restaurants/${restaurantId}/change-admin-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          newPassword: passwordData.newPassword,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert('Şifre başarıyla değiştirildi!');
+        setShowPasswordSection(false);
+        setPasswordData({ newPassword: '', confirmPassword: '' });
+      } else {
+        alert('Hata: ' + (data.message || 'Şifre değiştirilemedi'));
+      }
+    } catch (error) {
+      console.error('Password change error:', error);
+      alert('Şifre değiştirilirken bir hata oluştu!');
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (loading) {
@@ -317,6 +363,87 @@ export default function EditRestaurantPage() {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
+            </div>
+
+            {/* Admin Kullanıcı Bilgileri */}
+            <div className="border-t pt-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Admin Kullanıcı Bilgileri</h3>
+                <button
+                  type="button"
+                  onClick={() => setShowPasswordSection(!showPasswordSection)}
+                  className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors text-sm font-medium"
+                >
+                  {showPasswordSection ? 'İptal' : 'Şifre Değiştir'}
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Admin Kullanıcı Adı
+                  </label>
+                  <input
+                    type="text"
+                    value={restaurant.username || 'N/A'}
+                    disabled
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Admin Email
+                  </label>
+                  <input
+                    type="text"
+                    value={restaurant.email || 'N/A'}
+                    disabled
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed"
+                  />
+                </div>
+              </div>
+
+              {showPasswordSection && (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-4">
+                  <h4 className="text-sm font-semibold text-yellow-900 mb-3">Yeni Şifre Belirle</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Yeni Şifre
+                      </label>
+                      <input
+                        type="password"
+                        value={passwordData.newPassword}
+                        onChange={(e) => setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
+                        placeholder="En az 6 karakter"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Şifre Tekrar
+                      </label>
+                      <input
+                        type="password"
+                        value={passwordData.confirmPassword}
+                        onChange={(e) => setPasswordData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                        placeholder="Şifreyi tekrar girin"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handlePasswordChange}
+                    disabled={saving || !passwordData.newPassword || !passwordData.confirmPassword}
+                    className="mt-3 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {saving ? 'Kaydediliyor...' : 'Şifre Değiştir'}
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Buttons */}

@@ -428,6 +428,56 @@ router.put('/:id/features', async (req, res) => {
   }
 });
 
+// POST /api/restaurants/:id/change-admin-password - Change admin password by super admin
+router.post('/:id/change-admin-password', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { newPassword } = req.body;
+    
+    if (!newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'New password is required'
+      });
+    }
+    
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'New password must be at least 6 characters long'
+      });
+    }
+    
+    // Find restaurant
+    const restaurant = await Restaurant.findByPk(id);
+    if (!restaurant) {
+      return res.status(404).json({
+        success: false,
+        message: 'Restaurant not found'
+      });
+    }
+    
+    // Hash new password
+    const hashedNewPassword = await bcrypt.hash(newPassword, 12);
+    
+    // Update password
+    await restaurant.update({ password: hashedNewPassword });
+    
+    console.log(`✅ Admin password changed for restaurant ${restaurant.username}`);
+    
+    res.json({
+      success: true,
+      message: 'Admin password changed successfully'
+    });
+  } catch (error) {
+    console.error('Change admin password error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+
 // POST /api/restaurants/:id/change-password - Change restaurant password
 router.post('/:id/change-password', async (req, res) => {
   try {
