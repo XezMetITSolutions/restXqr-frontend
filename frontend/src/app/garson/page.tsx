@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FaUser, FaUtensils, FaBell, FaCheckCircle, FaClock, FaMoneyBillWave, FaEdit, FaEye, FaTimes } from 'react-icons/fa';
+import { FaUser, FaUtensils, FaBell, FaCheckCircle, FaClock, FaMoneyBillWave, FaEdit, FaEye, FaTimes, FaChartBar } from 'react-icons/fa';
 
 interface OrderItem {
   id: string;
@@ -30,6 +30,7 @@ export default function GarsonPanel() {
   const [restaurantId, setRestaurantId] = useState<string>('');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<string>('all');
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
 
@@ -138,124 +139,162 @@ export default function GarsonPanel() {
     setShowModal(true);
   };
 
+  // Filtrelenmiş siparişler
+  const filteredOrders = orders.filter(order => {
+    if (activeFilter === 'all') return true;
+    return order.status === activeFilter;
+  });
+
+  // İstatistikler
+  const stats = {
+    total: orders.length,
+    pending: orders.filter(o => o.status === 'pending').length,
+    preparing: orders.filter(o => o.status === 'preparing').length,
+    ready: orders.filter(o => o.status === 'ready').length,
+    completed: orders.filter(o => o.status === 'completed').length
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-purple-600 via-purple-700 to-blue-800 p-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-2xl p-4 mb-4 text-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <FaUser className="text-3xl text-blue-500" />
+              <div className="bg-white bg-opacity-20 p-3 rounded-xl">
+                <FaUser className="text-2xl" />
+              </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-800">Garson Paneli</h1>
-                <p className="text-gray-600">Aksaray Restoran</p>
+                <h1 className="text-xl font-bold">MasApp Garson</h1>
+                <p className="text-sm text-purple-200">Aksaray Restoran • Canlı Durum</p>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600">{orders.length}</div>
-                <div className="text-sm text-gray-600">Toplam Sipariş</div>
-              </div>
-              <button
-                onClick={fetchOrders}
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-              >
-                Yenile
-              </button>
-            </div>
+            <button
+              onClick={fetchOrders}
+              className="bg-yellow-400 text-purple-900 px-4 py-2 rounded-lg font-bold hover:bg-yellow-300 transition-colors text-sm"
+            >
+              YENİLE
+            </button>
           </div>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-5 gap-3 mb-4">
+          <button
+            onClick={() => setActiveFilter('all')}
+            className={`bg-white rounded-xl p-3 text-center transition-all ${activeFilter === 'all' ? 'ring-4 ring-yellow-400' : ''}`}
+          >
+            <div className="text-2xl font-bold text-gray-800">{stats.total}</div>
+            <div className="text-xs text-gray-600 font-medium">Tümü ({stats.total})</div>
+          </button>
+          <button
+            onClick={() => setActiveFilter('pending')}
+            className={`bg-white rounded-xl p-3 text-center transition-all ${activeFilter === 'pending' ? 'ring-4 ring-yellow-400' : ''}`}
+          >
+            <div className="text-2xl font-bold text-yellow-600">{stats.pending}</div>
+            <div className="text-xs text-gray-600 font-medium">Aktif ({stats.pending})</div>
+          </button>
+          <button
+            onClick={() => setActiveFilter('preparing')}
+            className={`bg-white rounded-xl p-3 text-center transition-all ${activeFilter === 'preparing' ? 'ring-4 ring-yellow-400' : ''}`}
+          >
+            <div className="text-2xl font-bold text-blue-600">{stats.preparing}</div>
+            <div className="text-xs text-gray-600 font-medium">Hazırlanıyor ({stats.preparing})</div>
+          </button>
+          <button
+            onClick={() => setActiveFilter('ready')}
+            className={`bg-white rounded-xl p-3 text-center transition-all ${activeFilter === 'ready' ? 'ring-4 ring-yellow-400' : ''}`}
+          >
+            <div className="text-2xl font-bold text-green-600">{stats.ready}</div>
+            <div className="text-xs text-gray-600 font-medium">Hazır ({stats.ready})</div>
+          </button>
+          <button
+            onClick={() => setActiveFilter('completed')}
+            className={`bg-white rounded-xl p-3 text-center transition-all ${activeFilter === 'completed' ? 'ring-4 ring-yellow-400' : ''}`}
+          >
+            <div className="text-2xl font-bold text-gray-600">{stats.completed}</div>
+            <div className="text-xs text-gray-600 font-medium">Teslim ({stats.completed})</div>
+          </button>
         </div>
 
         {/* Orders Grid */}
         {loading ? (
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Siparişler yükleniyor...</p>
+          <div className="text-center py-12 text-white">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>
+            <p className="mt-4">Siparişler yükleniyor...</p>
           </div>
-        ) : orders.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-            <FaUtensils className="text-6xl text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-600 mb-2">Henüz Sipariş Yok</h3>
-            <p className="text-gray-500">Yeni siparişler burada görünecek</p>
+        ) : filteredOrders.length === 0 ? (
+          <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-2xl p-12 text-center text-white">
+            <FaUtensils className="text-6xl mx-auto mb-4 opacity-50" />
+            <h3 className="text-xl font-semibold mb-2">Henüz Sipariş Yok</h3>
+            <p className="opacity-75">Yeni siparişler burada görünecek</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {orders.map((order) => (
-              <div key={order.id} className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredOrders.map((order) => (
+              <div key={order.id} className="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all border-2 border-transparent hover:border-yellow-400">
                 {/* Order Header */}
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                      <span className="text-xl font-bold text-blue-600">{order.tableNumber}</span>
-                    </div>
-                    <div>
-                      <div className="font-semibold text-gray-800">Masa {order.tableNumber}</div>
-                      <div className="text-sm text-gray-500">{formatTime(order.created_at)}</div>
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <div className="text-lg font-bold text-gray-900">Masa {order.tableNumber}</div>
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <FaClock size={10} />
+                      <span>{formatTime(order.created_at)}</span>
                     </div>
                   </div>
-                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(order.status)}`}>
-                    {getStatusText(order.status)}
-                  </span>
+                  <div className="text-right">
+                    <div className="text-lg font-bold text-orange-600">₺{Number(order.totalAmount).toFixed(2)}</div>
+                    <div className="text-xs text-gray-500">{order.items.length} ürün</div>
+                  </div>
                 </div>
 
-                {/* Order Items */}
-                <div className="border-t border-b border-gray-200 py-3 mb-3">
-                  <div className="space-y-2">
-                    {order.items.map((item, index) => (
-                      <div key={index} className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <div className="font-medium text-gray-800">
-                            {item.quantity}x {item.name}
-                          </div>
-                          {item.notes && (
-                            <div className="text-xs text-gray-500 mt-1">
-                              📝 {item.notes}
-                            </div>
-                          )}
-                        </div>
-                        <div className="text-sm font-semibold text-gray-700">
-                          {(Number(item.price) * Number(item.quantity)).toFixed(2)}₺
-                        </div>
+                {/* Order Items - Compact */}
+                <div className="space-y-1 mb-3">
+                  {order.items.slice(0, 3).map((item, index) => (
+                    <div key={index} className="flex items-center gap-2 text-sm">
+                      <div className="w-6 h-6 bg-purple-100 text-purple-700 rounded flex items-center justify-center text-xs font-bold">
+                        {item.quantity}x
                       </div>
-                    ))}
-                  </div>
+                      <div className="flex-1 text-gray-700 truncate">{item.name}</div>
+                      {item.notes && (
+                        <span className="px-2 py-0.5 bg-yellow-100 text-yellow-800 rounded text-xs font-medium">
+                          Not
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                  {order.items.length > 3 && (
+                    <div className="text-xs text-gray-500 pl-8">+{order.items.length - 3} ürün daha</div>
+                  )}
                 </div>
 
-                {/* Order Notes */}
+                {/* Customer Requests */}
                 {order.notes && (
-                  <div className="mb-3 p-2 bg-yellow-50 rounded text-sm text-gray-700">
-                    <strong>Not:</strong> {order.notes}
+                  <div className="mb-3 flex items-start gap-2 p-2 bg-red-50 border border-red-200 rounded-lg">
+                    <FaBell className="text-red-600 mt-0.5" size={12} />
+                    <div className="text-xs text-red-800 font-medium">{order.notes}</div>
                   </div>
                 )}
 
-                {/* Order Footer */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-lg font-bold text-gray-800">
-                      <FaMoneyBillWave className="text-green-500" />
-                      {Number(order.totalAmount).toFixed(2)}₺
-                    </div>
-                    {order.status === 'ready' && (
-                      <div className="flex items-center gap-1 text-green-600 text-sm font-semibold">
-                        <FaCheckCircle />
-                        Servis Hazır
-                      </div>
-                    )}
-                    {order.status === 'preparing' && (
-                      <div className="flex items-center gap-1 text-blue-600 text-sm">
-                        <FaClock className="animate-spin" />
-                        Hazırlanıyor
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* Detay Butonu */}
+                {/* Action Buttons */}
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    onClick={() => updateOrderStatus(order.id, 'completed')}
+                    className="py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-bold text-xs transition-colors"
+                  >
+                    ✓ Servis Et
+                  </button>
+                  <button
+                    onClick={() => updateOrderStatus(order.id, 'preparing')}
+                    className="py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-bold text-xs transition-colors"
+                  >
+                    Masa Değiştir
+                  </button>
                   <button
                     onClick={() => openOrderDetails(order)}
-                    className="w-full py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors flex items-center justify-center gap-2 font-semibold"
+                    className="py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-bold text-xs transition-colors"
                   >
-                    <FaEye />
-                    Detayları Gör & Düzenle
+                    👁 Detay
                   </button>
                 </div>
               </div>
