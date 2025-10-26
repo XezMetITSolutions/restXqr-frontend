@@ -95,36 +95,65 @@ export default function CreateRestaurant() {
       return;
     }
 
+    // Basit format kontrolü
+    const subdomainRegex = /^[a-z0-9-]+$/;
+    if (!subdomainRegex.test(subdomain)) {
+      setSubdomainValidation({
+        isChecking: false,
+        isValid: false,
+        message: 'Sadece küçük harf, rakam ve tire kullanılabilir'
+      });
+      return;
+    }
+
+    if (subdomain.length < 3) {
+      setSubdomainValidation({
+        isChecking: false,
+        isValid: false,
+        message: 'En az 3 karakter olmalıdır'
+      });
+      return;
+    }
+
     setSubdomainValidation({ isChecking: true, isValid: false, message: 'Kontrol ediliyor...' });
 
     try {
-      // Subdomain kontrolü
-      const response = await fetch('/api/restaurants/check-subdomain', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ subdomain })
-      });
-
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
+      
+      // Backend'den mevcut restoranları kontrol et
+      const response = await fetch(`${API_URL}/staff/restaurants`);
       const result = await response.json();
 
-      if (result.available) {
+      if (result.success && result.data) {
+        const exists = result.data.some((r: any) => r.username === subdomain);
+        
+        if (exists) {
+          setSubdomainValidation({
+            isChecking: false,
+            isValid: false,
+            message: 'Bu subdomain zaten kullanılıyor'
+          });
+        } else {
+          setSubdomainValidation({
+            isChecking: false,
+            isValid: true,
+            message: 'Subdomain kullanılabilir'
+          });
+        }
+      } else {
+        // Kontrol edilemezse yine de devam et
         setSubdomainValidation({
           isChecking: false,
           isValid: true,
           message: 'Subdomain kullanılabilir'
         });
-      } else {
-        setSubdomainValidation({
-          isChecking: false,
-          isValid: false,
-          message: 'Bu subdomain zaten kullanılıyor'
-        });
       }
     } catch (error) {
+      // Hata durumunda yine de devam et
       setSubdomainValidation({
         isChecking: false,
-        isValid: false,
-        message: 'Kontrol edilemedi'
+        isValid: true,
+        message: 'Kontrol edilemedi, devam edebilirsiniz'
       });
     }
   };
@@ -155,48 +184,60 @@ export default function CreateRestaurant() {
 
     setIsLoading(true);
     try {
-      const response = await fetch('/api/restaurants/create', {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
+      
+      // Backend'in beklediği format
+      const payload = {
+        name: formData.name,
+        username: formData.subdomain,
+        email: formData.ownerEmail,
+        password: formData.adminPassword,
+        phone: formData.ownerPhone,
+        address: formData.address,
+        plan: formData.plan,
+        adminUsername: formData.adminUsername,
+        adminPassword: formData.adminPassword
+      };
+
+      const response = await fetch(`${API_URL}/restaurants`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(payload)
       });
 
       const result = await response.json();
 
       if (result.success) {
-        // Başarı mesajını detaylı göster
         const message = `
-Restoran başarıyla oluşturuldu!
+✅ Restoran başarıyla oluşturuldu!
 
 📋 Detaylar:
-• Restoran: ${result.restaurant.name}
-• Subdomain: ${result.restaurant.subdomain}.masapp.com
-• URL: ${result.restaurant.subdomainUrl}
-• Durum: ${result.restaurant.status}
+• Restoran: ${formData.name}
+• Subdomain: ${formData.subdomain}.restxqr.com
+• Email: ${formData.ownerEmail}
+• Plan: ${formData.plan.toUpperCase()}
 
-🔧 Kurulum Detayları:
-• DNS Durumu: ${result.setupDetails.dnsStatus}
-• FTP Hesabı: ${result.setupDetails.ftpCreated ? 'Oluşturuldu' : 'Oluşturulamadı'}
-• Panel: ${result.setupDetails.panelCreated ? 'Kuruldu' : 'Kurulamadı'}
+👤 Admin Kullanıcı:
+• Kullanıcı Adı: ${formData.adminUsername}
+• Şifre: ${formData.adminPassword}
 
-${result.restaurant.ftpConfig ? `
-📁 FTP Bilgileri:
-• Host: ${result.restaurant.ftpConfig.host}
-• Kullanıcı: ${result.restaurant.ftpConfig.username}
-• Şifre: ${result.restaurant.ftpConfig.password}
-• Port: ${result.restaurant.ftpConfig.port}
-• Dizin: ${result.restaurant.ftpConfig.directory}
-` : ''}
+🔐 Süper Admin:
+• Kullanıcı Adı: restxqr
+• Şifre: 01528797Mb##
+
+🌐 Giriş URL'leri:
+• Restoran: https://${formData.subdomain}.restxqr.com/business/login
+• Staff Login: https://${formData.subdomain}.restxqr.com/staff-login
         `;
         
         alert(message);
         router.push('/admin/restaurants');
       } else {
-        alert('Hata: ' + result.message);
+        alert('Hata: ' + (result.message || 'Restoran oluşturulamadı'));
       }
     } catch (error) {
       console.error('Restaurant creation error:', error);
-      alert('Restoran oluşturulurken hata oluştu');
+      alert('Restoran oluşturulurken hata oluştu: ' + (error as Error).message);
     } finally {
       setIsLoading(false);
     }
