@@ -431,10 +431,10 @@ function MenuPageContent() {
                   <span className="text-lg mr-2">🎉</span>
                   <div>
                     <div className="font-semibold text-sm">
-                      <TranslatedText>Bugüne Özel!</TranslatedText>
+                      <TranslatedText>{settings.basicInfo.dailySpecialTitle || 'Bugüne Özel!'}</TranslatedText>
                     </div>
                     <div className="text-xs opacity-90">
-                      <TranslatedText>Tüm tatlılarda %20 indirim - Sadece bugün geçerli</TranslatedText>
+                      <TranslatedText>{settings.basicInfo.dailySpecialDesc || 'Tüm tatlılarda %20 indirim - Sadece bugün geçerli'}</TranslatedText>
                     </div>
                   </div>
                 </div>
@@ -444,10 +444,10 @@ function MenuPageContent() {
                   <span className="text-lg mr-2">🍲</span>
                   <div>
                     <div className="font-semibold text-sm">
-                      <TranslatedText>Günün Çorbası</TranslatedText>
+                      <TranslatedText>{settings.basicInfo.soupOfDayTitle || 'Günün Çorbası'}</TranslatedText>
                     </div>
                     <div className="text-xs opacity-90">
-                      <TranslatedText>Ezogelin çorbası - Ev yapımı lezzet</TranslatedText>
+                      <TranslatedText>{settings.basicInfo.soupOfDayDesc || 'Ezogelin çorbası - Ev yapımı lezzet'}</TranslatedText>
                     </div>
                   </div>
                 </div>
