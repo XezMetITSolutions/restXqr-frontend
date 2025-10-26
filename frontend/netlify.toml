@@ -13,10 +13,10 @@
   to = "/.netlify/functions/subdomain-validate"
   status = 200
 
-# Subdomain routing - wildcard domain desteği
+# Business static pages - serve static files from public/business/*
 [[redirects]]
-  from = "https://*.restxqr.com/*"
-  to = "https://restxqr.com/:splat"
+  from = "/business/*"
+  to = "/business/:splat"
   status = 200
   force = true
 
