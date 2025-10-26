@@ -323,12 +323,6 @@ ${order.items.map(item => `  - ${item.quantity}x ${item.name} - ${parseFloat(ite
                         <div className="font-semibold text-gray-800 mb-3">Sipariş Bilgileri:</div>
                         <div className="space-y-3">
                           <div className="flex justify-between items-center">
-                            <span className="text-gray-600">Toplam Tutar:</span>
-                            <span className="text-xl font-bold text-green-600">
-                              {parseFloat(order.totalAmount.toString()).toFixed(2)}₺
-                            </span>
-                          </div>
-                          <div className="flex justify-between items-center">
                             <span className="text-gray-600">Tahmini Süre:</span>
                             <span className="font-semibold text-gray-800">{estimatedTime} dk</span>
                           </div>
