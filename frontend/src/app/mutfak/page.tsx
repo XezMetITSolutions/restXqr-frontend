@@ -208,6 +208,13 @@ ${order.items.map(item => `  - ${item.quantity}x ${item.name} - ${parseFloat(ite
 
   const updateMenuAvailability = async (itemId: string, isAvailable: boolean) => {
     try {
+      // Optimistic update - Hemen görsel değişiklik
+      setMenuItems(prevItems => 
+        prevItems.map(item => 
+          item.id === itemId ? { ...item, isAvailable } : item
+        )
+      );
+
       const response = await fetch(`${API_URL}/restaurants/${restaurantId}/menu/items/${itemId}`, {
         method: 'PUT',
         headers: {
@@ -219,11 +226,16 @@ ${order.items.map(item => `  - ${item.quantity}x ${item.name} - ${parseFloat(ite
       const data = await response.json();
       
       if (data.success) {
-        // Menüyü yenile
+        // Backend'den güncel veriyi al
+        fetchMenuItems();
+      } else {
+        // Hata durumunda eski haline dön
         fetchMenuItems();
       }
     } catch (error) {
       console.error('Ürün durumu güncellenemedi:', error);
+      // Hata durumunda eski haline dön
+      fetchMenuItems();
     }
   };
 
