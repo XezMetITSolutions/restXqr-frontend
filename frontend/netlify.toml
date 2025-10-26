@@ -1,11 +1,12 @@
 [build]
   command = "npm run build"
-  publish = ".next"
+  publish = "out"
 
 [build.environment]
   NODE_VERSION = "18"
   NEXT_PUBLIC_API_URL = "https://masapp-backend.onrender.com/api"
-  NETLIFY_NEXT_PLUGIN_SKIP = "false"
+  NETLIFY_NEXT_PLUGIN_SKIP = "true"
+  NEXT_PUBLIC_FRONTEND_URL = "https://restxqr.com"
 
 # API routes için Netlify Functions
 [[redirects]]
@@ -13,7 +14,14 @@
   to = "/.netlify/functions/subdomain-validate"
   status = 200
 
-# SPA routing - all routes serve index for client-side routing
+# Subdomain routing - wildcard domain desteği
+[[redirects]]
+  from = "https://*.restxqr.com/*"
+  to = "https://restxqr.com/:splat"
+  status = 200
+  force = true
+
+# Frontend routing - SPA için
 [[redirects]]
   from = "/*"
   to = "/index.html"
