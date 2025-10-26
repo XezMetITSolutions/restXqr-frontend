@@ -5,6 +5,12 @@ import { useRouter, useParams } from 'next/navigation';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { FaSave, FaArrowLeft, FaSpinner } from 'react-icons/fa';
 
+// Static params generation for static export
+export function generateStaticParams() {
+  // Return empty array - pages will be generated on-demand
+  return [];
+}
+
 interface Restaurant {
   id: string;
   name: string;
