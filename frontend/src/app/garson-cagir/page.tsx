@@ -2,19 +2,31 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { FaBell, FaArrowLeft, FaGlassWhiskey, FaFileInvoiceDollar, FaSprayCan, FaHandHolding, FaCheckCircle } from 'react-icons/fa';
+import Link from 'next/link';
+import { FaBell, FaArrowLeft, FaGlassWhiskey, FaFileInvoiceDollar, FaSprayCan, FaHandHolding, FaCheckCircle, FaShoppingCart, FaUtensils } from 'react-icons/fa';
 import { useCartStore } from '@/store';
 import useBusinessSettingsStore from '@/store/useBusinessSettingsStore';
+import { LanguageProvider, useLanguage } from '@/context/LanguageContext';
+import TranslatedText from '@/components/TranslatedText';
 
-export default function GarsonCagirPage() {
+function GarsonCagirContent() {
   const router = useRouter();
+  const { currentLanguage } = useLanguage();
   const tableNumber = useCartStore(state => state.tableNumber);
+  const cartItems = useCartStore(state => state.items);
   const { settings } = useBusinessSettingsStore();
   const primary = settings.branding.primaryColor;
+  const [isClient, setIsClient] = useState(false);
   
   const [specialRequest, setSpecialRequest] = useState('');
   const [activeRequests, setActiveRequests] = useState<any[]>([]);
   const [showSuccess, setShowSuccess] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const cartCount = isClient ? cartItems.length : 0;
 
   const handleQuickRequest = (type: string) => {
     const newRequest = {
@@ -57,21 +69,23 @@ export default function GarsonCagirPage() {
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-white shadow-sm">
-        <div className="flex items-center justify-between p-4">
-          <button
-            onClick={() => router.back()}
+      <header className="sticky top-0 z-40 bg-white shadow-sm">
+        <div className="flex items-center justify-between px-4 py-3">
+          <Link 
+            href="/menu"
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
           >
             <FaArrowLeft size={20} className="text-gray-700" />
-          </button>
+          </Link>
           <div className="flex items-center gap-2">
-            <FaBell size={20} style={{ color: primary }} />
-            <h1 className="text-xl font-bold" style={{ color: primary }}>Garson Çağır</h1>
+            <FaBell size={22} style={{ color: primary }} />
+            <h1 className="text-xl font-bold" style={{ color: primary }}>
+              <TranslatedText>Garson Çağır</TranslatedText>
+            </h1>
           </div>
           <div className="w-10" /> {/* Spacer for centering */}
         </div>
-      </div>
+      </header>
 
       {/* Success Toast */}
       {showSuccess && (
@@ -192,6 +206,39 @@ export default function GarsonCagirPage() {
           </p>
         </div>
       </div>
+
+      {/* Bottom Navigation */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-2 shadow-lg z-50">
+        <div className="container mx-auto flex justify-around">
+          <Link href="/menu" className="flex flex-col items-center" style={{ color: primary }}>
+            <FaUtensils className="mb-0.5" size={16} />
+            <span className="text-[10px]"><TranslatedText>Menü</TranslatedText></span>
+          </Link>
+          <Link href="/cart" className="flex flex-col items-center" style={{ color: primary }}>
+            <div className="relative">
+              <FaShoppingCart className="mb-0.5" size={16} />
+              {isClient && cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-600 text-white rounded-full text-[9px] w-4 h-4 flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
+            </div>
+            <span className="text-[10px]"><TranslatedText>Sepet</TranslatedText></span>
+          </Link>
+          <div className="flex flex-col items-center" style={{ color: primary }}>
+            <FaBell className="mb-0.5" size={16} />
+            <span className="text-[10px] font-bold"><TranslatedText>Garson Çağır</TranslatedText></span>
+          </div>
+        </div>
+      </nav>
     </div>
+  );
+}
+
+export default function GarsonCagirPage() {
+  return (
+    <LanguageProvider>
+      <GarsonCagirContent />
+    </LanguageProvider>
   );
 }
