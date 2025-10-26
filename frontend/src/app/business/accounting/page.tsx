@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import BusinessSidebar from '@/components/BusinessSidebar';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useFeature } from '@/hooks/useFeature';
+import { apiService } from '@/services/api';
 import { 
   FaFileInvoiceDollar, 
   FaPlus, 
@@ -33,15 +34,86 @@ interface Transaction {
 
 export default function AccountingPage() {
   const router = useRouter();
-  const { isAuthenticated, logout } = useAuthStore();
+  const { isAuthenticated, logout, user } = useAuthStore();
   const hasAccountingSoftware = useFeature('accounting_software');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
 
-  // Demo data
-  const [transactions, setTransactions] = useState<Transaction[]>([
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      router.push('/business/login');
+    } else {
+      fetchTransactions();
+    }
+  }, [isAuthenticated, router]);
+
+  const fetchTransactions = async () => {
+    try {
+      setLoading(true);
+      const restaurantId = user?.id;
+      if (!restaurantId) return;
+      
+      const response = await apiService.getTransactions(restaurantId);
+      if (response.success && response.data) {
+        setTransactions(response.data);
+      }
+    } catch (error) {
+      console.error('İşlemler yüklenirken hata:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddTransaction = async (transactionData: Partial<Transaction>) => {
+    try {
+      const restaurantId = user?.id;
+      if (!restaurantId) return;
+
+      const response = await apiService.createTransaction({
+        ...transactionData,
+        restaurantId
+      });
+      
+      if (response.success) {
+        await fetchTransactions();
+        setShowAddModal(false);
+      }
+    } catch (error) {
+      console.error('İşlem eklenirken hata:', error);
+    }
+  };
+
+  const handleUpdateTransaction = async (id: string, transactionData: Partial<Transaction>) => {
+    try {
+      const response = await apiService.updateTransaction(id, transactionData);
+      if (response.success) {
+        await fetchTransactions();
+        setEditingTransaction(null);
+      }
+    } catch (error) {
+      console.error('İşlem güncellenirken hata:', error);
+    }
+  };
+
+  const handleDeleteTransaction = async (id: string) => {
+    if (!confirm('Bu işlemi silmek istediğinizden emin misiniz?')) return;
+    
+    try {
+      const response = await apiService.deleteTransaction(id);
+      if (response.success) {
+        await fetchTransactions();
+      }
+    } catch (error) {
+      console.error('İşlem silinirken hata:', error);
+    }
+  };
+
+  const oldDemoData = [
     {
       id: '1',
       date: new Date().toISOString(),

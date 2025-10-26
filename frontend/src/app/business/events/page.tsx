@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import BusinessSidebar from '@/components/BusinessSidebar';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useFeature } from '@/hooks/useFeature';
+import { apiService } from '@/services/api';
 import { 
   FaCalendarAlt, 
   FaPlus, 
@@ -38,15 +39,86 @@ interface Event {
 
 export default function EventsPage() {
   const router = useRouter();
-  const { isAuthenticated, logout } = useAuthStore();
+  const { isAuthenticated, logout, user } = useAuthStore();
   const hasEventManagement = useFeature('event_management');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
 
-  // Demo data
-  const [events, setEvents] = useState<Event[]>([
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      router.push('/business/login');
+    } else {
+      fetchEvents();
+    }
+  }, [isAuthenticated, router]);
+
+  const fetchEvents = async () => {
+    try {
+      setLoading(true);
+      const restaurantId = user?.id;
+      if (!restaurantId) return;
+      
+      const response = await apiService.getEvents(restaurantId);
+      if (response.success && response.data) {
+        setEvents(response.data);
+      }
+    } catch (error) {
+      console.error('Etkinlikler yüklenirken hata:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddEvent = async (eventData: Partial<Event>) => {
+    try {
+      const restaurantId = user?.id;
+      if (!restaurantId) return;
+
+      const response = await apiService.createEvent({
+        ...eventData,
+        restaurantId
+      });
+      
+      if (response.success) {
+        await fetchEvents();
+        setShowAddModal(false);
+      }
+    } catch (error) {
+      console.error('Etkinlik eklenirken hata:', error);
+    }
+  };
+
+  const handleUpdateEvent = async (id: string, eventData: Partial<Event>) => {
+    try {
+      const response = await apiService.updateEvent(id, eventData);
+      if (response.success) {
+        await fetchEvents();
+        setEditingEvent(null);
+      }
+    } catch (error) {
+      console.error('Etkinlik güncellenirken hata:', error);
+    }
+  };
+
+  const handleDeleteEvent = async (id: string) => {
+    if (!confirm('Bu etkinliği silmek istediğinizden emin misiniz?')) return;
+    
+    try {
+      const response = await apiService.deleteEvent(id);
+      if (response.success) {
+        await fetchEvents();
+      }
+    } catch (error) {
+      console.error('Etkinlik silinirken hata:', error);
+    }
+  };
+
+  const oldDemoData = [
     {
       id: '1',
       title: 'Canlı Müzik Gecesi',

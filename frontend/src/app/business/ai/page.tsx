@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import BusinessSidebar from '@/components/BusinessSidebar';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useFeature } from '@/hooks/useFeature';
+import { apiService } from '@/services/api';
 import { 
   FaBrain, 
   FaLightbulb, 
@@ -32,12 +33,49 @@ interface AIRecommendation {
 
 export default function AIPage() {
   const router = useRouter();
-  const { isAuthenticated, logout } = useAuthStore();
+  const { isAuthenticated, logout, user } = useAuthStore();
   const hasAIRecommendations = useFeature('ai_recommendations');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [recommendations, setRecommendations] = useState<AIRecommendation[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Demo data
-  const [recommendations] = useState<AIRecommendation[]>([
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      router.push('/business/login');
+    } else {
+      fetchRecommendations();
+    }
+  }, [isAuthenticated, router]);
+
+  const fetchRecommendations = async () => {
+    try {
+      setLoading(true);
+      const restaurantId = user?.id;
+      if (!restaurantId) return;
+      
+      const response = await apiService.getAIRecommendations(restaurantId);
+      if (response.success && response.data) {
+        setRecommendations(response.data);
+      }
+    } catch (error) {
+      console.error('AI önerileri yüklenirken hata:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteRecommendation = async (id: string) => {
+    try {
+      const response = await apiService.deleteAIRecommendation(id);
+      if (response.success) {
+        await fetchRecommendations();
+      }
+    } catch (error) {
+      console.error('Öneri silinirken hata:', error);
+    }
+  };
+
+  const oldDemoData = [
     {
       id: '1',
       type: 'menu',

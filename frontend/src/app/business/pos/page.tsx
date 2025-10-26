@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import BusinessSidebar from '@/components/BusinessSidebar';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useFeature } from '@/hooks/useFeature';
+import { apiService } from '@/services/api';
 import { 
   FaCashRegister, 
   FaPlus, 
@@ -34,15 +35,97 @@ interface POSDevice {
 
 export default function POSPage() {
   const router = useRouter();
-  const { isAuthenticated, logout } = useAuthStore();
+  const { isAuthenticated, logout, user } = useAuthStore();
   const hasPOSIntegration = useFeature('pos_integration');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [posDevices, setPosDevices] = useState<POSDevice[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editingDevice, setEditingDevice] = useState<POSDevice | null>(null);
 
-  // Demo data
-  const [posDevices, setPosDevices] = useState<POSDevice[]>([
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      router.push('/business/login');
+    } else {
+      fetchPOSDevices();
+    }
+  }, [isAuthenticated, router]);
+
+  const fetchPOSDevices = async () => {
+    try {
+      setLoading(true);
+      const restaurantId = user?.id;
+      if (!restaurantId) return;
+      
+      const response = await apiService.getPOSDevices(restaurantId);
+      if (response.success && response.data) {
+        setPosDevices(response.data);
+      }
+    } catch (error) {
+      console.error('POS cihazları yüklenirken hata:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddPOSDevice = async (deviceData: Partial<POSDevice>) => {
+    try {
+      const restaurantId = user?.id;
+      if (!restaurantId) return;
+
+      const response = await apiService.createPOSDevice({
+        ...deviceData,
+        restaurantId
+      });
+      
+      if (response.success) {
+        await fetchPOSDevices();
+        setShowAddModal(false);
+      }
+    } catch (error) {
+      console.error('POS cihazı eklenirken hata:', error);
+    }
+  };
+
+  const handleUpdatePOSDevice = async (id: string, deviceData: Partial<POSDevice>) => {
+    try {
+      const response = await apiService.updatePOSDevice(id, deviceData);
+      if (response.success) {
+        await fetchPOSDevices();
+        setEditingDevice(null);
+      }
+    } catch (error) {
+      console.error('POS cihazı güncellenirken hata:', error);
+    }
+  };
+
+  const handleDeletePOSDevice = async (id: string) => {
+    if (!confirm('Bu POS cihazını silmek istediğinizden emin misiniz?')) return;
+    
+    try {
+      const response = await apiService.deletePOSDevice(id);
+      if (response.success) {
+        await fetchPOSDevices();
+      }
+    } catch (error) {
+      console.error('POS cihazı silinirken hata:', error);
+    }
+  };
+
+  const handleSyncPOSDevice = async (id: string) => {
+    try {
+      const response = await apiService.syncPOSDevice(id);
+      if (response.success) {
+        await fetchPOSDevices();
+      }
+    } catch (error) {
+      console.error('POS cihazı senkronize edilirken hata:', error);
+    }
+  };
+
+  const oldDemoData = [
     {
       id: '1',
       name: 'Kasa 1 - Ana Salon',
