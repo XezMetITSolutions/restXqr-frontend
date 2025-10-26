@@ -423,9 +423,9 @@ export default function StaffPage() {
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 mb-6 sm:mb-8">
             <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4">Panel Yönetimi</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <a href="/kitchen/" target="_blank" className="w-full text-center px-4 py-3 bg-orange-600 text-white rounded-lg">Mutfak Paneli</a>
-              <a href="/waiter/" target="_blank" className="w-full text-center px-4 py-3 bg-blue-600 text-white rounded-lg">Garson Paneli</a>
-              <a href="/cashier/" target="_blank" className="w-full text-center px-4 py-3 bg-green-600 text-white rounded-lg">Kasa Paneli</a>
+              <a href="/mutfak" target="_blank" className="w-full text-center px-4 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-semibold">🍳 Mutfak Paneli</a>
+              <a href="/garson" target="_blank" className="w-full text-center px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold">👔 Garson Paneli</a>
+              <a href="/kasa" target="_blank" className="w-full text-center px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold">💰 Kasa Paneli</a>
             </div>
           </div>
 
