@@ -44,18 +44,11 @@ const availableFeatures: Feature[] = [
   // ============================================
   // PREMIUM ÖZELLİKLER
   // ============================================
-  { id: 'online_ordering', name: '🛒 Online Sipariş', description: 'Web sitesinden sipariş alma', category: 'premium', icon: '🛒' },
-  { id: 'table_reservation', name: '📅 Masa Rezervasyonu', description: 'Online masa rezervasyon sistemi', category: 'premium', icon: '📅' },
   { id: 'customer_reviews', name: '⭐ Müşteri Yorumları', description: 'Yorum ve değerlendirme sistemi', category: 'premium', icon: '⭐' },
-  { id: 'loyalty_program', name: '🎁 Sadakat Programı', description: 'Puan toplama ve hediye sistemi', category: 'premium', icon: '🎁' },
   { id: 'advanced_analytics', name: '📈 Gelişmiş Analitik', description: 'Detaylı satış ve müşteri analizleri', category: 'premium', icon: '📈' },
   { id: 'inventory_management', name: '📦 Stok Yönetimi', description: 'Ürün stok takibi ve uyarıları', category: 'premium', icon: '📦' },
-  { id: 'custom_branding', name: '🎨 Özel Tasarım', description: 'Logo, renkler ve tema özelleştirme', category: 'premium', icon: '🎨' },
   { id: 'multi_language', name: '🌐 Çoklu Dil Desteği', description: 'Türkçe, İngilizce, Arapça vb.', category: 'premium', icon: '🌐' },
-  { id: 'email_marketing', name: '📧 Email Marketing', description: 'Müşterilere kampanya maili gönderme', category: 'premium', icon: '📧' },
-  { id: 'sms_notifications', name: '📱 SMS Bildirimleri', description: 'Sipariş ve rezervasyon SMS\'i', category: 'premium', icon: '📱' },
   { id: 'payment_integration', name: '💳 Ödeme Entegrasyonu', description: 'Online ödeme alma (Stripe, iyzico)', category: 'premium', icon: '💳' },
-  { id: 'allergen_info', name: '🥜 Alerjen Bilgisi', description: 'Ürünlerde alerjen uyarıları', category: 'premium', icon: '🥜' },
   
   // ============================================
   // ENTERPRISE ÖZELLİKLER
@@ -63,31 +56,20 @@ const availableFeatures: Feature[] = [
   { id: 'multi_branch', name: '🏢 Çoklu Şube Yönetimi', description: 'Birden fazla şube yönetimi', category: 'enterprise', icon: '🏢' },
   { id: 'franchise_management', name: '🏪 Franchise Yönetimi', description: 'Franchise şubelerini yönetme', category: 'enterprise', icon: '🏪' },
   { id: 'api_access', name: '🔌 API Erişimi', description: 'REST API ile entegrasyon', category: 'enterprise', icon: '🔌' },
-  { id: 'white_label', name: '👔 White Label', description: 'Kendi markanız altında sistem', category: 'enterprise', icon: '👔' },
-  { id: 'dedicated_support', name: '☎️ Özel Destek', description: '7/24 öncelikli destek hattı', category: 'enterprise', icon: '☎️' },
   { id: 'custom_development', name: '⚙️ Özel Geliştirme', description: 'İsteğe özel yazılım geliştirme', category: 'enterprise', icon: '⚙️' },
-  { id: 'advanced_security', name: '🔒 Gelişmiş Güvenlik', description: 'SSL, 2FA, IP whitelist', category: 'enterprise', icon: '🔒' },
   { id: 'data_export', name: '📤 Veri Dışa Aktarma', description: 'Tüm verileri Excel/CSV olarak alma', category: 'enterprise', icon: '📤' },
-  { id: 'custom_domain', name: '🌍 Özel Domain', description: 'kendi-domain.com kullanma', category: 'enterprise', icon: '🌍' },
   
   // ============================================
-  // ÖZEL ENTEGRASYONLAR
+  // ÖZEL ÖZELLİKLER (Aktif edildiğinde sidebar'da görünür)
   // ============================================
   { id: 'whatsapp_ordering', name: '💬 WhatsApp Sipariş', description: 'WhatsApp üzerinden sipariş alma', category: 'custom', icon: '💬' },
-  { id: 'delivery_integration', name: '🚗 Paket Servis Entegrasyonu', description: 'Yemeksepeti, Getir, Trendyol', category: 'custom', icon: '🚗' },
+  { id: 'delivery_integration', name: '🚗 Paket Servis', description: 'Yemeksepeti, Getir, Trendyol entegrasyonu', category: 'custom', icon: '🚗' },
   { id: 'pos_integration', name: '💰 POS Entegrasyonu', description: 'Kasa sistemine bağlantı', category: 'custom', icon: '💰' },
   { id: 'accounting_software', name: '📊 Muhasebe Yazılımı', description: 'Logo, Netsis, Mikro entegrasyonu', category: 'custom', icon: '📊' },
   { id: 'google_my_business', name: '🗺️ Google My Business', description: 'Google harita ve yorum entegrasyonu', category: 'custom', icon: '🗺️' },
-  { id: 'instagram_integration', name: '📸 Instagram Entegrasyonu', description: 'Instagram siparişleri', category: 'custom', icon: '📸' },
-  { id: 'facebook_ordering', name: '👥 Facebook Sipariş', description: 'Facebook üzerinden sipariş', category: 'custom', icon: '👥' },
-  { id: 'voice_ordering', name: '🎤 Sesli Sipariş', description: 'Sesli asistan ile sipariş', category: 'custom', icon: '🎤' },
   { id: 'ai_recommendations', name: '🤖 AI Önerileri', description: 'Yapay zeka ile ürün önerisi', category: 'custom', icon: '🤖' },
   { id: 'video_menu', name: '🎥 Video Menü', description: 'Ürünlerde video gösterimi', category: 'custom', icon: '🎥' },
-  { id: 'live_music', name: '🎵 Canlı Müzik Sistemi', description: 'Restoranda müzik yönetimi', category: 'custom', icon: '🎵' },
   { id: 'event_management', name: '🎉 Etkinlik Yönetimi', description: 'Özel günler ve etkinlikler', category: 'custom', icon: '🎉' },
-  { id: 'gift_cards', name: '🎁 Hediye Kartları', description: 'Dijital hediye kartı satışı', category: 'custom', icon: '🎁' },
-  { id: 'nutrition_info', name: '🥗 Besin Değerleri', description: 'Kalori ve besin bilgileri', category: 'custom', icon: '🥗' },
-  { id: 'recipe_management', name: '📖 Tarif Yönetimi', description: 'Yemek tarifleri ve malzemeler', category: 'custom', icon: '📖' },
 ];
 
 export default function RestaurantFeaturesManagement() {
