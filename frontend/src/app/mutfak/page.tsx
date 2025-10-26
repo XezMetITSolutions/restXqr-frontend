@@ -311,7 +311,12 @@ ${order.items.map(item => `  - ${item.quantity}x ${item.name} - ${parseFloat(ite
                           <div className="space-y-2">
                             {order.items.map((item, index) => (
                               <div key={index} className="text-gray-600">
-                                {item.quantity}x {item.name}
+                                <div>{item.quantity}x {item.name}</div>
+                                {item.notes && (
+                                  <div className="text-xs text-yellow-700 italic ml-4">
+                                    📝 {item.notes}
+                                  </div>
+                                )}
                               </div>
                             ))}
                           </div>
@@ -326,15 +331,12 @@ ${order.items.map(item => `  - ${item.quantity}x ${item.name} - ${parseFloat(ite
                             <span className="text-gray-600">Tahmini Süre:</span>
                             <span className="font-semibold text-gray-800">{estimatedTime} dk</span>
                           </div>
-                          <div className="flex justify-between items-center">
-                            <span className="text-gray-600">Ödeme Durumu:</span>
-                            <div
-                              className="px-3 py-1 rounded-full text-xs font-semibold"
-                              style={{ background: '#fff3cd', color: '#856404' }}
-                            >
-                              {order.paymentStatus === 'paid' ? 'ÖDENDİ' : 'BEKLEMEDE'}
+                          {order.notes && (
+                            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded">
+                              <div className="font-semibold text-yellow-800 mb-1">📝 Özel Not:</div>
+                              <div className="text-sm text-gray-700">{order.notes}</div>
                             </div>
-                          </div>
+                          )}
                         </div>
                       </div>
 
