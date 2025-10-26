@@ -150,6 +150,20 @@ router.post('/', async (req, res) => {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
     
+    // Temel özellikler - Her yeni restoran bu özelliklerle başlar
+    const DEFAULT_FEATURES = [
+      'qr_menu',
+      'digital_menu',
+      'table_management',
+      'order_management',
+      'kitchen_display',
+      'waiter_panel',
+      'basic_reports',
+      'qr_code_generator',
+      'staff_management',
+      'menu_categories'
+    ];
+    
     const restaurant = await Restaurant.create({
       name,
       username,
@@ -157,7 +171,7 @@ router.post('/', async (req, res) => {
       password: hashedPassword,
       phone,
       address,
-      features: features || ['qr_menu', 'basic_reports'],
+      features: features || DEFAULT_FEATURES,
       subscriptionPlan: selectedPlan,
       maxTables: limits.maxTables,
       maxMenuItems: limits.maxMenuItems,
