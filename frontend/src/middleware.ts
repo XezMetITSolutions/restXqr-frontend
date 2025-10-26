@@ -58,17 +58,8 @@ export function middleware(request: NextRequest) {
       return NextResponse.rewrite(url);
     }
     
-    // Subdomain ana sayfası menüye yönlendir (müşteri deneyimi için)
-    if (pathname === '/') {
-      const url = new URL('/menu', request.url);
-      url.searchParams.set('restaurant', subdomain || querySubdomain || 'demo');
-      
-      // Token oluştur (genel menü için)
-      const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-      url.searchParams.set('token', token);
-      
-      return NextResponse.rewrite(url);
-    }
+    // Subdomain ana sayfası - landing page göster
+    // Artık direkt menüye yönlendirme yok, ana sayfa gösterilecek
   }
   
   // Business sayfalarını koru
