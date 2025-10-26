@@ -24,12 +24,24 @@ interface Order {
   items: OrderItem[];
 }
 
+interface MenuItem {
+  id: string;
+  name: string;
+  categoryId: string;
+  price: number;
+  description?: string;
+  isAvailable: boolean;
+}
+
 export default function MutfakPanel() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [restaurantId, setRestaurantId] = useState<string>('');
   const [activeTab, setActiveTab] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [showMenuModal, setShowMenuModal] = useState(false);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [menuLoading, setMenuLoading] = useState(false);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
 
@@ -170,6 +182,51 @@ ${order.items.map(item => `  - ${item.quantity}x ${item.name} - ${parseFloat(ite
     alert(details);
   };
 
+  // Menü yönetimi
+  const fetchMenuItems = async () => {
+    if (!restaurantId) return;
+
+    try {
+      setMenuLoading(true);
+      const response = await fetch(`${API_URL}/restaurants/${restaurantId}/menu/items`);
+      const data = await response.json();
+
+      if (data.success && data.data) {
+        setMenuItems(data.data);
+      }
+    } catch (error) {
+      console.error('Menü ürünleri yüklenemedi:', error);
+    } finally {
+      setMenuLoading(false);
+    }
+  };
+
+  const handleMenuManagement = () => {
+    setShowMenuModal(true);
+    fetchMenuItems();
+  };
+
+  const updateMenuAvailability = async (itemId: string, isAvailable: boolean) => {
+    try {
+      const response = await fetch(`${API_URL}/restaurants/${restaurantId}/menu/items/${itemId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ isAvailable })
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        // Menüyü yenile
+        fetchMenuItems();
+      }
+    } catch (error) {
+      console.error('Ürün durumu güncellenemedi:', error);
+    }
+  };
+
   // Filtrelenmiş siparişler
   const filteredOrders = orders.filter(order => {
     // Durum filtresi
@@ -212,7 +269,10 @@ ${order.items.map(item => `  - ${item.quantity}x ${item.name} - ${parseFloat(ite
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <button className="px-4 py-2 bg-yellow-400 text-gray-900 rounded-lg font-semibold hover:bg-yellow-500 transition-colors">
+            <button 
+              onClick={handleMenuManagement}
+              className="px-4 py-2 bg-yellow-400 text-gray-900 rounded-lg font-semibold hover:bg-yellow-500 transition-colors"
+            >
               + Menü Yönetimi
             </button>
             <div className="px-4 py-2 border border-gray-300 rounded-lg text-sm cursor-pointer hover:bg-gray-50">
@@ -390,6 +450,89 @@ ${order.items.map(item => `  - ${item.quantity}x ${item.name} - ${parseFloat(ite
           )}
         </div>
       </div>
+
+      {/* Menü Yönetimi Modal */}
+      {showMenuModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+            {/* Modal Header */}
+            <div className="bg-yellow-400 px-6 py-4 flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-gray-900">📋 Menü Yönetimi</h2>
+              <button 
+                onClick={() => setShowMenuModal(false)}
+                className="text-gray-900 hover:text-gray-700 text-2xl"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 overflow-y-auto flex-1">
+              {menuLoading ? (
+                <div className="text-center py-12">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-yellow-500 mx-auto mb-4"></div>
+                  <p className="text-gray-600">Menü yükleniyor...</p>
+                </div>
+              ) : menuItems.length === 0 ? (
+                <div className="text-center py-12 bg-gray-50 rounded-lg">
+                  <div className="text-6xl mb-4">📋</div>
+                  <h3 className="text-xl font-semibold text-gray-800 mb-2">Henüz ürün yok</h3>
+                  <p className="text-gray-600">Menüye ürün ekleyin.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {menuItems.map((item) => (
+                    <div 
+                      key={item.id} 
+                      className={`bg-white border-2 rounded-lg p-4 ${
+                        item.isAvailable ? 'border-green-200' : 'border-red-200 bg-red-50'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3">
+                            <h3 className="text-lg font-bold text-gray-800">{item.name}</h3>
+                            <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                              item.isAvailable 
+                                ? 'bg-green-100 text-green-800' 
+                                : 'bg-red-100 text-red-800'
+                            }`}>
+                              {item.isAvailable ? '✓ Mevcut' : '✗ Bitti'}
+                            </span>
+                          </div>
+                          {item.description && (
+                            <p className="text-sm text-gray-600 mt-1">{item.description}</p>
+                          )}
+                          <p className="text-lg font-bold text-green-600 mt-2">
+                            {parseFloat(item.price.toString()).toFixed(2)}₺
+                          </p>
+                        </div>
+                        <div className="ml-4">
+                          {item.isAvailable ? (
+                            <button
+                              onClick={() => updateMenuAvailability(item.id, false)}
+                              className="px-6 py-3 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition-colors"
+                            >
+                              ✗ Bitti
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => updateMenuAvailability(item.id, true)}
+                              className="px-6 py-3 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition-colors"
+                            >
+                              ✓ Mevcut
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
