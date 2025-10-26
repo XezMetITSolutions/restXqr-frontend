@@ -171,13 +171,13 @@ export default function BusinessDashboard() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.push('/login');
+      router.push('/business/login');
     }
   }, [isAuthenticated, router]);
 
   const handleLogout = () => {
     logout();
-    router.push('/login');
+    router.push('/business/login');
   };
 
   // Plan yükseltme fonksiyonları
