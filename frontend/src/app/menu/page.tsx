@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { FaShoppingCart, FaBell, FaArrowLeft, FaStar, FaPlus, FaInfo, FaUtensils, FaFilter, FaBug } from 'react-icons/fa';
 import useRestaurantStore from '@/store/useRestaurantStore';
 import { useCartStore } from '@/store';
-import AnnouncementPopup from '@/components/AnnouncementPopup';
 import Toast from '@/components/Toast';
 import MenuItemModal from '@/components/MenuItemModal';
 import { LanguageProvider, useLanguage } from '@/context/LanguageContext';
@@ -445,7 +444,6 @@ function MenuPageContent() {
         </div>
       )}
       <Toast message="Ürün sepete eklendi!" visible={toastVisible} onClose={() => setToastVisible(false)} />
-      <AnnouncementPopup />
       <main className="min-h-screen pb-20 overflow-x-hidden">
         {/* Header */}
         <header className="bg-white shadow-sm fixed top-0 left-0 right-0 z-20">
