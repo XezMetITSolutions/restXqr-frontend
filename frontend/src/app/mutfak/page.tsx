@@ -55,11 +55,13 @@ export default function MutfakPanel() {
   }, []);
 
   // Siparişleri çek
-  const fetchOrders = async () => {
+  const fetchOrders = async (showLoading = true) => {
     if (!restaurantId) return;
 
     try {
-      setLoading(true);
+      if (showLoading) {
+        setLoading(true);
+      }
       const response = await fetch(`${API_URL}/orders?restaurantId=${restaurantId}`);
       const data = await response.json();
 
@@ -69,7 +71,9 @@ export default function MutfakPanel() {
     } catch (error) {
       console.error('Siparişler alınamadı:', error);
     } finally {
-      setLoading(false);
+      if (showLoading) {
+        setLoading(false);
+      }
     }
   };
 
@@ -85,6 +89,13 @@ export default function MutfakPanel() {
   // Sipariş durumunu güncelle
   const updateOrderStatus = async (orderId: string, newStatus: string) => {
     try {
+      // Optimistic update - Hemen görsel değişiklik
+      setOrders(prevOrders => 
+        prevOrders.map(order => 
+          order.id === orderId ? { ...order, status: newStatus as any } : order
+        )
+      );
+
       const response = await fetch(`${API_URL}/orders/${orderId}`, {
         method: 'PUT',
         headers: {
@@ -96,10 +107,16 @@ export default function MutfakPanel() {
       const data = await response.json();
       
       if (data.success) {
-        fetchOrders(); // Listeyi yenile
+        // Backend'den güncel veriyi al (loading gösterme)
+        fetchOrders(false);
+      } else {
+        // Hata durumunda eski haline dön (loading gösterme)
+        fetchOrders(false);
       }
     } catch (error) {
       console.error('Durum güncellenemedi:', error);
+      // Hata durumunda eski haline dön (loading gösterme)
+      fetchOrders(false);
     }
   };
 
