@@ -93,6 +93,12 @@ function MenuPageContent() {
             setTokenValid(true);
             setTokenMessage('QR kod geçerli. Menüye erişebilirsiniz.');
             
+            // Token'dan gelen masa numarasını ayarla
+            if (response.data?.tableNumber) {
+              setTableNumber(response.data.tableNumber);
+              console.log('✅ Masa numarası token\'dan alındı:', response.data.tableNumber);
+            }
+            
             // Token'ı sessionStorage'a kaydet
             sessionStorage.setItem('qr_token', tokenParam);
             console.log('✅ Token doğrulandı:', tokenParam);
@@ -114,6 +120,11 @@ function MenuPageContent() {
                   sessionStorage.setItem('qr-session-token', genData.data.token);
                   setTokenValid(true);
                   setTokenMessage('Yeni QR oturumu oluşturuldu. Menüye erişebilirsiniz.');
+                  // Masa numarasını set et
+                  if (tableParam) {
+                    setTableNumber(parseInt(tableParam));
+                    console.log('✅ Masa numarası yeni token ile ayarlandı:', tableParam);
+                  }
         } else {
                   setTokenValid(false);
                   setTokenMessage('QR kod geçersiz veya süresi dolmuş. Lütfen yeni bir QR kod tarayın.');
@@ -143,10 +154,9 @@ function MenuPageContent() {
         const tableNum = parseInt(tableParam);
         
         if (!isNaN(tableNum) && tableNum > 0) {
-          // Token varsa masa numarasını ayarla (QR kod ile geldiğinde)
-          if (tokenParam) {
-            setTableNumber(tableNum);
-          }
+          // Masa numarasını her durumda set et
+          setTableNumber(tableNum);
+          console.log('✅ Masa numarası URL parametresinden ayarlandı:', tableNum);
           
           // Token yoksa yeni QR token oluştur (eski sistem için)
           if (!tokenParam) {
