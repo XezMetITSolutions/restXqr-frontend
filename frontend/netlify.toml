@@ -13,15 +13,7 @@
   to = "/.netlify/functions/subdomain-validate"
   status = 200
 
-# Subdomain routing - wildcard domain desteği
-[[redirects]]
-  from = "https://*.restxqr.com/*"
-  to = "https://restxqr.com/:splat"
-  status = 200
-  force = true
-  headers = {X-Subdomain = ":subdomain"}
-
-# Frontend routing
+# SPA routing - all routes serve index for client-side routing
 [[redirects]]
   from = "/*"
   to = "/index.html"
