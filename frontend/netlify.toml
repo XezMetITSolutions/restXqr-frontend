@@ -13,29 +13,8 @@
   to = "/.netlify/functions/subdomain-validate"
   status = 200
 
-# Business pages - ONLY static HTML files, NOT Next.js pages
-[[redirects]]
-  from = "/business/login"
-  to = "/business/login/index.html"
-  status = 200
-  force = true
-[[redirects]]
-  from = "/business/kitchen"
-  to = "/business/kitchen/index.html"
-  status = 200
-  force = true
-[[redirects]]
-  from = "/business/waiter"
-  to = "/business/waiter/index.html"
-  status = 200
-  force = true
-[[redirects]]
-  from = "/business/cashier"
-  to = "/business/cashier/index.html"
-  status = 200
-  force = true
-
-# Business dashboard uses Next.js - no redirect needed
+# Business pages now use Next.js - no static HTML redirects needed
+# All business pages are handled by Next.js routing
 
 # Frontend routing - SPA için
 [[redirects]]
