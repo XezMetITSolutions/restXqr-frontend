@@ -842,7 +842,6 @@ function MenuPageContent() {
                   onChange={(e) => setSpecialRequest(e.target.value)}
                   placeholder="İsteğinizi buraya yazın..."
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 resize-none transition-all"
-                  style={{ focusRing: primary }}
                   rows={4}
                 />
                 <button 
