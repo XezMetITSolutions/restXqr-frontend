@@ -79,7 +79,7 @@ export default function InventoryPage() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.push('/business/login');
+      router.push('/isletme-giris');
     }
   }, [isAuthenticated, router]);
 
@@ -106,7 +106,7 @@ export default function InventoryPage() {
 
   const handleLogout = () => {
     logout();
-    router.push('/business/login');
+    router.push('/isletme-giris');
   };
 
   const filteredInventory = inventory.filter(item => {
@@ -329,3 +329,4 @@ export default function InventoryPage() {
     </div>
   );
 }
+

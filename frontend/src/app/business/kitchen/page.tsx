@@ -218,7 +218,7 @@ export default function KitchenDashboard() {
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Mutfak Paneli</h2>
             <p className="text-gray-600 mb-6">Mutfak paneline erişmek için giriş yapmanız gerekiyor.</p>
             <button
-              onClick={() => window.location.href = '/business/login'}
+              onClick={() => window.location.href = '/isletme-giris'}
               className="w-full bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors"
             >
               Giriş Yap

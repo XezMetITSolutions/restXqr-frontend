@@ -44,7 +44,7 @@ export default function QRCodesPage() {
   // Authentication check
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.push('/business/login');
+      router.push('/isletme-giris');
       return;
     }
   }, [isAuthenticated, router]);
@@ -203,7 +203,7 @@ export default function QRCodesPage() {
 
   const onLogout = () => {
     logout();
-    router.push('/business/login');
+    router.push('/isletme-giris');
   };
 
   if (!authenticatedRestaurant && !authenticatedStaff) {
@@ -425,3 +425,4 @@ export default function QRCodesPage() {
     </div>
   );
 }
+

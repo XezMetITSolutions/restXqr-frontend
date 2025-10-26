@@ -50,7 +50,7 @@ export default function ApiPage() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.push('/business/login');
+      router.push('/isletme-giris');
     } else {
       fetchApiKeys();
     }
@@ -153,7 +153,7 @@ export default function ApiPage() {
 
   const handleLogout = () => {
     logout();
-    router.push('/business/login');
+    router.push('/isletme-giris');
   };
 
   const toggleKeyVisibility = (keyId: string) => {
@@ -404,3 +404,4 @@ export default function ApiPage() {
     </div>
   );
 }
+

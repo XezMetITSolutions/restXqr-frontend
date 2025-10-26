@@ -51,7 +51,7 @@ export default function DeliveryPage() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.push('/business/login');
+      router.push('/isletme-giris');
     } else {
       fetchDeliveries();
     }
@@ -141,7 +141,7 @@ export default function DeliveryPage() {
 
   const handleLogout = () => {
     logout();
-    router.push('/business/login');
+    router.push('/isletme-giris');
   };
 
   const getStatusColor = (status: string) => {
@@ -402,3 +402,4 @@ export default function DeliveryPage() {
     </div>
   );
 }
+

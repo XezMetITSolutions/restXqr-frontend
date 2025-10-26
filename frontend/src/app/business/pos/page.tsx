@@ -47,7 +47,7 @@ export default function POSPage() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.push('/business/login');
+      router.push('/isletme-giris');
     } else {
       fetchPOSDevices();
     }
@@ -127,7 +127,7 @@ export default function POSPage() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.push('/business/login');
+      router.push('/isletme-giris');
     }
   }, [isAuthenticated, router]);
 
@@ -154,7 +154,7 @@ export default function POSPage() {
 
   const handleLogout = () => {
     logout();
-    router.push('/business/login');
+    router.push('/isletme-giris');
   };
 
   const getStatusColor = (status: string) => {
@@ -403,3 +403,4 @@ export default function POSPage() {
     </div>
   );
 }
+

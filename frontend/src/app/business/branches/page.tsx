@@ -50,7 +50,7 @@ export default function BranchesPage() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.push('/business/login');
+      router.push('/isletme-giris');
     } else {
       fetchBranches();
     }
@@ -140,7 +140,7 @@ export default function BranchesPage() {
 
   const handleLogout = () => {
     logout();
-    router.push('/business/login');
+    router.push('/isletme-giris');
   };
 
   const filteredBranches = branches.filter(branch => {
@@ -354,3 +354,4 @@ export default function BranchesPage() {
     </div>
   );
 }
+

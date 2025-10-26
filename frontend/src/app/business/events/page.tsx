@@ -51,7 +51,7 @@ export default function EventsPage() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.push('/business/login');
+      router.push('/isletme-giris');
     } else {
       fetchEvents();
     }
@@ -120,7 +120,7 @@ export default function EventsPage() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.push('/business/login');
+      router.push('/isletme-giris');
     }
   }, [isAuthenticated, router]);
 
@@ -147,7 +147,7 @@ export default function EventsPage() {
 
   const handleLogout = () => {
     logout();
-    router.push('/business/login');
+    router.push('/isletme-giris');
   };
 
   const getStatusColor = (status: string) => {
@@ -407,3 +407,4 @@ export default function EventsPage() {
     </div>
   );
 }
+

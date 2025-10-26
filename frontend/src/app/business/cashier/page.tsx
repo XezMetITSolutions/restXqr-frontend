@@ -66,7 +66,7 @@ export default function CashierDashboard() {
   useEffect(() => {
     // Login kontrolü
     if (!isAuthenticated()) {
-      router.replace('/business/login');
+      router.replace('/isletme-giris');
       return;
     }
 
@@ -110,7 +110,7 @@ export default function CashierDashboard() {
 
     // Sadece kasiyer (cashier) rolündeki personel kasa paneline erişebilir
     if (authenticatedStaff?.role !== 'cashier' && authenticatedRestaurant?.role !== 'cashier') {
-      router.replace('/business/login');
+      router.replace('/isletme-giris');
       return;
     }
 
@@ -798,7 +798,7 @@ export default function CashierDashboard() {
               <button
                 onClick={() => {
                   logout();
-                  router.push('/business/login');
+                  router.push('/isletme-giris');
                 }}
                 className="px-2 sm:px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center gap-1 sm:gap-2 text-sm sm:text-base"
               >

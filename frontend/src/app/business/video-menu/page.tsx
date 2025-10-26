@@ -97,7 +97,7 @@ export default function VideoMenuPage() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.push('/business/login');
+      router.push('/isletme-giris');
     }
   }, [isAuthenticated, router]);
 
@@ -124,7 +124,7 @@ export default function VideoMenuPage() {
 
   const handleLogout = () => {
     logout();
-    router.push('/business/login');
+    router.push('/isletme-giris');
   };
 
   const getStatusColor = (status: string) => {
@@ -354,3 +354,4 @@ export default function VideoMenuPage() {
     </div>
   );
 }
+

@@ -41,7 +41,7 @@ export default function AIPage() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.push('/business/login');
+      router.push('/isletme-giris');
     } else {
       fetchRecommendations();
     }
@@ -77,7 +77,7 @@ export default function AIPage() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.push('/business/login');
+      router.push('/isletme-giris');
     }
   }, [isAuthenticated, router]);
 
@@ -104,7 +104,7 @@ export default function AIPage() {
 
   const handleLogout = () => {
     logout();
-    router.push('/business/login');
+    router.push('/isletme-giris');
   };
 
   const getImpactColor = (impact: string) => {
@@ -318,3 +318,4 @@ export default function AIPage() {
     </div>
   );
 }
+

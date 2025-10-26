@@ -46,7 +46,7 @@ export default function AccountingPage() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.push('/business/login');
+      router.push('/isletme-giris');
     } else {
       fetchTransactions();
     }
@@ -115,7 +115,7 @@ export default function AccountingPage() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.push('/business/login');
+      router.push('/isletme-giris');
     }
   }, [isAuthenticated, router]);
 
@@ -142,7 +142,7 @@ export default function AccountingPage() {
 
   const handleLogout = () => {
     logout();
-    router.push('/business/login');
+    router.push('/isletme-giris');
   };
 
   const filteredTransactions = transactions.filter(transaction => {
@@ -374,3 +374,4 @@ export default function AccountingPage() {
     </div>
   );
 }
+

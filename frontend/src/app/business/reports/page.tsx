@@ -41,7 +41,7 @@ export default function ReportsPage() {
   
   const handleLogout = () => {
     logout();
-    router.push('/business/login');
+    router.push('/isletme-giris');
   };
 
   // Feature kontrolü - erişim yok sayfası göster
@@ -763,3 +763,4 @@ export default function ReportsPage() {
     </div>
   );
 }
+
