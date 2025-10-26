@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FaShoppingCart, FaBell, FaArrowLeft, FaStar, FaPlus, FaInfo, FaUtensils, FaFilter, FaBug, FaGlassWhiskey, FaFileInvoiceDollar, FaSprayCan, FaHandHolding } from 'react-icons/fa';
+import { FaShoppingCart, FaBell, FaArrowLeft, FaStar, FaPlus, FaInfo, FaUtensils, FaFilter, FaBug } from 'react-icons/fa';
 import useRestaurantStore from '@/store/useRestaurantStore';
 import { useCartStore } from '@/store';
 import AnnouncementPopup from '@/components/AnnouncementPopup';
@@ -47,9 +47,6 @@ function MenuPageContent() {
   const [tokenValid, setTokenValid] = useState<boolean | null>(null);
   const [tokenMessage, setTokenMessage] = useState('');
   const [showDebugModal, setShowDebugModal] = useState(false);
-  const [showWaiterModal, setShowWaiterModal] = useState(false);
-  const [specialRequest, setSpecialRequest] = useState('');
-  const [activeRequests, setActiveRequests] = useState<any[]>([]);
   const primary = settings.branding.primaryColor;
   const secondary = settings.branding.secondaryColor || settings.branding.primaryColor;
   
@@ -339,40 +336,6 @@ function MenuPageContent() {
     setSelectedItem(null);
   };
 
-  // Garson çağır fonksiyonları
-  const handleQuickRequest = (type: string) => {
-    const newRequest = {
-      id: Date.now(),
-      type,
-      timestamp: new Date(),
-      tableNumber: tableNumber || 'Bilinmiyor'
-    };
-    setActiveRequests(prev => [...prev, newRequest]);
-    setToastVisible(true);
-    setTimeout(() => setToastVisible(false), 3000);
-    console.log('Garson talebi gönderildi:', type);
-  };
-
-  const handleSpecialRequest = () => {
-    if (!specialRequest.trim()) return;
-    
-    const newRequest = {
-      id: Date.now(),
-      type: 'custom',
-      message: specialRequest,
-      timestamp: new Date(),
-      tableNumber: tableNumber || 'Bilinmiyor'
-    };
-    setActiveRequests(prev => [...prev, newRequest]);
-    setSpecialRequest('');
-    setToastVisible(true);
-    setTimeout(() => setToastVisible(false), 3000);
-    console.log('Özel istek gönderildi:', specialRequest);
-  };
-
-  const removeRequest = (id: number) => {
-    setActiveRequests(prev => prev.filter(req => req.id !== id));
-  };
 
   const showDebugInfo = () => {
     const debugData = {
@@ -750,10 +713,10 @@ function MenuPageContent() {
             </div>
             <span className="text-[10px]"><TranslatedText>Sepet</TranslatedText></span>
           </Link>
-            <button onClick={() => setShowWaiterModal(true)} className="flex flex-col items-center" style={{ color: primary }}>
+            <Link href="/garson-cagir" className="flex flex-col items-center" style={{ color: primary }}>
             <FaBell className="mb-0.5" size={16} />
             <span className="text-[10px]"><TranslatedText>Garson Çağır</TranslatedText></span>
-            </button>
+            </Link>
         </div>
       </nav>
       </main>
@@ -767,127 +730,6 @@ function MenuPageContent() {
         />
       )}
 
-      {/* Garson Çağır Modal */}
-      {showWaiterModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowWaiterModal(false)}>
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>
-            {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b">
-              <div className="flex items-center gap-3">
-                <FaBell style={{ color: primary }} size={20} />
-                <h2 className="text-lg font-bold" style={{ color: primary }}>Garson Çağır</h2>
-              </div>
-              <button 
-                onClick={() => setShowWaiterModal(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                ✕
-              </button>
-            </div>
-
-            {/* Masa Numarası */}
-            <div className="px-6 py-3 bg-gray-50 border-b">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Masa</span>
-                <span className="text-sm font-medium text-gray-900">#{tableNumber || 'Bilinmiyor'}</span>
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
-              {/* Hızlı İstekler */}
-              <div>
-                <h3 className="text-lg font-bold mb-4 text-gray-800">Hızlı İstekler</h3>
-                <div className="grid grid-cols-2 gap-3">
-                  <button 
-                    onClick={() => handleQuickRequest('water')}
-                    className="flex flex-col items-center justify-center gap-2 py-5 rounded-xl shadow-sm hover:shadow-md active:scale-95 transition-all duration-200"
-                    style={{ backgroundColor: primary, color: 'white' }}
-                  >
-                    <FaGlassWhiskey size={28} />
-                    <span className="text-sm font-semibold">Su Getir</span>
-                  </button>
-                  <button 
-                    onClick={() => handleQuickRequest('bill')}
-                    className="flex flex-col items-center justify-center gap-2 py-5 rounded-xl shadow-sm hover:shadow-md active:scale-95 transition-all duration-200"
-                    style={{ backgroundColor: primary, color: 'white' }}
-                  >
-                    <FaFileInvoiceDollar size={28} />
-                    <span className="text-sm font-semibold">Hesap İste</span>
-                  </button>
-                  <button 
-                    onClick={() => handleQuickRequest('clean')}
-                    className="flex flex-col items-center justify-center gap-2 py-5 rounded-xl shadow-sm hover:shadow-md active:scale-95 transition-all duration-200"
-                    style={{ backgroundColor: primary, color: 'white' }}
-                  >
-                    <FaSprayCan size={28} />
-                    <span className="text-sm font-semibold">Masayı Temizle</span>
-                  </button>
-                  <button 
-                    onClick={() => handleQuickRequest('help')}
-                    className="flex flex-col items-center justify-center gap-2 py-5 rounded-xl shadow-sm hover:shadow-md active:scale-95 transition-all duration-200"
-                    style={{ backgroundColor: primary, color: 'white' }}
-                  >
-                    <FaHandHolding size={28} />
-                    <span className="text-sm font-semibold">Yardım Gerekiyor</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Özel İstek */}
-              <div>
-                <h3 className="text-lg font-bold mb-4 text-gray-800">Özel İstek</h3>
-                <textarea 
-                  value={specialRequest}
-                  onChange={(e) => setSpecialRequest(e.target.value)}
-                  placeholder="İsteğinizi buraya yazın..."
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 resize-none transition-all"
-                  rows={4}
-                />
-                <button 
-                  onClick={handleSpecialRequest}
-                  className="w-full mt-3 py-3 rounded-xl font-semibold shadow-sm hover:shadow-md active:scale-95 transition-all duration-200"
-                  style={{ backgroundColor: primary, color: 'white' }}
-                >
-                  İstek Gönder
-                </button>
-              </div>
-
-              {/* Aktif İstekler */}
-              <div>
-                <h3 className="text-lg font-bold mb-4" style={{ color: primary }}>Aktif İstekler</h3>
-                {activeRequests.length === 0 ? (
-                  <div className="text-center py-8 bg-gray-50 rounded-lg">
-                    <span className="text-gray-500">Aktif istek yok</span>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    {activeRequests.map(request => (
-                      <div key={request.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900">
-                            {request.type === 'water' && 'Su Getir'}
-                            {request.type === 'bill' && 'Hesap İste'}
-                            {request.type === 'clean' && 'Masayı Temizle'}
-                            {request.type === 'help' && 'Yardım Gerekiyor'}
-                            {request.type === 'custom' && request.message}
-                          </p>
-                        </div>
-                        <button 
-                          onClick={() => removeRequest(request.id)}
-                          className="ml-2 text-red-500 hover:text-red-700"
-                        >
-                          Kaldır
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }
