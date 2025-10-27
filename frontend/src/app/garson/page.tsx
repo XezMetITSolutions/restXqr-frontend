@@ -292,16 +292,16 @@ export default function GarsonPanel() {
                 {/* Order Items - Compact */}
                 <div className="space-y-1 mb-3">
                   {order.items.slice(0, 3).map((item, index) => (
-                    <div key={index} className="flex items-center gap-2 text-sm">
-                      <div className="w-6 h-6 bg-purple-100 text-purple-700 rounded flex items-center justify-center text-xs font-bold">
+                    <div key={index} className="flex items-start gap-2 text-sm">
+                      <div className="w-6 h-6 bg-purple-100 text-purple-700 rounded flex items-center justify-center text-xs font-bold mt-0.5">
                         {item.quantity}x
                       </div>
-                      <div className="flex-1 text-gray-700 truncate">{item.name}</div>
-                      {item.notes && (
-                        <span className="px-2 py-0.5 bg-yellow-100 text-yellow-800 rounded text-xs font-medium">
-                          Not
-                        </span>
-                      )}
+                      <div className="flex-1">
+                        <div className="text-gray-700">{item.name}</div>
+                        {item.notes && (
+                          <div className="text-xs text-purple-600 italic mt-0.5">• {item.notes}</div>
+                        )}
+                      </div>
                     </div>
                   ))}
                   {order.items.length > 3 && (

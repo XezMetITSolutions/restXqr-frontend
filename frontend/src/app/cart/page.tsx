@@ -127,7 +127,7 @@ function CartPageContent() {
           price: item.price,
           notes: item.notes || ''
         })),
-        notes: `Ödeme yöntemi: ${paymentMethod}, Bahşiş: ${tipAmount}₺, Bağış: ${donationAmount}₺`,
+        notes: `Ödeme yöntemi: ${paymentMethod === 'cash' ? 'nakit' : paymentMethod}, Bahşiş: ${tipAmount}₺, Bağış: ${donationAmount}₺`,
         orderType: 'dine_in'
       };
 
