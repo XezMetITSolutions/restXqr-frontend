@@ -237,8 +237,8 @@ export default function GarsonPanel() {
                 <FaUser className="text-2xl" />
               </div>
               <div>
-                <h1 className="text-xl font-bold">MasApp Garson</h1>
-                <p className="text-sm text-purple-200">Aksaray Restoran • Canlı Durum</p>
+                <h1 className="text-xl font-bold">RestXQr Garson</h1>
+                <p className="text-sm text-purple-200">Demo Restoran • Canlı Durum</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
