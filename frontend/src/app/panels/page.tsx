@@ -105,6 +105,9 @@ export default function PanelsPage() {
                 <Link href="/panels/waiter" className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-8 py-4 rounded-2xl text-lg font-black hover:from-blue-500 hover:to-cyan-500 transition-all duration-300 shadow-lg hover:shadow-blue-500/25 inline-block group-hover:scale-105">
                   Demo Paneli Görüntüle
                 </Link>
+                <Link href="/garson" className="ml-4 text-blue-300 text-lg font-bold hover:text-white transition-all">
+                  Eski Demo →
+                </Link>
               </div>
 
               {/* Mutfak Paneli */}
@@ -138,6 +141,9 @@ export default function PanelsPage() {
                 </ul>
                 <Link href="/panels/kitchen" className="bg-gradient-to-r from-orange-600 to-red-600 text-white px-8 py-4 rounded-2xl text-lg font-black hover:from-orange-500 hover:to-red-500 transition-all duration-300 shadow-lg hover:shadow-orange-500/25 inline-block group-hover:scale-105">
                   Demo Paneli Görüntüle
+                </Link>
+                <Link href="/mutfak" className="ml-4 text-orange-300 text-lg font-bold hover:text-white transition-all">
+                  Eski Demo →
                 </Link>
               </div>
 
@@ -173,6 +179,9 @@ export default function PanelsPage() {
                 <Link href="/panels/cashier" className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-4 rounded-2xl text-lg font-black hover:from-green-500 hover:to-emerald-500 transition-all duration-300 shadow-lg hover:shadow-green-500/25 inline-block group-hover:scale-105">
                   Demo Paneli Görüntüle
                 </Link>
+                <Link href="/kasa" className="ml-4 text-green-300 text-lg font-bold hover:text-white transition-all">
+                  Eski Demo →
+                </Link>
               </div>
 
               {/* İşletme Paneli */}
@@ -206,6 +215,9 @@ export default function PanelsPage() {
                 </ul>
                 <Link href="/panels/business" className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-2xl text-lg font-black hover:from-purple-500 hover:to-pink-500 transition-all duration-300 shadow-lg hover:shadow-purple-500/25 inline-block group-hover:scale-105">
                   Demo Paneli Görüntüle
+                </Link>
+                <Link href="/business/dashboard" className="ml-4 text-purple-300 text-lg font-bold hover:text-white transition-all">
+                  Gerçek Panel →
                 </Link>
               </div>
 
