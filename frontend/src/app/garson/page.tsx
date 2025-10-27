@@ -33,8 +33,11 @@ export default function GarsonPanel() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [showTableModal, setShowTableModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [menuItems, setMenuItems] = useState<any[]>([]);
   const [newTableNumber, setNewTableNumber] = useState<string>('');
   const [orderToChangeTable, setOrderToChangeTable] = useState<Order | null>(null);
+  const [orderToEdit, setOrderToEdit] = useState<Order | null>(null);
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const [staffUser, setStaffUser] = useState<any>(null);
 
@@ -85,6 +88,20 @@ export default function GarsonPanel() {
 
     fetchRestaurant();
   }, []);
+
+  // Menu items'ları çek
+  const fetchMenuItems = async () => {
+    if (!restaurantId) return;
+    try {
+      const response = await fetch(`${API_URL}/restaurants/${restaurantId}/menu/items`);
+      const data = await response.json();
+      if (data.success) {
+        setMenuItems(data.data || []);
+      }
+    } catch (error) {
+      console.error('Menu items alınamadı:', error);
+    }
+  };
 
   // Siparişleri çek - AJAX gibi sessiz güncelleme
   const fetchOrders = async (silent: boolean = false) => {
@@ -321,7 +338,7 @@ export default function GarsonPanel() {
                 )}
 
                 {/* Action Buttons */}
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-4 gap-2">
                   <button
                     onClick={() => updateOrderStatus(order.id, 'completed')}
                     className="py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-bold text-xs transition-colors"
@@ -339,10 +356,24 @@ export default function GarsonPanel() {
                     🔄 Masa Değiştir
                   </button>
                   <button
-                    onClick={() => openOrderDetails(order)}
+                    onClick={() => {
+                      setOrderToEdit(order);
+                      fetchMenuItems();
+                      setShowEditModal(true);
+                    }}
                     className="py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-bold text-xs transition-colors"
                   >
-                    👁 Detay
+                    ✏️ Düzenle
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (confirm('Bu siparişi iptal etmek istediğinizden emin misiniz?')) {
+                        updateOrderStatus(order.id, 'cancelled');
+                      }
+                    }}
+                    className="py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-bold text-xs transition-colors"
+                  >
+                    ❌ İptal Et
                   </button>
                 </div>
               </div>
@@ -433,6 +464,130 @@ export default function GarsonPanel() {
               >
                 ✨ Değiştir
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Sipariş Düzenle Modal */}
+      {showEditModal && orderToEdit && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6 p-6 border-b">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-800">✏️ Siparişi Düzenle</h3>
+                <p className="text-sm text-gray-500 mt-1">Masa {orderToEdit.tableNumber}</p>
+              </div>
+              <button
+                onClick={() => {
+                  setShowEditModal(false);
+                  setOrderToEdit(null);
+                }}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <FaTimes size={24} />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Mevcut Sipariş */}
+              <div className="bg-gray-50 rounded-xl p-4">
+                <h4 className="font-semibold text-gray-800 mb-3">📋 Mevcut Sipariş</h4>
+                <div className="space-y-2">
+                  {orderToEdit.items.map((item, idx) => (
+                    <div key={idx} className="flex items-center justify-between bg-white p-3 rounded-lg">
+                      <span className="text-sm">{item.quantity}x {item.name} - ₺{Number(item.price).toFixed(2)}</span>
+                      <button
+                        onClick={() => {
+                          const updatedOrder = {
+                            ...orderToEdit,
+                            items: orderToEdit.items.filter((_, i) => i !== idx)
+                          };
+                          setOrderToEdit(updatedOrder);
+                        }}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <FaTimes size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Ürün Ekle */}
+              <div>
+                <h4 className="font-semibold text-gray-800 mb-3">➕ Ürün Ekle</h4>
+                <div className="space-y-2 max-h-64 overflow-y-auto">
+                  {menuItems.map((item) => {
+                    const existingItem = orderToEdit.items.find(i => i.name === item.name);
+                    return (
+                      <div key={item.id} className="flex items-center justify-between bg-white p-3 rounded-lg border hover:border-blue-400 transition-colors">
+                        <div>
+                          <div className="font-medium">{item.name}</div>
+                          <div className="text-sm text-gray-600">₺{Number(item.price).toFixed(2)}</div>
+                        </div>
+                        <button
+                          onClick={() => {
+                            const newItem = {
+                              id: item.id,
+                              name: item.name,
+                              quantity: 1,
+                              price: item.price,
+                              notes: ''
+                            };
+                            const updatedOrder = {
+                              ...orderToEdit,
+                              items: [...orderToEdit.items, newItem]
+                            };
+                            setOrderToEdit(updatedOrder);
+                          }}
+                          className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold text-sm transition-colors"
+                        >
+                          + Ekle
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => {
+                    setShowEditModal(false);
+                    setOrderToEdit(null);
+                  }}
+                  className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-semibold transition-colors"
+                >
+                  İptal
+                </button>
+                <button
+                  onClick={async () => {
+                    try {
+                      // Backend'e gönder
+                      const response = await fetch(`${API_URL}/orders/${orderToEdit.id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          items: orderToEdit.items,
+                          totalAmount: orderToEdit.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+                        })
+                      });
+                      if (response.ok) {
+                        alert('✅ Sipariş başarıyla güncellendi!');
+                        setShowEditModal(false);
+                        setOrderToEdit(null);
+                        fetchOrders(); // Listeyi yenile
+                      }
+                    } catch (error) {
+                      alert('❌ Sipariş güncellenemedi!');
+                    }
+                  }}
+                  className="flex-1 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-semibold transition-colors"
+                >
+                  💾 Kaydet
+                </button>
+              </div>
             </div>
           </div>
         </div>
