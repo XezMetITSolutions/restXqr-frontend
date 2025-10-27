@@ -28,54 +28,48 @@ export default function IsletmeGirisPage() {
       setRememberMe(true);
     }
 
-    if (typeof window !== 'undefined') {
-      const hostname = window.location.hostname;
-      const currentSubdomain = hostname.split('.')[0];
-      const mainDomains = ['localhost', 'www', 'restxqr'];
-      
-      if (!mainDomains.includes(currentSubdomain) && hostname.includes('.')) {
-        setSubdomain(currentSubdomain);
+    const loadRestaurantInfo = async () => {
+      if (typeof window !== 'undefined') {
+        const hostname = window.location.hostname;
+        const currentSubdomain = hostname.split('.')[0];
+        const mainDomains = ['localhost', 'www', 'restxqr'];
         
-        const restaurantData: Record<string, any> = {
-          'aksaray': {
-            name: 'Aksaray Restaurant',
-            description: 'Geleneksel Türk Mutfağı',
-            logo: '🍽️'
-          },
-          'safran': {
-            name: 'Safran Restaurant',
-            description: 'Özel Lezzetler',
-            logo: '🌟'
-          },
-          'lezzet': {
-            name: 'Lezzet Restaurant',
-            description: 'Anadolu Lezzetleri',
-            logo: '🥘'
-          },
-          'kardesler': {
-            name: 'Kardeşler Lokantası',
-            description: 'Aile İşletmesi',
-            logo: '👨‍👩‍👧‍👦'
-          },
-          'pizza': {
-            name: 'Pizza Palace',
-            description: 'İtalyan Mutfağı',
-            logo: '🍕'
-          },
-          'cafe': {
-            name: 'Cafe Central',
-            description: 'Modern Kafe',
-            logo: '☕'
+        if (!mainDomains.includes(currentSubdomain) && hostname.includes('.')) {
+          setSubdomain(currentSubdomain);
+          
+          try {
+            // Backend'den restoran ayarlarını çek
+            const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
+            const response = await fetch(`${API_URL}/restaurants/username/${currentSubdomain}`);
+            
+            if (response.ok) {
+              const data = await response.json();
+              if (data.success && data.data) {
+                const restaurant = data.data;
+                
+                setRestaurantInfo({
+                  name: restaurant.name || `${currentSubdomain.charAt(0).toUpperCase() + currentSubdomain.slice(1)} Restaurant`,
+                  description: 'İşletme Paneli', // TODO: Bu bilgi settings'ten gelecek
+                  logo: '🍽️'
+                });
+                return;
+              }
+            }
+          } catch (error) {
+            console.error('Failed to fetch restaurant info:', error);
           }
-        };
-        
-        setRestaurantInfo(restaurantData[currentSubdomain] || {
-          name: `${currentSubdomain.charAt(0).toUpperCase() + currentSubdomain.slice(1)} Restaurant`,
-          description: 'İşletme Paneli',
-          logo: '🍽️'
-        });
+          
+          // Fallback
+          setRestaurantInfo({
+            name: `${currentSubdomain.charAt(0).toUpperCase() + currentSubdomain.slice(1)} Restaurant`,
+            description: 'İşletme Paneli',
+            logo: '🍽️'
+          });
+        }
       }
-    }
+    };
+    
+    loadRestaurantInfo();
   }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -282,19 +276,7 @@ export default function IsletmeGirisPage() {
               )}
             </button>
 
-            {/* Footer */}
-            <div className="text-center text-sm text-purple-300 mt-6 pt-6 border-t border-white/10">
-              <p>🚀 Modern & Güvenli Giriş</p>
-              <p className="text-xs text-purple-400 mt-1">Backend: PostgreSQL (Render)</p>
-            </div>
           </form>
-        </div>
-
-        {/* Additional Info */}
-        <div className="mt-8 text-center">
-          <p className="text-purple-200 text-sm">
-            Hesabınız yok mu? <span className="text-white font-semibold cursor-pointer hover:underline">İletişime Geçin</span>
-          </p>
         </div>
       </div>
     </div>
