@@ -83,12 +83,12 @@ export default function GarsonPanel() {
     fetchRestaurant();
   }, []);
 
-  // Siparişleri çek
-  const fetchOrders = async () => {
+  // Siparişleri çek - AJAX gibi sessiz güncelleme
+  const fetchOrders = async (silent: boolean = false) => {
     if (!restaurantId) return;
 
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       const response = await fetch(`${API_URL}/orders?restaurantId=${restaurantId}`);
       const data = await response.json();
 
@@ -98,15 +98,15 @@ export default function GarsonPanel() {
     } catch (error) {
       console.error('Siparişler alınamadı:', error);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
   useEffect(() => {
     if (restaurantId) {
-      fetchOrders();
-      // Her 5 saniyede bir yenile
-      const interval = setInterval(fetchOrders, 5000);
+      fetchOrders(false); // İlk yükleme normal loading ile
+      // Her 5 saniyede bir sessiz güncelleme (AJAX tarzı)
+      const interval = setInterval(() => fetchOrders(true), 5000);
       return () => clearInterval(interval);
     }
   }, [restaurantId]);
