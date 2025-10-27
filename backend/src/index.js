@@ -37,8 +37,13 @@ const corsOptions = {
       return callback(null, true);
     }
     
-    // Allow all subdomains of restxqr.com
+    // Allow all subdomains of restxqr.com and safran.restxqr.com
     if (origin.match(/^https:\/\/[a-zA-Z0-9-]+\.restxqr\.com$/)) {
+      return callback(null, true);
+    }
+    
+    // Allow Safran specific subdomain
+    if (origin === 'https://safran.restxqr.com') {
       return callback(null, true);
     }
     
