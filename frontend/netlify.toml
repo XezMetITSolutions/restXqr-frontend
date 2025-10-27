@@ -2,10 +2,19 @@
   command = "npm run build"
   publish = ".next"
 
+# Zero-downtime deployments
+[build.processing]
+  skip_processing = false
+
+# Deploy settings for smooth updates
+[build]
+  ignore = "git diff HEAD^ HEAD --quiet ./"
+
 [build.environment]
   NODE_VERSION = "18"
   NEXT_PUBLIC_API_URL = "https://masapp-backend.onrender.com/api"
   NEXT_PUBLIC_FRONTEND_URL = "https://restxqr.com"
+  CI = "false" # Daha hızlı build için CI aşamalarını atla
 
 # API routes için Netlify Functions
 [[redirects]]
