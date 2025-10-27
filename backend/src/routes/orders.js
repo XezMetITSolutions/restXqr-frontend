@@ -206,7 +206,7 @@ router.delete('/bulk', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, items, totalAmount, tableNumber } = req.body;
     const allowed = ['pending', 'preparing', 'ready', 'completed', 'cancelled'];
     if (status && !allowed.includes(status)) {
       return res.status(400).json({ success: false, message: 'invalid status' });
@@ -215,8 +215,37 @@ router.put('/:id', async (req, res) => {
     const order = await Order.findByPk(id);
     if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
 
+    // Status güncelle
     if (status) order.status = status;
+    
+    // Table number güncelle
+    if (tableNumber) order.tableNumber = tableNumber;
+    
     await order.save();
+    
+    // Items değiştiyse güncelle
+    if (items && Array.isArray(items)) {
+      // Mevcut order items'ları sil
+      await OrderItem.destroy({ where: { orderId: id } });
+      
+      // Yeni items'ları ekle
+      for (const item of items) {
+        await OrderItem.create({
+          orderId: id,
+          menuItemId: item.id || item.menuItemId,
+          quantity: item.quantity || 1,
+          unitPrice: item.price || item.unitPrice || 0,
+          notes: item.notes || ''
+        });
+      }
+      
+      // Total amount'u güncelle
+      if (totalAmount) {
+        order.totalAmount = totalAmount;
+        await order.save();
+      }
+    }
+    
     res.json({ success: true, data: order });
   } catch (error) {
     console.error('PUT /orders/:id error:', error);
