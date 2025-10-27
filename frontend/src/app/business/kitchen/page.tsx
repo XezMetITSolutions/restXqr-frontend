@@ -22,6 +22,7 @@ interface Order {
 
 export default function KitchenDashboard() {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState<'all' | 'pending' | 'preparing' | 'ready'>('all');
   const [isConnected, setIsConnected] = useState(false);
   const [notifications, setNotifications] = useState<string[]>([]);
@@ -111,32 +112,38 @@ export default function KitchenDashboard() {
     }
   }, []);
 
-  // Mevcut siparişleri yükle
-  useEffect(() => {
-    const loadOrders = async () => {
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com'}/api/orders?restaurantId=aksaray&status=pending`);
-        const data = await response.json();
+  // Mevcut siparişleri yükle - AJAX gibi sessiz güncelleme
+  const loadOrders = async (silent: boolean = false) => {
+    try {
+      if (!silent) setLoading(true);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com'}/api/orders?restaurantId=aksaray&status=pending`);
+      const data = await response.json();
+      
+      if (data.success) {
+        const formattedOrders: Order[] = data.data.map((order: any) => ({
+          orderId: order.id,
+          restaurantId: order.restaurantId,
+          tableNumber: order.tableNumber || 0,
+          items: order.items || [],
+          totalAmount: order.totalAmount || 0,
+          timestamp: order.created_at,
+          status: order.status || 'pending'
+        }));
         
-        if (data.success) {
-          const formattedOrders: Order[] = data.data.map((order: any) => ({
-            orderId: order.id,
-            restaurantId: order.restaurantId,
-            tableNumber: order.tableNumber || 0,
-            items: order.items || [],
-            totalAmount: order.totalAmount || 0,
-            timestamp: order.created_at,
-            status: order.status || 'pending'
-          }));
-          
-          setOrders(formattedOrders);
-        }
-      } catch (error) {
-        console.error('Error loading orders:', error);
+        setOrders(formattedOrders);
       }
-    };
+    } catch (error) {
+      console.error('Error loading orders:', error);
+    } finally {
+      if (!silent) setLoading(false);
+    }
+  };
 
-    loadOrders();
+  useEffect(() => {
+    loadOrders(false); // İlk yükleme normal loading ile
+    // Her 5 saniyede bir sessiz güncelleme (AJAX tarzı)
+    const interval = setInterval(() => loadOrders(true), 5000);
+    return () => clearInterval(interval);
   }, []);
 
   const updateOrderStatus = async (orderId: string, status: 'preparing' | 'ready' | 'completed') => {

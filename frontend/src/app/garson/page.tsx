@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { FaUser, FaUtensils, FaBell, FaCheckCircle, FaClock, FaMoneyBillWave, FaEdit, FaEye, FaTimes, FaChartBar, FaSignOutAlt } from 'react-icons/fa';
+import { FaUser, FaUtensils, FaBell, FaCheckCircle, FaClock, FaMoneyBillWave, FaEdit, FaEye, FaTimes, FaChartBar, FaSignOutAlt, FaPlus, FaMinus } from 'react-icons/fa';
 
 interface OrderItem {
   id: string;
@@ -172,7 +172,18 @@ export default function GarsonPanel() {
       const data = await response.json();
       
       if (data.success) {
-        fetchOrders(); // Listeyi yenile
+        if (newStatus === 'cancelled') {
+          // İptal edilen siparişleri listeden kaldır
+          setOrders(prevOrders => prevOrders.filter(o => o.id !== orderId));
+        } else {
+          // Diğer durumlarda güncelle
+          setOrders(prevOrders => 
+            prevOrders.map(o => 
+              o.id === orderId ? { ...o, status: newStatus as any } : o
+            )
+          );
+        }
+        fetchOrders(); // Listeyi backend'den yenile
         setShowModal(false);
         setSelectedOrder(null);
       }
@@ -496,19 +507,55 @@ export default function GarsonPanel() {
                 <div className="space-y-2">
                   {orderToEdit.items.map((item, idx) => (
                     <div key={idx} className="flex items-center justify-between bg-white p-3 rounded-lg">
-                      <span className="text-sm">{item.quantity}x {item.name} - ₺{Number(item.price).toFixed(2)}</span>
-                      <button
-                        onClick={() => {
-                          const updatedOrder = {
-                            ...orderToEdit,
-                            items: orderToEdit.items.filter((_, i) => i !== idx)
-                          };
-                          setOrderToEdit(updatedOrder);
-                        }}
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        <FaTimes size={14} />
-                      </button>
+                      <div className="flex items-center gap-3 flex-1">
+                        <span className="text-sm flex-1">{item.name}</span>
+                        <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
+                          <button
+                            onClick={() => {
+                              const updatedOrder = {
+                                ...orderToEdit,
+                                items: orderToEdit.items.map((i, index) => 
+                                  index === idx ? { ...i, quantity: Math.max(1, i.quantity - 1) } : i
+                                )
+                              };
+                              setOrderToEdit(updatedOrder);
+                            }}
+                            className="px-2 py-1 bg-white rounded text-blue-600 hover:bg-blue-50"
+                          >
+                            <FaMinus size={12} />
+                          </button>
+                          <span className="w-8 text-center font-bold">{item.quantity}</span>
+                          <button
+                            onClick={() => {
+                              const updatedOrder = {
+                                ...orderToEdit,
+                                items: orderToEdit.items.map((i, index) => 
+                                  index === idx ? { ...i, quantity: i.quantity + 1 } : i
+                                )
+                              };
+                              setOrderToEdit(updatedOrder);
+                            }}
+                            className="px-2 py-1 bg-white rounded text-blue-600 hover:bg-blue-50"
+                          >
+                            <FaPlus size={12} />
+                          </button>
+                        </div>
+                        <span className="text-sm font-semibold text-gray-700 w-20 text-right">
+                          ₺{Number(item.price * item.quantity).toFixed(2)}
+                        </span>
+                        <button
+                          onClick={() => {
+                            const updatedOrder = {
+                              ...orderToEdit,
+                              items: orderToEdit.items.filter((_, i) => i !== idx)
+                            };
+                            setOrderToEdit(updatedOrder);
+                          }}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <FaTimes size={14} />
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
