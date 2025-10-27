@@ -9,7 +9,7 @@ interface OrderItem {
   name: string;
   quantity: number;
   price: number;
-  notes?: string;
+  notes?: string; // Ürün notu
 }
 
 interface Order {
@@ -73,12 +73,12 @@ export default function GarsonPanel() {
       customerName: 'Ahmet Yılmaz',
       status: 'pending',
       totalAmount: 245.50,
-      notes: 'Not: Az baharatlı olsun',
+      notes: 'Acil servis - Müşteri bekliyor',
       orderType: 'table',
       created_at: new Date().toISOString(),
       items: [
-        { id: '1', name: 'Adana Kebap', quantity: 2, price: 85.00 },
-        { id: '2', name: 'Ayran', quantity: 2, price: 15.00 },
+        { id: '1', name: 'Adana Kebap', quantity: 2, price: 85.00, notes: 'Az baharatlı olsun' },
+        { id: '2', name: 'Ayran', quantity: 2, price: 15.00, notes: 'Buzlu isteniyor' },
         { id: '3', name: 'Fırın Sütlaç', quantity: 1, price: 35.50 }
       ]
     },
@@ -89,29 +89,30 @@ export default function GarsonPanel() {
       customerName: 'Ayşe Demir',
       status: 'ready',
       totalAmount: 128.00,
+      notes: 'Paket siparişi - Teslim için hazır',
       orderType: 'takeaway',
       created_at: new Date(Date.now() - 15 * 60000).toISOString(),
       items: [
         { id: '4', name: 'Pide (Kaşarlı)', quantity: 2, price: 45.00 },
-        { id: '5', name: 'Çay', quantity: 2, price: 10.00 },
-        { id: '6', name: 'Salata', quantity: 1, price: 18.00 }
+        { id: '5', name: 'Çay', quantity: 2, price: 10.00, notes: 'Şekersiz' },
+        { id: '6', name: 'Salata', quantity: 1, price: 18.00, notes: 'Ekstra soslu' }
       ]
     },
     {
       id: '3',
       restaurantId: 'demo-restaurant',
       tableNumber: 8,
-      customerName: '',
+      customerName: 'Zeynep Karaca',
       status: 'preparing',
       totalAmount: 320.00,
-      notes: 'Hemen geliyoruz',
+      notes: 'Doğum günü masa - Pasta istiyorlar',
       orderType: 'table',
       created_at: new Date(Date.now() - 5 * 60000).toISOString(),
       items: [
-        { id: '7', name: 'Sucuklu Pizza', quantity: 1, price: 95.00 },
+        { id: '7', name: 'Sucuklu Pizza', quantity: 1, price: 95.00, notes: 'Çıtır olsun' },
         { id: '8', name: 'Karışık Pizza', quantity: 1, price: 110.00 },
         { id: '9', name: 'Cola (2L)', quantity: 1, price: 45.00 },
-        { id: '10', name: 'Patates Kızartması', quantity: 2, price: 35.00 }
+        { id: '10', name: 'Patates Kızartması', quantity: 2, price: 35.00, notes: 'Ekstra tuzlu' }
       ]
     },
     {
@@ -121,12 +122,13 @@ export default function GarsonPanel() {
       customerName: 'Mehmet Kaya',
       status: 'pending',
       totalAmount: 98.50,
+      notes: 'Öğle yemeği - Hızlı servis',
       orderType: 'table',
       created_at: new Date(Date.now() - 30 * 60000).toISOString(),
       items: [
-        { id: '11', name: 'Döner Tost', quantity: 1, price: 55.00 },
+        { id: '11', name: 'Döner Tost', quantity: 1, price: 55.00, notes: 'Acısız' },
         { id: '12', name: 'Ayran', quantity: 2, price: 15.00 },
-        { id: '13', name: 'Baklava', quantity: 1, price: 28.50 }
+        { id: '13', name: 'Baklava', quantity: 1, price: 28.50, notes: 'Fıstıklı' }
       ]
     }
   ];
@@ -184,25 +186,14 @@ export default function GarsonPanel() {
 
   // Sipariş durumunu güncelle
   const updateOrderStatus = async (orderId: string, newStatus: string) => {
-    try {
-      const response = await fetch(`${API_URL}/orders/${orderId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ status: newStatus })
-      });
-
-      const data = await response.json();
-      
-      if (data.success) {
-        fetchOrders(); // Listeyi yenile
-        setShowModal(false);
-        setSelectedOrder(null);
-      }
-    } catch (error) {
-      console.error('Durum güncellenemedi:', error);
-    }
+    // Demo modda sadece state'i güncelle
+    setOrders(prevOrders => 
+      prevOrders.map(order => 
+        order.id === orderId ? { ...order, status: newStatus as any } : order
+      )
+    );
+    setShowModal(false);
+    setSelectedOrder(null);
   };
 
   // Sipariş detaylarını aç
@@ -336,16 +327,16 @@ export default function GarsonPanel() {
                 {/* Order Items - Compact */}
                 <div className="space-y-1 mb-3">
                   {order.items.slice(0, 3).map((item, index) => (
-                    <div key={index} className="flex items-center gap-2 text-sm">
-                      <div className="w-6 h-6 bg-purple-100 text-purple-700 rounded flex items-center justify-center text-xs font-bold">
+                    <div key={index} className="flex items-start gap-2 text-sm">
+                      <div className="w-6 h-6 bg-purple-100 text-purple-700 rounded flex items-center justify-center text-xs font-bold mt-0.5">
                         {item.quantity}x
                       </div>
-                      <div className="flex-1 text-gray-700 truncate">{item.name}</div>
-                      {item.notes && (
-                        <span className="px-2 py-0.5 bg-yellow-100 text-yellow-800 rounded text-xs font-medium">
-                          Not
-                        </span>
-                      )}
+                      <div className="flex-1">
+                        <div className="text-gray-700">{item.name}</div>
+                        {item.notes && (
+                          <div className="text-xs text-gray-500 mt-0.5 italic">• {item.notes}</div>
+                        )}
+                      </div>
                     </div>
                   ))}
                   {order.items.length > 3 && (
@@ -364,20 +355,38 @@ export default function GarsonPanel() {
                 {/* Action Buttons */}
                 <div className="grid grid-cols-3 gap-2">
                   <button
-                    onClick={() => updateOrderStatus(order.id, 'completed')}
-                    className="py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-bold text-xs transition-colors"
+                    onClick={() => {
+                      if (order.status === 'ready') {
+                        updateOrderStatus(order.id, 'completed');
+                      }
+                    }}
+                    disabled={order.status !== 'ready'}
+                    className={`py-2 text-white rounded-lg font-bold text-xs transition-colors ${
+                      order.status === 'ready'
+                        ? 'bg-green-500 hover:bg-green-600 cursor-pointer'
+                        : 'bg-gray-300 cursor-not-allowed'
+                    }`}
                   >
                     ✓ Servis Et
                   </button>
                   <button
-                    onClick={() => updateOrderStatus(order.id, 'preparing')}
-                    className="py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-bold text-xs transition-colors"
+                    onClick={() => {
+                      const newTable = prompt('Yeni masa numarası:', order.tableNumber.toString());
+                      if (newTable && parseInt(newTable) > 0) {
+                        setOrders(prevOrders => 
+                          prevOrders.map(o => 
+                            o.id === order.id ? { ...o, tableNumber: parseInt(newTable) } : o
+                          )
+                        );
+                      }
+                    }}
+                    className="py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-bold text-xs transition-colors cursor-pointer"
                   >
-                    Masa Değiştir
+                    🔄 Masa Değiştir
                   </button>
                   <button
                     onClick={() => openOrderDetails(order)}
-                    className="py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-bold text-xs transition-colors"
+                    className="py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-bold text-xs transition-colors cursor-pointer"
                   >
                     👁 Detay
                   </button>
