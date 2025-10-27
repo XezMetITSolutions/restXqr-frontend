@@ -80,22 +80,69 @@ export default function KasaPanel() {
     fetchRestaurant();
   }, []);
 
+  // Demo veriler
+  const demoOrders: Order[] = [
+    {
+      id: '1',
+      restaurantId: 'demo-restaurant',
+      tableNumber: 5,
+      customerName: 'Ahmet Yılmaz',
+      status: 'ready',
+      totalAmount: 245.50,
+      notes: 'Not: Az baharatlı olsun',
+      orderType: 'table',
+      created_at: new Date(Date.now() - 20 * 60000).toISOString(),
+      items: [
+        { id: '1', name: 'Adana Kebap', quantity: 2, price: 85.00 },
+        { id: '2', name: 'Ayran', quantity: 2, price: 15.00 },
+        { id: '3', name: 'Fırın Sütlaç', quantity: 1, price: 35.50 }
+      ]
+    },
+    {
+      id: '2',
+      restaurantId: 'demo-restaurant',
+      tableNumber: 12,
+      customerName: 'Ayşe Demir',
+      status: 'completed',
+      totalAmount: 128.00,
+      orderType: 'takeaway',
+      created_at: new Date(Date.now() - 50 * 60000).toISOString(),
+      items: [
+        { id: '4', name: 'Pide (Kaşarlı)', quantity: 2, price: 45.00 },
+        { id: '5', name: 'Çay', quantity: 2, price: 10.00 },
+        { id: '6', name: 'Salata', quantity: 1, price: 18.00 }
+      ]
+    },
+    {
+      id: '3',
+      restaurantId: 'demo-restaurant',
+      tableNumber: 8,
+      customerName: '',
+      status: 'ready',
+      totalAmount: 320.00,
+      notes: 'Hemen geliyoruz',
+      orderType: 'table',
+      created_at: new Date(Date.now() - 30 * 60000).toISOString(),
+      items: [
+        { id: '7', name: 'Sucuklu Pizza', quantity: 1, price: 95.00 },
+        { id: '8', name: 'Karışık Pizza', quantity: 1, price: 110.00 },
+        { id: '9', name: 'Cola (2L)', quantity: 1, price: 45.00 },
+        { id: '10', name: 'Patates Kızartması', quantity: 2, price: 35.00 }
+      ]
+    }
+  ];
+
   // Siparişleri çek (sadece ready ve completed)
   const fetchOrders = async () => {
     if (!restaurantId) return;
 
     try {
       setLoading(true);
-      const response = await fetch(`${API_URL}/orders?restaurantId=${restaurantId}`);
-      const data = await response.json();
-
-      if (data.success) {
-        // Kasanın ilgilenmesi gereken siparişler
-        const paymentOrders = (data.data || []).filter(
-          (order: Order) => order.status === 'ready' || order.status === 'completed'
-        );
-        setOrders(paymentOrders);
-      }
+      // Demo modda demo verileri kullan
+      const paymentOrders = demoOrders.filter(
+        (order: Order) => order.status === 'ready' || order.status === 'completed'
+      );
+      setOrders(paymentOrders);
     } catch (error) {
       console.error('Siparişler alınamadı:', error);
     } finally {
