@@ -37,30 +37,11 @@ export default function GarsonPanel() {
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://masapp-backend.onrender.com/api';
 
-  // Login kontrolü
+  // Demo mode - No authentication required
   useEffect(() => {
-    const checkAuth = () => {
-      const user = localStorage.getItem('staff_user');
-      const token = localStorage.getItem('staff_token');
-      
-      if (!user || !token) {
-        router.push('/staff-login');
-        return;
-      }
-      
-      const parsedUser = JSON.parse(user);
-      setStaffUser(parsedUser);
-      
-      // Sadece garson ve yöneticiler erişebilir
-      if (parsedUser.role !== 'waiter' && parsedUser.role !== 'manager' && parsedUser.role !== 'admin') {
-        alert('Bu panele erişim yetkiniz yok!');
-        router.push('/staff-login');
-        return;
-      }
-    };
-    
-    checkAuth();
-  }, [router]);
+    // Set demo user for display
+    setStaffUser({ name: 'Demo Garson', role: 'waiter' });
+  }, []);
 
   // Restoran ID'sini al
   useEffect(() => {
