@@ -192,7 +192,7 @@ export default function KasaPanel() {
               <FaMoneyBillWave className="text-4xl text-green-500" />
               <div>
                 <h1 className="text-3xl font-bold text-gray-800">Kasa Paneli</h1>
-                <p className="text-gray-600">RestXQr Demo Restoran</p>
+                <p className="text-gray-600">RestXQr Restoranı</p>
               </div>
             </div>
             <div className="flex items-center gap-6">
