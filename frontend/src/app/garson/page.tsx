@@ -32,6 +32,9 @@ export default function GarsonPanel() {
   const [restaurantId, setRestaurantId] = useState<string>('');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [showTableModal, setShowTableModal] = useState(false);
+  const [newTableNumber, setNewTableNumber] = useState<string>('');
+  const [orderToChangeTable, setOrderToChangeTable] = useState<Order | null>(null);
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const [staffUser, setStaffUser] = useState<any>(null);
 
@@ -326,10 +329,14 @@ export default function GarsonPanel() {
                     ✓ Servis Et
                   </button>
                   <button
-                    onClick={() => updateOrderStatus(order.id, 'preparing')}
+                    onClick={() => {
+                      setOrderToChangeTable(order);
+                      setNewTableNumber(order.tableNumber.toString());
+                      setShowTableModal(true);
+                    }}
                     className="py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-bold text-xs transition-colors"
                   >
-                    Masa Değiştir
+                    🔄 Masa Değiştir
                   </button>
                   <button
                     onClick={() => openOrderDetails(order)}
@@ -343,6 +350,93 @@ export default function GarsonPanel() {
           </div>
         )}
       </div>
+
+      {/* Masa Değiştir Modal */}
+      {showTableModal && orderToChangeTable && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-800">🔄 Masa Değiştir</h3>
+                <p className="text-sm text-gray-500 mt-1">Masa {orderToChangeTable.tableNumber} için yeni masa numarası girin</p>
+              </div>
+              <button
+                onClick={() => {
+                  setShowTableModal(false);
+                  setOrderToChangeTable(null);
+                  setNewTableNumber('');
+                }}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <FaTimes size={24} />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Yeni Masa Numarası
+                </label>
+                <input
+                  type="number"
+                  value={newTableNumber}
+                  onChange={(e) => setNewTableNumber(e.target.value)}
+                  min="1"
+                  max="100"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none text-lg font-semibold transition-colors"
+                  placeholder="Masa numarası..."
+                  autoFocus
+                />
+              </div>
+
+              <div className="bg-purple-50 rounded-xl p-4 border border-purple-200">
+                <div className="flex items-center gap-3">
+                  <div className="bg-purple-500 text-white rounded-lg px-3 py-2 text-xl font-bold">
+                    {orderToChangeTable.tableNumber}
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-semibold text-gray-800">₺{Number(orderToChangeTable.totalAmount).toFixed(2)}</div>
+                    <div className="text-sm text-gray-600">{orderToChangeTable.items.length} ürün</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => {
+                  setShowTableModal(false);
+                  setOrderToChangeTable(null);
+                  setNewTableNumber('');
+                }}
+                className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-semibold transition-colors"
+              >
+                İptal
+              </button>
+              <button
+                onClick={() => {
+                  const tableNum = parseInt(newTableNumber);
+                  if (tableNum > 0 && tableNum <= 100) {
+                    setOrders(prevOrders => 
+                      prevOrders.map(o => 
+                        o.id === orderToChangeTable.id ? { ...o, tableNumber: tableNum } : o
+                      )
+                    );
+                    setShowTableModal(false);
+                    setOrderToChangeTable(null);
+                    setNewTableNumber('');
+                  } else {
+                    alert('Lütfen 1-100 arasında geçerli bir masa numarası girin!');
+                  }
+                }}
+                className="flex-1 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-semibold transition-colors"
+              >
+                ✨ Değiştir
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Sipariş Detay Modal */}
       {showModal && selectedOrder && (
