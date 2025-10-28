@@ -269,7 +269,7 @@ export default function ReportsPage() {
                 <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-xl">
                   <FaChartBar className="text-2xl text-white" />
                 </div>
-                <div>
+              <div>
                   <h2 className="text-3xl font-black bg-gradient-to-r from-gray-900 via-blue-800 to-indigo-800 bg-clip-text text-transparent">
                     İşletme Raporları
                   </h2>

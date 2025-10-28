@@ -531,13 +531,13 @@ export default function MenuManagement() {
                 <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-xl">
                   <FaUtensils className="text-2xl text-white" />
                 </div>
-                <div>
+            <div>
                   <h2 className="text-3xl font-black bg-gradient-to-r from-gray-900 via-purple-800 to-pink-800 bg-clip-text text-transparent">
                     Menü Yönetimi
                   </h2>
                   <p className="text-gray-600 text-lg font-semibold mt-1">Restoran menünüzü yönetin ve düzenleyin</p>
-                </div>
-              </div>
+            </div>
+            </div>
             </div>
           </div>
         </header>
@@ -609,8 +609,8 @@ export default function MenuManagement() {
             </svg>
             <span>Toplu İçe Aktar</span>
           </button>
-          </div>
         </div>
+      </div>
 
       {/* Loading State */}
 

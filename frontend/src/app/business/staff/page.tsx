@@ -212,7 +212,7 @@ export default function StaffPage() {
 
   // Adminleri filtrele - sadece operasyonel personel
   const operationalStaff = staff.filter(s => s.role !== 'admin');
-  
+
   const stats = {
     total: operationalStaff.length,
     active: operationalStaff.filter(s => s.status === 'active').length,
