@@ -172,8 +172,15 @@ export default function MenuManagement() {
     initializeAuth();
   }, [initializeAuth]);
 
-  // Sayfa yüklendiğinde menüyü backend'den çek
+  // Sayfa yüklendiğinde menüyü backend'den çek (sadece normal modda)
   useEffect(() => {
+    const isDemo = typeof window !== 'undefined' && window.location.pathname.includes('/demo-paneller/isletme');
+    
+    if (isDemo) {
+      console.log('📦 Demo mode - skipping backend fetch');
+      return;
+    }
+    
     console.log('🏪 Current Restaurant ID:', currentRestaurantId);
     if (currentRestaurantId) {
       console.log('📥 Fetching menu for restaurant:', currentRestaurantId);
