@@ -483,8 +483,14 @@ export default function MenuManagement() {
     });
     
     // Güvenlik kontrolü - item.name ve item.description undefined olabilir
-    const itemName = item.name || '';
-    const itemDescription = item.description || '';
+    const getName = (name: any): string => {
+      if (typeof name === 'string') return name;
+      if (typeof name === 'object' && name !== null) return name.tr || name.en || '';
+      return '';
+    };
+    
+    const itemName = getName(item.name);
+    const itemDescription = getName(item.description);
     
     const matchesSearch = itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          itemDescription.toLowerCase().includes(searchTerm.toLowerCase());
