@@ -41,13 +41,10 @@ export default function QRCodesPage() {
   const [qrType, setQrType] = useState<'token'>('token');
   const [toast, setToast] = useState({ message: '', visible: false });
 
-  // Authentication check
+  // Demo için session kontrolü yok
   useEffect(() => {
-    if (!isAuthenticated()) {
-      router.push('/');
-      return;
-    }
-  }, [isAuthenticated, router]);
+    console.log('Demo panel sayfası');
+  }, []);
 
   const showToast = (message: string) => {
     setToast({ message, visible: true });
