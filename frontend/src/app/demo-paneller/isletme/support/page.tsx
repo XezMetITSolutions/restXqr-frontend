@@ -61,11 +61,10 @@ export default function SupportPage() {
     description: ''
   });
 
+  // Demo için session kontrolü yok
   useEffect(() => {
-    if (!isAuthenticated()) {
-      router.push('/login');
-    }
-  }, [isAuthenticated, router]);
+    console.log('Demo panel sayfası');
+  }, []);
 
   // Destek talepleri her restoran için ayrı (boş başla, Kardeşler için demo yüklenecek)
   useEffect(() => {
@@ -559,4 +558,5 @@ export default function SupportPage() {
     </div>
   );
 }
+
 

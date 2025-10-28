@@ -114,11 +114,10 @@ export default function SettingsPage() {
     }));
   };
 
+  // Demo için session kontrolü yok
   useEffect(() => {
-    if (!isAuthenticated()) {
-      router.push('/login');
-    }
-  }, [isAuthenticated, router]);
+    console.log('Demo panel sayfası');
+  }, []);
 
   // Restaurant bilgilerini settings'e senkronize et
   useEffect(() => {
@@ -1390,4 +1389,5 @@ export default function SettingsPage() {
     </div>
   );
 }
+
 

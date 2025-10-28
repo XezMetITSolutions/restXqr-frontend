@@ -181,16 +181,10 @@ export default function MenuManagement() {
     }
   }, [currentRestaurantId, fetchRestaurantMenu]);
 
+  // Demo için session kontrolü yok
   useEffect(() => {
-    // Eğer subdomain varsa authentication olmadan da çalışsın (test için)
-    const hasSubdomain = typeof window !== 'undefined' && 
-      !['localhost', 'www', 'guzellestir'].includes(window.location.hostname.split('.')[0]) &&
-      window.location.hostname.includes('.');
-      
-    if (!isAuthenticated() && !hasSubdomain) {
-      router.push('/login');
-    }
-  }, [isAuthenticated, router]);
+    console.log('Demo panel sayfası');
+  }, []);
 
   const handleLogout = () => {
     logout();

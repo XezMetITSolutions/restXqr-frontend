@@ -50,11 +50,10 @@ export default function OrdersPage() {
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  // Demo için session kontrolü yok
   useEffect(() => {
-    if (!isAuthenticated()) {
-      router.push('/login');
-    }
-  }, [isAuthenticated, router]);
+    console.log('Demo panel sayfası');
+  }, []);
 
   // Siparişleri backend'den yükle
   useEffect(() => {
@@ -638,4 +637,5 @@ export default function OrdersPage() {
     </div>
   );
 }
+
 
