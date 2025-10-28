@@ -47,6 +47,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 import useBusinessSettingsStore from '@/store/useBusinessSettingsStore';
 import BusinessSidebar from '@/components/BusinessSidebar';
 import { apiService } from '@/services/api';
+import { demoStaff } from '@/data/demoIsletmeData';
 
 export default function StaffPage() {
   const router = useRouter();
@@ -94,6 +95,16 @@ export default function StaffPage() {
   // Personel listesini backend'den yükle
   useEffect(() => {
     const loadStaffFromBackend = async () => {
+      // Demo modunda demo verileri kullan
+      const isDemo = typeof window !== 'undefined' && window.location.pathname.includes('/demo-paneller/isletme');
+      
+      if (isDemo) {
+        console.log('📡 Using demo staff data');
+        setStaff(demoStaff);
+        setFilteredStaff(demoStaff);
+        return;
+      }
+
       if (authenticatedRestaurant?.id) {
         try {
           console.log('📡 Loading staff from backend for restaurant:', authenticatedRestaurant.id);

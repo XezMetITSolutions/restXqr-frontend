@@ -239,6 +239,11 @@ export const demoStaff = [
     email: 'ahmet@restxqr.com',
     role: 'waiter',
     phone: '+90 555 111 22 33',
+    username: 'ahmet',
+    password: 'demo123',
+    department: 'service',
+    notes: 'Deneyimli garson',
+    status: 'active',
     isActive: true,
     createdAt: new Date('2024-01-15')
   },
@@ -248,6 +253,11 @@ export const demoStaff = [
     email: 'mehmet@restxqr.com',
     role: 'chef',
     phone: '+90 555 222 33 44',
+    username: 'mehmet',
+    password: 'demo123',
+    department: 'kitchen',
+    notes: 'Deneyimli şef',
+    status: 'active',
     isActive: true,
     createdAt: new Date('2024-01-10')
   },
@@ -257,6 +267,11 @@ export const demoStaff = [
     email: 'ayse@restxqr.com',
     role: 'cashier',
     phone: '+90 555 333 44 55',
+    username: 'ayse',
+    password: 'demo123',
+    department: 'finance',
+    notes: 'Kasiyer',
+    status: 'active',
     isActive: true,
     createdAt: new Date('2024-01-20')
   },
@@ -266,6 +281,11 @@ export const demoStaff = [
     email: 'fatma@restxqr.com',
     role: 'waiter',
     phone: '+90 555 444 55 66',
+    username: 'fatma',
+    password: 'demo123',
+    department: 'service',
+    notes: 'Garson',
+    status: 'active',
     isActive: true,
     createdAt: new Date('2024-02-01')
   }
