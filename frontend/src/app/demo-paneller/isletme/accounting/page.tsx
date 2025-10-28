@@ -45,12 +45,9 @@ export default function AccountingPage() {
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
 
   useEffect(() => {
-    if (!isAuthenticated()) {
-      router.push('/isletme-giris');
-    } else {
-      fetchTransactions();
-    }
-  }, [isAuthenticated, router]);
+    // Demo için session kontrolü yok
+    fetchTransactions();
+  }, []);
 
   const fetchTransactions = async () => {
     try {
@@ -113,11 +110,7 @@ export default function AccountingPage() {
     }
   };
 
-  useEffect(() => {
-    if (!isAuthenticated()) {
-      router.push('/isletme-giris');
-    }
-  }, [isAuthenticated, router]);
+  // Demo için session kontrolü yok
 
   // Özellik kontrolü
   if (!hasAccountingSoftware) {
@@ -142,7 +135,7 @@ export default function AccountingPage() {
 
   const handleLogout = () => {
     logout();
-    router.push('/isletme-giris');
+    router.push('/');
   };
 
   const filteredTransactions = transactions.filter(transaction => {
