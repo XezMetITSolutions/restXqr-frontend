@@ -284,18 +284,19 @@ export default function BusinessDashboard() {
   // Aylık ciro
   const monthlyRevenue = monthlyOrders.reduce((total, order) => total + (order.totalAmount || 0), 0);
   
+  // Demo verileri
   const stats = {
-    todayOrders: todayOrders.length,
-    activeOrders: activeOrders.length,
-    todayRevenue,
-    monthlyRevenue,
-    monthlyOrders: monthlyOrders.length,
-    averageRating: 0, // TODO: Rating sistemi eklendiğinde
-    customerSatisfaction: 0, // TODO: Memnuniyet sistemi eklendiğinde
-    totalMenuItems: menuItems.length,
-    activeCategories: categories.length,
-    totalWaiters: 0, // TODO: Personel sistemi eklendiğinde
-    activeTables: 0 // TODO: Masa sistemi eklendiğinde
+    todayOrders: 47, // Demo: Bugünkü sipariş
+    activeOrders: 5, // Demo: Aktif sipariş
+    todayRevenue: 8450, // Demo: Bugünkü ciro
+    monthlyRevenue: 124500, // Demo: Aylık ciro
+    monthlyOrders: 156, // Demo: Aylık sipariş
+    averageRating: 4.8, // Demo: Ortalama puan
+    customerSatisfaction: 92, // Demo: Müşteri memnuniyeti
+    totalMenuItems: 38, // Demo: Menü ürünleri
+    activeCategories: 7, // Demo: Aktif kategoriler
+    totalWaiters: 12, // Demo: Personel
+    activeTables: 8 // Demo: Aktif masa
   };
 
   return (
