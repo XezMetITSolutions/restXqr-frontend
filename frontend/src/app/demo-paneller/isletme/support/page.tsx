@@ -106,7 +106,7 @@ export default function SupportPage() {
 
   const handleLogout = () => {
     logout();
-    router.push('/login');
+    router.push('/');
   };
 
   const handleCreateTicket = async () => {
@@ -558,5 +558,6 @@ export default function SupportPage() {
     </div>
   );
 }
+
 
 

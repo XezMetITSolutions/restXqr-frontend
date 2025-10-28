@@ -88,9 +88,7 @@ export default function StaffPage() {
     // Auth'u initialize et
     initializeAuth();
     
-    if (!isAuthenticated()) {
-      router.push('/login');
-    }
+    // Demo için session kontrolü yok
   }, [isAuthenticated, router, initializeAuth]);
 
   // Personel listesini backend'den yükle
@@ -154,7 +152,7 @@ export default function StaffPage() {
 
   const handleLogout = () => {
     logout();
-    router.push('/login');
+    router.push('/');
   };
 
   const getRoleColor = (role: string) => {
@@ -1283,5 +1281,6 @@ export default function StaffPage() {
     </div>
   );
 }
+
 
 

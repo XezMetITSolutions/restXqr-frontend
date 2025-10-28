@@ -169,7 +169,7 @@ export default function SettingsPage() {
 
   const handleLogout = () => {
     logout();
-    router.push('/login');
+    router.push('/');
   };
 
   const togglePasswordVisibility = (key: string) => {
@@ -1389,5 +1389,6 @@ export default function SettingsPage() {
     </div>
   );
 }
+
 
 

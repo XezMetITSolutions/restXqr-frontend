@@ -120,7 +120,7 @@ export default function OrdersPage() {
 
   const handleLogout = () => {
     logout();
-    router.push('/login');
+    router.push('/');
   };
 
   const getStatusColor = (status: string) => {
@@ -637,5 +637,6 @@ export default function OrdersPage() {
     </div>
   );
 }
+
 
 
