@@ -115,6 +115,13 @@ export function useFeatures(featureIds: string[]): Record<string, boolean> {
   }, [authenticatedRestaurant?.id, authenticatedRestaurant?.features, restaurants, featureIds.join('|')]);
 
   useEffect(() => {
+    // Demo panelde backend'e gitme
+    const isDemo = typeof window !== 'undefined' && window.location.pathname.includes('/demo-paneller/');
+    if (isDemo) {
+      console.log('📦 useFeatures: Demo mode, skipping fetch');
+      return;
+    }
+    
     if (local) return;
     if (authenticatedRestaurant) return;
     if (typeof window === 'undefined') return;
@@ -165,6 +172,13 @@ export function useActiveFeatures(): string[] {
   }, [authenticatedRestaurant?.id, authenticatedRestaurant?.features, restaurants]);
 
   useEffect(() => {
+    // Demo panelde backend'e gitme
+    const isDemo = typeof window !== 'undefined' && window.location.pathname.includes('/demo-paneller/');
+    if (isDemo) {
+      console.log('📦 useActiveFeatures: Demo mode, skipping fetch');
+      return;
+    }
+    
     if (local) return;
     if (authenticatedRestaurant) return;
     if (typeof window === 'undefined') return;
