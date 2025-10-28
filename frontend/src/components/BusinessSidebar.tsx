@@ -123,128 +123,134 @@ export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout 
   
   const { name: restaurantName, email: restaurantEmail } = getRestaurantInfo();
 
+  // Demo sayfasında mıyız?
+  const isDemo = pathname?.includes('/demo-paneller/isletme');
+  
+  // Base path'i belirle
+  const basePath = isDemo ? '/demo-paneller/isletme' : '/business';
+  
   const allMenuItems = [
     {
-      href: '/business/dashboard',
+      href: `${basePath}/dashboard`,
       icon: FaChartLine,
       label: 'Kontrol Paneli',
-      active: pathname === '/business/dashboard',
+      active: pathname === `${basePath}/dashboard`,
       visible: true // Her zaman görünür
     },
     {
-      href: '/business/menu',
+      href: `${basePath}/menu`,
       icon: FaUtensils,
       label: 'Menü Yönetimi',
-      active: pathname === '/business/menu',
+      active: pathname === `${basePath}/menu`,
       visible: hasQrMenu // Sadece qr_menu varsa
     },
     {
-      href: '/business/staff',
+      href: `${basePath}/staff`,
       icon: FaUsers,
       label: 'Personel',
-      active: pathname === '/business/staff',
+      active: pathname === `${basePath}/staff`,
       visible: true // Her zaman görünür
     },
     {
-      href: '/business/qr-codes',
+      href: `${basePath}/qr-codes`,
       icon: FaQrcode,
       label: 'QR Kodlar',
-      active: pathname === '/business/qr-codes',
+      active: pathname === `${basePath}/qr-codes`,
       visible: hasQrMenu || hasTableManagement // qr_menu veya table_management varsa
     },
     {
-      href: '/business/reports',
+      href: `${basePath}/reports`,
       icon: FaChartBar,
       label: 'Raporlar',
-      active: pathname === '/business/reports',
+      active: pathname === `${basePath}/reports`,
       visible: hasBasicReports || hasAdvancedAnalytics // basic_reports veya advanced_analytics varsa
     },
     {
-      href: '/business/settings',
+      href: `${basePath}/settings`,
       icon: FaCog,
       label: 'Ayarlar',
-      active: pathname === '/business/settings',
+      active: pathname === `${basePath}/settings`,
       visible: true // Her zaman görünür
     },
     {
-      href: '/business/support',
+      href: `${basePath}/support`,
       icon: FaHeadset,
       label: 'Destek',
-      active: pathname === '/business/support',
+      active: pathname === `${basePath}/support`,
       visible: true // Her zaman görünür
     },
     // Premium Özellikler
     {
-      href: '/business/inventory',
+      href: `${basePath}/inventory`,
       icon: FaBox,
       label: 'Stok Yönetimi',
-      active: pathname === '/business/inventory',
+      active: pathname === `${basePath}/inventory`,
       visible: hasInventoryManagement,
       badge: 'Premium'
     },
     // Enterprise Özellikler
     {
-      href: '/business/branches',
+      href: `${basePath}/branches`,
       icon: FaBuilding,
       label: 'Şube Yönetimi',
-      active: pathname === '/business/branches',
+      active: pathname === `${basePath}/branches`,
       visible: hasMultiBranch,
       badge: 'Enterprise'
     },
     {
-      href: '/business/api',
+      href: `${basePath}/api`,
       icon: FaCode,
       label: 'API Yönetimi',
-      active: pathname === '/business/api',
+      active: pathname === `${basePath}/api`,
       visible: hasApiAccess,
       badge: 'Enterprise'
     },
     // Özel Özellikler
     {
-      href: '/business/delivery',
+      href: `${basePath}/delivery`,
       icon: FaTruck,
       label: 'Paket Servis',
-      active: pathname === '/business/delivery',
+      active: pathname === `${basePath}/delivery`,
       visible: hasDeliveryIntegration,
       badge: 'Özel'
     },
     {
-      href: '/business/pos',
+      href: `${basePath}/pos`,
       icon: FaCashRegister,
       label: 'POS Entegrasyonu',
-      active: pathname === '/business/pos',
+      active: pathname === `${basePath}/pos`,
       visible: hasPosIntegration,
       badge: 'Özel'
     },
     {
-      href: '/business/accounting',
+      href: `${basePath}/accounting`,
       icon: FaCalculator,
       label: 'Muhasebe',
-      active: pathname === '/business/accounting',
+      active: pathname === `${basePath}/accounting`,
       visible: hasAccountingSoftware,
       badge: 'Özel'
     },
     {
-      href: '/business/ai',
+      href: `${basePath}/ai`,
       icon: FaRobot,
       label: 'AI Önerileri',
-      active: pathname === '/business/ai',
+      active: pathname === `${basePath}/ai`,
       visible: hasAiRecommendations,
       badge: 'Özel'
     },
     {
-      href: '/business/video-menu',
+      href: `${basePath}/video-menu`,
       icon: FaVideo,
       label: 'Video Menü',
-      active: pathname === '/business/video-menu',
+      active: pathname === `${basePath}/video-menu`,
       visible: hasVideoMenu,
       badge: 'Özel'
     },
     {
-      href: '/business/events',
+      href: `${basePath}/events`,
       icon: FaCalendarAlt,
       label: 'Etkinlikler',
-      active: pathname === '/business/events',
+      active: pathname === `${basePath}/events`,
       visible: hasEventManagement,
       badge: 'Özel'
     }
