@@ -96,9 +96,7 @@ export default function VideoMenuPage() {
   ]);
 
   useEffect(() => {
-    if (!isAuthenticated()) {
-      router.push('/isletme-giris');
-    }
+    // Demo için session kontrolü yok
   }, [isAuthenticated, router]);
 
   // Özellik kontrolü
@@ -124,7 +122,7 @@ export default function VideoMenuPage() {
 
   const handleLogout = () => {
     logout();
-    router.push('/isletme-giris');
+    router.push('/');
   };
 
   const getStatusColor = (status: string) => {
@@ -354,6 +352,7 @@ export default function VideoMenuPage() {
     </div>
   );
 }
+
 
 
 

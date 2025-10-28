@@ -40,9 +40,7 @@ export default function AIPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isAuthenticated()) {
-      router.push('/isletme-giris');
-    } else {
+    // Demo için session kontrolü yok else {
       fetchRecommendations();
     }
   }, [isAuthenticated, router]);
@@ -76,9 +74,7 @@ export default function AIPage() {
   };
 
   useEffect(() => {
-    if (!isAuthenticated()) {
-      router.push('/isletme-giris');
-    }
+    // Demo için session kontrolü yok
   }, [isAuthenticated, router]);
 
   // Özellik kontrolü
@@ -104,7 +100,7 @@ export default function AIPage() {
 
   const handleLogout = () => {
     logout();
-    router.push('/isletme-giris');
+    router.push('/');
   };
 
   const getImpactColor = (impact: string) => {
@@ -318,6 +314,7 @@ export default function AIPage() {
     </div>
   );
 }
+
 
 
 

@@ -49,9 +49,7 @@ export default function BranchesPage() {
   const [editingBranch, setEditingBranch] = useState<Branch | null>(null);
 
   useEffect(() => {
-    if (!isAuthenticated()) {
-      router.push('/isletme-giris');
-    } else {
+    // Demo için session kontrolü yok else {
       fetchBranches();
     }
   }, [isAuthenticated, router]);
@@ -140,7 +138,7 @@ export default function BranchesPage() {
 
   const handleLogout = () => {
     logout();
-    router.push('/isletme-giris');
+    router.push('/');
   };
 
   const filteredBranches = branches.filter(branch => {
@@ -354,6 +352,7 @@ export default function BranchesPage() {
     </div>
   );
 }
+
 
 
 

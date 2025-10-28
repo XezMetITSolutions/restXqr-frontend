@@ -78,9 +78,7 @@ export default function InventoryPage() {
   ]);
 
   useEffect(() => {
-    if (!isAuthenticated()) {
-      router.push('/isletme-giris');
-    }
+    // Demo için session kontrolü yok
   }, [isAuthenticated, router]);
 
   // Özellik kontrolü
@@ -106,7 +104,7 @@ export default function InventoryPage() {
 
   const handleLogout = () => {
     logout();
-    router.push('/isletme-giris');
+    router.push('/');
   };
 
   const filteredInventory = inventory.filter(item => {
@@ -329,6 +327,7 @@ export default function InventoryPage() {
     </div>
   );
 }
+
 
 
 

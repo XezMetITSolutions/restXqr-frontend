@@ -46,9 +46,7 @@ export default function POSPage() {
   const [editingDevice, setEditingDevice] = useState<POSDevice | null>(null);
 
   useEffect(() => {
-    if (!isAuthenticated()) {
-      router.push('/isletme-giris');
-    } else {
+    // Demo için session kontrolü yok else {
       fetchPOSDevices();
     }
   }, [isAuthenticated, router]);
@@ -126,9 +124,7 @@ export default function POSPage() {
   };
 
   useEffect(() => {
-    if (!isAuthenticated()) {
-      router.push('/isletme-giris');
-    }
+    // Demo için session kontrolü yok
   }, [isAuthenticated, router]);
 
   // Özellik kontrolü
@@ -154,7 +150,7 @@ export default function POSPage() {
 
   const handleLogout = () => {
     logout();
-    router.push('/isletme-giris');
+    router.push('/');
   };
 
   const getStatusColor = (status: string) => {
@@ -403,6 +399,7 @@ export default function POSPage() {
     </div>
   );
 }
+
 
 
 

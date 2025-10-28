@@ -49,9 +49,7 @@ export default function ApiPage() {
   const [editingKey, setEditingKey] = useState<ApiKey | null>(null);
 
   useEffect(() => {
-    if (!isAuthenticated()) {
-      router.push('/isletme-giris');
-    } else {
+    // Demo için session kontrolü yok else {
       fetchApiKeys();
     }
   }, [isAuthenticated, router]);
@@ -153,7 +151,7 @@ export default function ApiPage() {
 
   const handleLogout = () => {
     logout();
-    router.push('/isletme-giris');
+    router.push('/');
   };
 
   const toggleKeyVisibility = (keyId: string) => {
@@ -404,6 +402,7 @@ export default function ApiPage() {
     </div>
   );
 }
+
 
 
 

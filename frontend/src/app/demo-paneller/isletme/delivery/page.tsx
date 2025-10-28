@@ -50,9 +50,7 @@ export default function DeliveryPage() {
   const [editingDelivery, setEditingDelivery] = useState<Delivery | null>(null);
 
   useEffect(() => {
-    if (!isAuthenticated()) {
-      router.push('/isletme-giris');
-    } else {
+    // Demo için session kontrolü yok else {
       fetchDeliveries();
     }
   }, [isAuthenticated, router]);
@@ -141,7 +139,7 @@ export default function DeliveryPage() {
 
   const handleLogout = () => {
     logout();
-    router.push('/isletme-giris');
+    router.push('/');
   };
 
   const getStatusColor = (status: string) => {
@@ -402,6 +400,7 @@ export default function DeliveryPage() {
     </div>
   );
 }
+
 
 
 

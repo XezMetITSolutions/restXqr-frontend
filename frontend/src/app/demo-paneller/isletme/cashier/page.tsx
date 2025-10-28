@@ -798,7 +798,7 @@ export default function CashierDashboard() {
               <button
                 onClick={() => {
                   logout();
-                  router.push('/isletme-giris');
+                  router.push('/');
                 }}
                 className="px-2 sm:px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center gap-1 sm:gap-2 text-sm sm:text-base"
               >
@@ -1680,5 +1680,6 @@ export default function CashierDashboard() {
     </div>
   );
 }
+
 
 

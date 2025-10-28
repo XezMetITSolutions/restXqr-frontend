@@ -50,9 +50,7 @@ export default function EventsPage() {
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
 
   useEffect(() => {
-    if (!isAuthenticated()) {
-      router.push('/isletme-giris');
-    } else {
+    // Demo için session kontrolü yok else {
       fetchEvents();
     }
   }, [isAuthenticated, router]);
@@ -119,9 +117,7 @@ export default function EventsPage() {
   };
 
   useEffect(() => {
-    if (!isAuthenticated()) {
-      router.push('/isletme-giris');
-    }
+    // Demo için session kontrolü yok
   }, [isAuthenticated, router]);
 
   // Özellik kontrolü
@@ -147,7 +143,7 @@ export default function EventsPage() {
 
   const handleLogout = () => {
     logout();
-    router.push('/isletme-giris');
+    router.push('/');
   };
 
   const getStatusColor = (status: string) => {
@@ -407,6 +403,7 @@ export default function EventsPage() {
     </div>
   );
 }
+
 
 
 
