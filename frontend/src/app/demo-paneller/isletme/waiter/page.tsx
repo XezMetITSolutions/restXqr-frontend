@@ -472,15 +472,12 @@ export default function WaiterDashboard() {
   useEffect(() => {
     // Client-side rendering kontrolü
     setIsClient(true);
-    
-    if (!isAuthenticated()) {
-      router.push('/login');
-    }
-  }, [isAuthenticated, router, setIsClient]);
+    console.log('Demo panel sayfası');
+  }, [setIsClient]);
 
   const handleLogout = () => {
     logout();
-    router.push('/login');
+    router.push('/');
   };
 
   const filteredOrders = orders.filter(order => {
