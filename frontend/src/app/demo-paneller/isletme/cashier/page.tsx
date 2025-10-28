@@ -64,11 +64,8 @@ export default function CashierDashboard() {
   
   // Test için demo data initialize et
   useEffect(() => {
-    // Login kontrolü
-    if (!isAuthenticated()) {
-      router.replace('/isletme-giris');
-      return;
-    }
+    // Demo için session kontrolü yok
+    console.log('Demo panel sayfası');
 
     // Real-time connection için EventSource
     const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'https://masapp-backend.onrender.com';
