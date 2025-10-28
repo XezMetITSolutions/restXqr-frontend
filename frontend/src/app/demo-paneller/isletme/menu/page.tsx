@@ -37,6 +37,7 @@ import useRestaurantStore from '@/store/useRestaurantStore';
 import { lazy, Suspense } from 'react';
 import BusinessSidebar from '@/components/BusinessSidebar';
 import { useFeature } from '@/hooks/useFeature';
+import { demoRestaurant, demoCategories, demoMenuItems } from '@/data/demoIsletmeData';
 
 // Lazy load heavy components
 const CameraCapture = lazy(() => import('@/components/CameraCapture'));
@@ -96,9 +97,10 @@ export default function MenuManagement() {
   console.log('  allCategories:', allCategories.length);
   console.log('  allMenuItems:', allMenuItems.length);
   
-  // Sadece bu restorana ait kategorileri ve ürünleri filtrele
-  const categories = allCategories.filter(c => c.restaurantId === currentRestaurantId);
-  const items = allMenuItems.filter(i => i.restaurantId === currentRestaurantId);
+  // Demo modunda demo verileri kullan
+  const isDemo = typeof window !== 'undefined' && window.location.pathname.includes('/demo-paneller/isletme');
+  const categories = isDemo ? demoCategories : allCategories.filter(c => c.restaurantId === currentRestaurantId);
+  const items = isDemo ? demoMenuItems : allMenuItems.filter(i => i.restaurantId === currentRestaurantId);
   
   console.log('  filtered categories:', categories.length);
   console.log('  filtered items:', items.length);
