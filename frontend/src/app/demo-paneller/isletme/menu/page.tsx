@@ -752,7 +752,7 @@ export default function MenuManagement() {
                                 (item.imageUrl || item.image) : 
                                 `https://masapp-backend.onrender.com${item.imageUrl || item.image}` 
                               : '/placeholder-food.jpg'}
-                            alt={item.name}
+                            alt={typeof item.name === 'string' ? item.name : (item.name?.tr || item.name?.en || 'Ürün')}
                             className="h-12 w-12 rounded-lg object-cover mr-4"
                             onError={(e) => {
                               console.log('Resim yüklenemedi:', item.imageUrl || item.image);
@@ -764,7 +764,7 @@ export default function MenuManagement() {
                           />
                           <div>
                             <div className="text-sm font-medium text-gray-900">
-                              {item.name}
+                              {typeof item.name === 'string' ? item.name : (item.name?.tr || item.name?.en || 'İsim Yok')}
                               {item.isPopular && (
                                 <span className="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-yellow-100 to-orange-100 text-yellow-800 border border-yellow-200">
                                   <FaFire className="mr-1 text-yellow-600" />
@@ -773,13 +773,18 @@ export default function MenuManagement() {
                               )}
                             </div>
                             <div className="text-sm text-gray-500 line-clamp-1">
-                              {item.description}
+                              {typeof item.description === 'string' ? item.description : (item.description?.tr || item.description?.en || 'Açıklama Yok')}
                             </div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {categories.find(c => c.id === item.categoryId)?.name || 'Kategori Yok'}
+                        {(() => {
+                          const cat = categories.find(c => c.id === item.categoryId);
+                          if (!cat) return 'Kategori Yok';
+                          const catName = cat.name;
+                          return typeof catName === 'string' ? catName : (catName?.tr || catName?.en || 'Kategori Yok');
+                        })()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                         ₺{item.price}
@@ -830,7 +835,7 @@ export default function MenuManagement() {
                         (item.imageUrl || item.image) : 
                         `https://masapp-backend.onrender.com${item.imageUrl || item.image}` 
                       : '/placeholder-food.jpg'}
-                    alt={item.name}
+                    alt={typeof item.name === 'string' ? item.name : (item.name?.tr || item.name?.en || 'Ürün')}
                     className="h-16 w-16 rounded-lg object-cover flex-shrink-0"
                     onError={(e) => {
                       console.log('Mobile - Resim yüklenemedi:', item.imageUrl || item.image);
@@ -844,7 +849,7 @@ export default function MenuManagement() {
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <h3 className="text-sm font-medium text-gray-900 truncate">
-                          {item.name}
+                          {typeof item.name === 'string' ? item.name : (item.name?.tr || item.name?.en || 'İsim Yok')}
                         </h3>
                         {item.isPopular && (
                           <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-yellow-100 to-orange-100 text-yellow-800 border border-yellow-200 mt-1">
@@ -853,7 +858,7 @@ export default function MenuManagement() {
                           </span>
                         )}
                         <p className="text-xs text-gray-500 mt-1 line-clamp-2">
-                          {item.description}
+                          {typeof item.description === 'string' ? item.description : (item.description?.tr || item.description?.en || 'Açıklama Yok')}
                         </p>
                       </div>
                       <div className="flex flex-col items-end gap-2">
@@ -874,7 +879,12 @@ export default function MenuManagement() {
                     </div>
                     <div className="flex items-center justify-between mt-3">
                       <span className="text-xs text-gray-500">
-                        {categories.find(c => c.id === item.categoryId)?.name || 'Kategori Yok'}
+                        {(() => {
+                          const cat = categories.find(c => c.id === item.categoryId);
+                          if (!cat) return 'Kategori Yok';
+                          const catName = cat.name;
+                          return typeof catName === 'string' ? catName : (catName?.tr || catName?.en || 'Kategori Yok');
+                        })()}
                       </span>
                       <div className="flex gap-2">
                         <button 
@@ -934,7 +944,7 @@ export default function MenuManagement() {
               {categories.map(category => (
               <div key={category.id} className="bg-white rounded-lg shadow-sm border p-4">
                 <div className="flex justify-between items-start mb-3">
-                  <h3 className="font-semibold text-lg">{category.name}</h3>
+                  <h3 className="font-semibold text-lg">{typeof category.name === 'string' ? category.name : (category.name?.tr || category.name?.en || 'Kategori')}</h3>
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                     category.isActive !== false
                       ? 'bg-green-100 text-green-800'
