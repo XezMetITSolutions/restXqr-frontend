@@ -135,49 +135,49 @@ export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout 
       icon: FaChartLine,
       label: 'Kontrol Paneli',
       active: pathname === `${basePath}/dashboard`,
-      visible: true // Her zaman görünür
+      visible: isDemo ? true : true // Demo'da hepsi görünür
     },
     {
       href: `${basePath}/menu`,
       icon: FaUtensils,
       label: 'Menü Yönetimi',
       active: pathname === `${basePath}/menu`,
-      visible: hasQrMenu // Sadece qr_menu varsa
+      visible: isDemo ? true : hasQrMenu // Demo'da hepsi görünür
     },
     {
       href: `${basePath}/staff`,
       icon: FaUsers,
       label: 'Personel',
       active: pathname === `${basePath}/staff`,
-      visible: true // Her zaman görünür
+      visible: true
     },
     {
       href: `${basePath}/qr-codes`,
       icon: FaQrcode,
       label: 'QR Kodlar',
       active: pathname === `${basePath}/qr-codes`,
-      visible: hasQrMenu || hasTableManagement // qr_menu veya table_management varsa
+      visible: isDemo ? true : (hasQrMenu || hasTableManagement)
     },
     {
       href: `${basePath}/reports`,
       icon: FaChartBar,
       label: 'Raporlar',
       active: pathname === `${basePath}/reports`,
-      visible: hasBasicReports || hasAdvancedAnalytics // basic_reports veya advanced_analytics varsa
+      visible: isDemo ? true : (hasBasicReports || hasAdvancedAnalytics)
     },
     {
       href: `${basePath}/settings`,
       icon: FaCog,
       label: 'Ayarlar',
       active: pathname === `${basePath}/settings`,
-      visible: true // Her zaman görünür
+      visible: true
     },
     {
       href: `${basePath}/support`,
       icon: FaHeadset,
       label: 'Destek',
       active: pathname === `${basePath}/support`,
-      visible: true // Her zaman görünür
+      visible: true
     },
     // Premium Özellikler
     {
@@ -185,7 +185,7 @@ export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout 
       icon: FaBox,
       label: 'Stok Yönetimi',
       active: pathname === `${basePath}/inventory`,
-      visible: hasInventoryManagement,
+      visible: isDemo ? true : hasInventoryManagement,
       badge: 'Premium'
     },
     // Enterprise Özellikler
@@ -194,7 +194,7 @@ export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout 
       icon: FaBuilding,
       label: 'Şube Yönetimi',
       active: pathname === `${basePath}/branches`,
-      visible: hasMultiBranch,
+      visible: isDemo ? true : hasMultiBranch,
       badge: 'Enterprise'
     },
     {
@@ -202,7 +202,7 @@ export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout 
       icon: FaCode,
       label: 'API Yönetimi',
       active: pathname === `${basePath}/api`,
-      visible: hasApiAccess,
+      visible: isDemo ? true : hasApiAccess,
       badge: 'Enterprise'
     },
     // Özel Özellikler
@@ -211,7 +211,7 @@ export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout 
       icon: FaTruck,
       label: 'Paket Servis',
       active: pathname === `${basePath}/delivery`,
-      visible: hasDeliveryIntegration,
+      visible: isDemo ? true : hasDeliveryIntegration,
       badge: 'Özel'
     },
     {
@@ -219,7 +219,7 @@ export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout 
       icon: FaCashRegister,
       label: 'POS Entegrasyonu',
       active: pathname === `${basePath}/pos`,
-      visible: hasPosIntegration,
+      visible: isDemo ? true : hasPosIntegration,
       badge: 'Özel'
     },
     {
@@ -227,7 +227,7 @@ export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout 
       icon: FaCalculator,
       label: 'Muhasebe',
       active: pathname === `${basePath}/accounting`,
-      visible: hasAccountingSoftware,
+      visible: isDemo ? true : hasAccountingSoftware,
       badge: 'Özel'
     },
     {
@@ -235,7 +235,7 @@ export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout 
       icon: FaRobot,
       label: 'AI Önerileri',
       active: pathname === `${basePath}/ai`,
-      visible: hasAiRecommendations,
+      visible: isDemo ? true : hasAiRecommendations,
       badge: 'Özel'
     },
     {
@@ -243,7 +243,7 @@ export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout 
       icon: FaVideo,
       label: 'Video Menü',
       active: pathname === `${basePath}/video-menu`,
-      visible: hasVideoMenu,
+      visible: isDemo ? true : hasVideoMenu,
       badge: 'Özel'
     },
     {
@@ -251,7 +251,7 @@ export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout 
       icon: FaCalendarAlt,
       label: 'Etkinlikler',
       active: pathname === `${basePath}/events`,
-      visible: hasEventManagement,
+      visible: isDemo ? true : hasEventManagement,
       badge: 'Özel'
     }
   ];
