@@ -105,14 +105,9 @@ export default function CashierDashboard() {
       console.log('Cashier SSE connection closed');
     };
 
-    // Sadece kasiyer (cashier) rolündeki personel kasa paneline erişebilir
-    if (authenticatedStaff?.role !== 'cashier' && authenticatedRestaurant?.role !== 'cashier') {
-      router.replace('/isletme-giris');
-      return;
-    }
-
+    // Demo için role kontrolü yok
     initializeDemoData();
-  }, [initializeDemoData, router, isAuthenticated, authenticatedStaff, authenticatedRestaurant]);
+  }, [initializeDemoData]);
   
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card'>('cash');
