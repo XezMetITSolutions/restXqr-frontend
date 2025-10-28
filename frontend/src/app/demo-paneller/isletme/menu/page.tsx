@@ -194,7 +194,7 @@ export default function MenuManagement() {
 
   const handleLogout = () => {
     logout();
-    router.push('/isletme-giris');
+    router.push('/');
   };
 
   // Feature kontrolü kaldırıldı - herkes menü yönetimine erişebilir

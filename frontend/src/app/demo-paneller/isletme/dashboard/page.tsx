@@ -177,7 +177,7 @@ export default function BusinessDashboard() {
 
   const handleLogout = () => {
     logout();
-    router.push('/isletme-giris');
+    router.push('/');
   };
 
   // Plan yükseltme fonksiyonları

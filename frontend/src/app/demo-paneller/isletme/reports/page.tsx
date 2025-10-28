@@ -41,7 +41,7 @@ export default function ReportsPage() {
   
   const handleLogout = () => {
     logout();
-    router.push('/isletme-giris');
+    router.push('/');
   };
 
   // Feature kontrolü - erişim yok sayfası göster
