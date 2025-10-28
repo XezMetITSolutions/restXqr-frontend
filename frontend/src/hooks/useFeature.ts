@@ -16,6 +16,13 @@ export function useFeature(featureId: string): boolean {
   
   // Real-time data fetch için subdomain'i al ve backend'den çek
   useEffect(() => {
+    // Demo panelde backend'e gitme
+    const isDemo = typeof window !== 'undefined' && window.location.pathname.includes('/demo-paneller/');
+    if (isDemo) {
+      console.log('📦 useFeature: Demo mode, skipping fetch');
+      return;
+    }
+    
     if (typeof window !== 'undefined') {
       const subdomain = window.location.hostname.split('.')[0];
       if (subdomain && subdomain !== 'localhost' && subdomain !== 'www') {
