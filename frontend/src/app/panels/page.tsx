@@ -207,7 +207,7 @@ export default function PanelsPage() {
                     <span>Müşteri analitikleri</span>
                   </li>
                 </ul>
-                <Link href="/panels/business" className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-2xl text-lg font-black hover:from-purple-500 hover:to-pink-500 transition-all duration-300 shadow-lg hover:shadow-purple-500/25 inline-block group-hover:scale-105">
+                <Link href="/demo-paneller/isletme" className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-2xl text-lg font-black hover:from-purple-500 hover:to-pink-500 transition-all duration-300 shadow-lg hover:shadow-purple-500/25 inline-block group-hover:scale-105">
                   Demo Paneli Görüntüle
                 </Link>
               </div>
