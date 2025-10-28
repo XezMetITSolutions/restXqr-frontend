@@ -50,10 +50,9 @@ export default function DeliveryPage() {
   const [editingDelivery, setEditingDelivery] = useState<Delivery | null>(null);
 
   useEffect(() => {
-    // Demo için session kontrolü yok else {
-      fetchDeliveries();
-    }
-  }, [isAuthenticated, router]);
+    // Demo için session kontrolü yok
+    fetchDeliveries();
+  }, []);
 
   const fetchDeliveries = async () => {
     try {

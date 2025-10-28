@@ -49,10 +49,9 @@ export default function ApiPage() {
   const [editingKey, setEditingKey] = useState<ApiKey | null>(null);
 
   useEffect(() => {
-    // Demo için session kontrolü yok else {
-      fetchApiKeys();
-    }
-  }, [isAuthenticated, router]);
+    // Demo için session kontrolü yok
+    fetchApiKeys();
+  }, []);
 
   const fetchApiKeys = async () => {
     try {

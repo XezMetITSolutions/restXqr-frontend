@@ -49,10 +49,9 @@ export default function BranchesPage() {
   const [editingBranch, setEditingBranch] = useState<Branch | null>(null);
 
   useEffect(() => {
-    // Demo için session kontrolü yok else {
-      fetchBranches();
-    }
-  }, [isAuthenticated, router]);
+    // Demo için session kontrolü yok
+    fetchBranches();
+  }, []);
 
   const fetchBranches = async () => {
     try {

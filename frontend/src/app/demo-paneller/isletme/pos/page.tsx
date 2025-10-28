@@ -46,10 +46,9 @@ export default function POSPage() {
   const [editingDevice, setEditingDevice] = useState<POSDevice | null>(null);
 
   useEffect(() => {
-    // Demo için session kontrolü yok else {
-      fetchPOSDevices();
-    }
-  }, [isAuthenticated, router]);
+    // Demo için session kontrolü yok
+    fetchPOSDevices();
+  }, []);
 
   const fetchPOSDevices = async () => {
     try {

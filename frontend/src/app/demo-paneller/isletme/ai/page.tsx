@@ -40,10 +40,9 @@ export default function AIPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Demo için session kontrolü yok else {
-      fetchRecommendations();
-    }
-  }, [isAuthenticated, router]);
+    // Demo için session kontrolü yok
+    fetchRecommendations();
+  }, []);
 
   const fetchRecommendations = async () => {
     try {

@@ -50,10 +50,9 @@ export default function EventsPage() {
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
 
   useEffect(() => {
-    // Demo için session kontrolü yok else {
-      fetchEvents();
-    }
-  }, [isAuthenticated, router]);
+    // Demo için session kontrolü yok
+    fetchEvents();
+  }, []);
 
   const fetchEvents = async () => {
     try {
