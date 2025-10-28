@@ -151,11 +151,17 @@ export default function StaffPage() {
 
     // Arama
     if (searchTerm) {
-      filtered = filtered.filter(member => 
-        member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        member.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        member.phone.includes(searchTerm)
-      );
+      filtered = filtered.filter(member => {
+        const name = typeof member.name === 'string' ? member.name : (member.name?.tr || member.name?.en || '');
+        const email = typeof member.email === 'string' ? member.email : '';
+        const phone = typeof member.phone === 'string' ? member.phone : '';
+        
+        return (
+          name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          phone.includes(searchTerm)
+        );
+      });
     }
 
     setFilteredStaff(filtered);
