@@ -102,15 +102,10 @@ export default function PanelsPage() {
                     <span>Masa yönetimi</span>
                   </li>
                 </ul>
-                <div className="flex gap-4">
-                  <Link href="/demo-paneller/garson" className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-6 py-3 rounded-2xl text-base font-black hover:from-blue-500 hover:to-cyan-500 transition-all duration-300 shadow-lg hover:shadow-blue-500/25 inline-block group-hover:scale-105">
-                    <FaRocket className="inline mr-2" />
-                    Demo Paneli
-                  </Link>
-                  <Link href="/panels/waiter" className="bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-2xl text-base font-bold hover:bg-white/30 transition-all duration-300 border border-white/30 inline-block group-hover:scale-105">
-                    Eski Demo →
-                  </Link>
-                </div>
+                <Link href="/demo-paneller/garson" className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-8 py-4 rounded-2xl text-base font-black hover:from-blue-500 hover:to-cyan-500 transition-all duration-300 shadow-lg hover:shadow-blue-500/25 inline-block group-hover:scale-105">
+                  <FaRocket className="inline mr-2" />
+                  Demo Paneli Görüntüle
+                </Link>
               </div>
 
               {/* Mutfak Paneli */}
@@ -142,15 +137,10 @@ export default function PanelsPage() {
                     <span>Otomatik bildirimler</span>
                   </li>
                 </ul>
-                <div className="flex gap-4">
-                  <Link href="/demo-paneller/mutfak" className="bg-gradient-to-r from-orange-600 to-red-600 text-white px-6 py-3 rounded-2xl text-base font-black hover:from-orange-500 hover:to-red-500 transition-all duration-300 shadow-lg hover:shadow-orange-500/25 inline-block group-hover:scale-105">
-                    <FaRocket className="inline mr-2" />
-                    Demo Paneli
-                  </Link>
-                  <Link href="/panels/kitchen" className="bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-2xl text-base font-bold hover:bg-white/30 transition-all duration-300 border border-white/30 inline-block group-hover:scale-105">
-                    Eski Demo →
-                  </Link>
-                </div>
+                <Link href="/demo-paneller/mutfak" className="bg-gradient-to-r from-orange-600 to-red-600 text-white px-8 py-4 rounded-2xl text-base font-black hover:from-orange-500 hover:to-red-500 transition-all duration-300 shadow-lg hover:shadow-orange-500/25 inline-block group-hover:scale-105">
+                  <FaRocket className="inline mr-2" />
+                  Demo Paneli Görüntüle
+                </Link>
               </div>
 
               {/* Kasa Paneli */}
@@ -182,15 +172,10 @@ export default function PanelsPage() {
                     <span>Ödeme yöntemi analizi</span>
                   </li>
                 </ul>
-                <div className="flex gap-4">
-                  <Link href="/demo-paneller/kasa" className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-2xl text-base font-black hover:from-green-500 hover:to-emerald-500 transition-all duration-300 shadow-lg hover:shadow-green-500/25 inline-block group-hover:scale-105">
-                    <FaRocket className="inline mr-2" />
-                    Demo Paneli
-                  </Link>
-                  <Link href="/panels/cashier" className="bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-2xl text-base font-bold hover:bg-white/30 transition-all duration-300 border border-white/30 inline-block group-hover:scale-105">
-                    Eski Demo →
-                  </Link>
-                </div>
+                <Link href="/demo-paneller/kasa" className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-4 rounded-2xl text-base font-black hover:from-green-500 hover:to-emerald-500 transition-all duration-300 shadow-lg hover:shadow-green-500/25 inline-block group-hover:scale-105">
+                  <FaRocket className="inline mr-2" />
+                  Demo Paneli Görüntüle
+                </Link>
               </div>
 
               {/* İşletme Paneli */}
