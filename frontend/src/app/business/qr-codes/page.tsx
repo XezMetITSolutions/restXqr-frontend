@@ -154,16 +154,8 @@ export default function QRCodesPage() {
         }
       }
 
-      const newQRCodes = createBulkTableQRCodes(
-        1, // Masa 1'den başla
-        bulkCount,
-        authenticatedRestaurant.id,
-        selectedTheme,
-        authenticatedRestaurant,
-        tokens
-      );
-
-      setQrCodes(prev => [...prev, ...newQRCodes]);
+      // Backend'den QR kodları yeniden yükle (backend'de kaydedildi)
+      await reloadQRCodes();
       setShowCreateModal(false);
       
       showToast(`${bulkCount} adet token'lı QR kod oluşturuldu! (Ödeme sonrası yeniden scan gerekli)`);
@@ -189,15 +181,8 @@ export default function QRCodesPage() {
       });
 
       if (response.success && response.data?.token) {
-        const newQRCode = createTableQRCode(
-          tableNumber,
-          authenticatedRestaurant.id,
-          selectedTheme,
-          authenticatedRestaurant,
-          response.data.token
-        );
-
-        setQrCodes(prev => [...prev, newQRCode]);
+        // Backend'den QR kodları yeniden yükle (backend'de kaydedildi)
+        await reloadQRCodes();
         showToast(`Masa ${tableNumber} için token'lı QR kod oluşturuldu!`);
       } else {
         throw new Error('Token oluşturulamadı');
