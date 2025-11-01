@@ -77,10 +77,13 @@ export default function QRCodesPage() {
           name: `Masa ${t.tableNumber} - QR Menü`,
           tableNumber: t.tableNumber,
           token: t.token,
-          qrCode: t.qrUrl,
-          url: t.qrUrl,
+          qrCode: t.qrUrl || t.qrData, // Backend'den gelen qrUrl veya qrData
+          url: t.qrUrl || t.qrData,
           createdAt: t.createdAt || new Date().toISOString(),
           theme: selectedTheme,
+          isActive: t.isActive !== false,
+          scanCount: t.scanCount || 0,
+          description: `Masa ${t.tableNumber} için QR kod`
         }));
         setQrCodes(mapped);
       } else {
