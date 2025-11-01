@@ -394,14 +394,26 @@ export default function QRCodesPage() {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {qrCodes.map((qrCode) => (
+                  {qrCodes.map((qrCode) => {
+                    console.log('Rendering QR Code:', qrCode);
+                    return (
                     <div key={qrCode.id} className="border rounded-lg p-4">
                       <div className="text-center mb-4">
-                        <img 
-                          src={qrCode.qrCode} 
-                          alt={qrCode.name}
-                          className="w-32 h-32 mx-auto mb-2"
-                        />
+                        {qrCode.qrCode ? (
+                          <img 
+                            src={qrCode.qrCode} 
+                            alt={qrCode.name}
+                            className="w-32 h-32 mx-auto mb-2"
+                            onError={(e) => {
+                              console.error('QR Image load error:', qrCode.qrCode);
+                              e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="128" height="128"%3E%3Crect fill="%23ddd" width="128" height="128"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" fill="%23999"%3EQR%3C/text%3E%3C/svg%3E';
+                            }}
+                          />
+                        ) : (
+                          <div className="w-32 h-32 mx-auto mb-2 bg-gray-200 flex items-center justify-center text-gray-500">
+                            <FaQrcode className="text-4xl" />
+                          </div>
+                        )}
                         <h3 className="font-semibold text-gray-900">{qrCode.name}</h3>
                         <p className="text-sm text-gray-600">{qrCode.description}</p>
                       </div>
@@ -437,7 +449,7 @@ export default function QRCodesPage() {
                         </button>
                       </div>
                     </div>
-                  ))}
+                  )})}
                 </div>
               )}
             </div>
