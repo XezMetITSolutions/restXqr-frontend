@@ -65,16 +65,17 @@ export default function QRCodesPage() {
       
       if (res?.success && Array.isArray(res.data)) {
         const mapped: QRCodeData[] = res.data.map((t: any) => {
-          // QR kod URL'i oluştur
+          // QR kod URL'i oluştur (backend'den gelen veya kendi oluşturduğumuz)
           const restaurantSlug = authenticatedRestaurant.username || 'aksaray';
-          const qrUrl = `https://${restaurantSlug}.restxqr.com/menu/?t=${t.token}&table=${t.tableNumber}`;
+          const backendQrUrl = t.qrUrl || `https://${restaurantSlug}.restxqr.com/menu/?t=${t.token}&table=${t.tableNumber}`;
           
-          // QR kod image URL'i oluştur - Alternatif API'ler dene
-          const qrImageUrl = `https://quickchart.io/qr?text=${encodeURIComponent(qrUrl)}&size=300&margin=2`;
+          // QR kod resmi için URL'yi QR code generator API'ye gönder
+          // QuickChart API kullanarak QR kod resmi oluştur
+          const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(backendQrUrl)}`;
           
           console.log('QR Code generated:', { 
             tableNumber: t.tableNumber, 
-            qrUrl, 
+            qrUrl: backendQrUrl, 
             qrImageUrl,
             token: t.token 
           });
@@ -84,8 +85,8 @@ export default function QRCodesPage() {
             name: `Masa ${t.tableNumber} - QR Menü`,
             tableNumber: t.tableNumber,
             token: t.token,
-            qrCode: t.qrUrl || t.qrData || qrImageUrl, // Backend'den gelen veya oluşturulan
-            url: t.qrUrl || t.qrData || qrUrl,
+            qrCode: qrImageUrl, // Her zaman QR kod resmi URL'i kullan
+            url: backendQrUrl, // Menü URL'i
             createdAt: t.createdAt || new Date().toISOString(),
             theme: 'default',
             isActive: t.isActive !== false,
