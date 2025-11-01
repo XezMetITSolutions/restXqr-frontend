@@ -221,6 +221,13 @@ class ApiService {
     });
   }
 
+  async deactivateQRTokenByTable(restaurantId: string, tableNumber: number) {
+    return this.request<any>(`/qr/deactivate-by-table`, {
+      method: 'POST',
+      body: JSON.stringify({ restaurantId, tableNumber }),
+    });
+  }
+
   async cleanupExpiredTokens() {
     return this.request<any>(`/qr/cleanup`, {
       method: 'POST',

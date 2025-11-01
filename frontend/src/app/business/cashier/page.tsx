@@ -13,6 +13,7 @@ import { publish } from '@/lib/realtime';
 import { FaCreditCard, FaMoneyBillWave, FaQrcode, FaPrint, FaCheck, FaClock, FaUtensils, FaReceipt, FaSearch, FaFilter, FaPlus, FaMinus, FaTimes, FaShoppingCart, FaTrash, FaSignOutAlt } from 'react-icons/fa';
 import { Order } from '@/store/useOrderStore';
 import { menuData, MenuItem } from '@/data/menu-data';
+import apiService from '@/services/api';
 
 export default function CashierDashboard() {
   const router = useRouter();
@@ -215,9 +216,22 @@ export default function CashierDashboard() {
     setIsProcessing(true);
     
     // Ödeme işlemi simülasyonu
-    setTimeout(() => {
+    setTimeout(async () => {
       // Sipariş durumunu "ödendi" olarak güncelle
       updateOrderStatus(selectedOrder.id, 'paid');
+      
+      // QR token'ı deaktive et (ödeme tamamlandığında token geçersiz olacak)
+      if (authenticatedRestaurant?.id && selectedOrder.tableNumber) {
+        try {
+          await apiService.deactivateQRTokenByTable(
+            authenticatedRestaurant.id,
+            selectedOrder.tableNumber
+          );
+          console.log(`✅ Masa ${selectedOrder.tableNumber} için QR token deaktive edildi`);
+        } catch (error) {
+          console.error('QR token deaktive hatası:', error);
+        }
+      }
       
       // Ödeme bildirimi oluştur
       createPaymentNotification(selectedOrder.id, paymentMethod === 'cash' ? 'Nakit' : 'Kart');
@@ -363,9 +377,22 @@ export default function CashierDashboard() {
     
     setIsProcessing(true);
     
-    setTimeout(() => {
+    setTimeout(async () => {
       // Sipariş durumunu "ödendi" olarak güncelle
       updateOrderStatus(selectedOrder.id, 'paid');
+      
+      // QR token'ı deaktive et (ödeme tamamlandığında token geçersiz olacak)
+      if (authenticatedRestaurant?.id && selectedOrder.tableNumber) {
+        try {
+          await apiService.deactivateQRTokenByTable(
+            authenticatedRestaurant.id,
+            selectedOrder.tableNumber
+          );
+          console.log(`✅ Masa ${selectedOrder.tableNumber} için QR token deaktive edildi`);
+        } catch (error) {
+          console.error('QR token deaktive hatası:', error);
+        }
+      }
       
       // Her ödeme için kayıt oluştur
       splitPayments.forEach((payment, index) => {

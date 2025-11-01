@@ -103,6 +103,40 @@ function MenuPageContent() {
             sessionStorage.setItem('qr_token', tokenParam);
             console.log('✅ Token doğrulandı:', tokenParam);
           } else {
+            // Token deaktifse veya geçersizse, masa numarası varsa yeni token oluştur
+            if (tableParam) {
+              console.log('⚠️ Token geçersiz veya deaktif, yeni token oluşturuluyor...');
+              try {
+                // Backend'den restoran bilgisini al (subdomain'den)
+                const subdomain = window.location.hostname.split('.')[0];
+                const restaurantRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/restaurants/username/${subdomain}`);
+                if (restaurantRes.ok) {
+                  const restaurantData = await restaurantRes.json();
+                  if (restaurantData.success && restaurantData.data) {
+                    // Yeni token oluştur
+                    const newTokenRes = await apiService.generateQRToken({
+                      restaurantId: restaurantData.data.id,
+                      tableNumber: parseInt(tableParam),
+                      duration: 24
+                    });
+                    if (newTokenRes.success && newTokenRes.data?.token) {
+                      // Yeni token ile URL'i güncelle
+                      const newUrl = `${window.location.origin}/menu/?token=${newTokenRes.data.token}&table=${tableParam}`;
+                      window.history.replaceState({}, '', newUrl);
+                      sessionStorage.setItem('qr_token', newTokenRes.data.token);
+                      setTokenValid(true);
+                      setTokenMessage('Yeni QR kod oluşturuldu. Menüye erişebilirsiniz.');
+                      setTableNumber(parseInt(tableParam));
+                      console.log('✅ Yeni token oluşturuldu:', newTokenRes.data.token);
+                      return;
+                    }
+                  }
+                }
+              } catch (error) {
+                console.error('Yeni token oluşturma hatası:', error);
+              }
+            }
+            
             // Oturum devamlılığı için, masa parametresi varsa yeni token üretelim
             if (currentRestaurant?.id && tableParam) {
               try {
