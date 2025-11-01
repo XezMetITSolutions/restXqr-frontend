@@ -1,4 +1,19 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+
+interface QRCode {
+  id: string;
+  name: string;
+  tableNumber?: number;
+  token: string;
+  qrCode: string;
+  url: string;
+  createdAt: string;
+  theme: string;
+  isActive: boolean;
+  scanCount: number;
+  description: string;
+}
 
 interface QRState {
   qrCodes: QRCode[];
@@ -13,17 +28,26 @@ interface QRState {
   generateQRCodes: (restaurantId: string, restaurantSlug: string, tableCount: number) => QRCode[];
   activateQRCode: (id: string) => void;
   deactivateQRCode: (id: string) => void;
+  clearQRCodes: () => void;
   
   // Session Actions
   startTableSession: (restaurantId: string, tableNumber: number) => void;
   endTableSession: () => void;
 }
 
-export const useQRStore = create<QRState>()((set, get) => ({
+export const useQRStore = create<QRState>()(
+  persist(
+    (set, get) => ({
       qrCodes: [],
       activeTableSession: null,
       
-      setQRCodes: (codes) => set({ qrCodes: codes }),
+      setQRCodes: (codes) => {
+        set({ qrCodes: codes });
+      },
+      
+      clearQRCodes: () => {
+        set({ qrCodes: [] });
+      },
       
       generateQRCodes: (restaurantId, restaurantSlug, tableCount) => {
         const codes: QRCode[] = [];
@@ -31,12 +55,16 @@ export const useQRStore = create<QRState>()((set, get) => ({
         for (let i = 1; i <= tableCount; i++) {
           const code: QRCode = {
             id: `qr_${restaurantId}_table_${i}_${Date.now()}`,
-            restaurantId,
+            name: `Masa ${i}`,
             tableNumber: i,
-            code: `MASAPP_${restaurantId}_T${i}`,
+            token: `MASAPP_${restaurantId}_T${i}`,
+            qrCode: '',
             url: `https://masapp.com/r/${restaurantSlug}/masa/${i}`,
             isActive: true,
-            createdAt: new Date()
+            scanCount: 0,
+            theme: 'default',
+            description: `Masa ${i} için QR kod`,
+            createdAt: new Date().toISOString()
           };
           codes.push(code);
         }
@@ -72,4 +100,10 @@ export const useQRStore = create<QRState>()((set, get) => ({
       },
       
       endTableSession: () => set({ activeTableSession: null })
-}));
+    }),
+    {
+      name: 'qr-storage',
+      partialize: (state) => ({ qrCodes: state.qrCodes })
+    }
+  )
+);

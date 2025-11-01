@@ -25,6 +25,7 @@ import {
   type QRCodeData 
 } from '@/utils/qrCodeGenerator';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useQRStore } from '@/store/useQRStore';
 import BusinessSidebar from '@/components/BusinessSidebar';
 import apiService from '@/services/api';
 
@@ -32,15 +33,18 @@ export default function QRCodesPage() {
   const router = useRouter();
   const { authenticatedRestaurant, authenticatedStaff, isAuthenticated, logout, initializeAuth } = useAuthStore();
   
+  // Zustand store for persistent QR codes
+  const { qrCodes, setQRCodes, clearQRCodes } = useQRStore();
+  
   // States
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [qrCodes, setQrCodes] = useState<QRCodeData[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [bulkCount, setBulkCount] = useState(5);
   const [selectedTheme, setSelectedTheme] = useState('default');
   const [qrType, setQrType] = useState<'token'>('token');
   const [toast, setToast] = useState({ message: '', visible: false });
   const [loading, setLoading] = useState(true);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Initialize auth on mount
   useEffect(() => {
@@ -60,12 +64,11 @@ export default function QRCodesPage() {
     setTimeout(() => setToast({ message: '', visible: false }), 3000);
   };
 
-  // Helper: reload from backend
+  // Helper: reload from backend and persist to store
   const reloadQRCodes = async () => {
     try {
       if (!authenticatedRestaurant?.id) {
         setLoading(false);
-        setQrCodes([]);
         return;
       }
       
@@ -83,49 +86,66 @@ export default function QRCodesPage() {
           theme: selectedTheme,
           isActive: t.isActive !== false,
           scanCount: t.scanCount || 0,
-          description: `Masa ${t.tableNumber} için QR kod`
+          description: `Masa ${t.tableNumber} için QR kod`,
+          type: 'table' as const,
+          restaurantId: authenticatedRestaurant.id
         }));
-        setQrCodes(mapped);
+        setQRCodes(mapped);
       } else {
-        setQrCodes([]);
+        // Backend'de QR kod yoksa store'u temizle
+        if (res?.success) {
+          clearQRCodes();
+        }
       }
     } catch (e) {
       console.error('Load QR tokens error:', e);
-      setQrCodes([]);
     } finally {
       setLoading(false);
+      setIsInitialized(true);
     }
   };
 
   // Load existing QR codes from backend on mount/login
   useEffect(() => {
-    // authenticatedRestaurant yüklendiğinde QR kodları yükle
-    if (authenticatedRestaurant?.id) {
-      reloadQRCodes();
-    } else if (!authenticatedRestaurant && !authenticatedStaff) {
-      // Henüz authentication bilgisi yükleniyor, biraz bekle
-      if (isAuthenticated()) {
-        const timer = setTimeout(() => {
-          // initializeAuth çalıştıktan sonra tekrar kontrol et
-          const checkAgain = () => {
+    let mounted = true;
+    let retryCount = 0;
+    const maxRetries = 3;
+    
+    const loadWithRetry = async () => {
+      // Wait for auth to initialize
+      if (!authenticatedRestaurant?.id && retryCount < maxRetries) {
+        retryCount++;
+        setTimeout(() => {
+          if (mounted) {
             const state = useAuthStore.getState();
             if (state.authenticatedRestaurant?.id) {
               reloadQRCodes();
+            } else if (retryCount < maxRetries) {
+              loadWithRetry();
             } else {
               setLoading(false);
+              setIsInitialized(true);
             }
-          };
-          checkAgain();
-        }, 1000);
-        return () => clearTimeout(timer);
+          }
+        }, 500 * retryCount); // Exponential backoff
+        return;
+      }
+      
+      if (authenticatedRestaurant?.id && mounted) {
+        await reloadQRCodes();
       } else {
         setLoading(false);
+        setIsInitialized(true);
       }
-    } else {
-      setLoading(false);
-    }
+    };
+    
+    loadWithRetry();
+    
+    return () => {
+      mounted = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authenticatedRestaurant?.id, authenticatedRestaurant, authenticatedStaff]);
+  }, [authenticatedRestaurant?.id]);
 
   // Toplu QR kod oluşturma - Sabit QR kodları (basılabilir)
   const handleCreateBulkQRCodes = async () => {
@@ -247,7 +267,7 @@ export default function QRCodesPage() {
     );
   }
 
-  if (loading && qrCodes.length === 0) {
+  if (loading && !isInitialized) {
     return (
       <div className="min-h-screen bg-gray-50">
         <BusinessSidebar 
