@@ -1,28 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   FaQrcode, 
   FaPlus,
-  FaEdit,
   FaTrash,
-  FaEye,
-  FaEyeSlash,
   FaCopy,
   FaDownload,
   FaPrint,
-  FaSync,
-  FaClock,
-  FaSignOutAlt
+  FaCheck,
+  FaTimes,
+  FaSpinner,
+  FaEye
 } from 'react-icons/fa';
-import { 
-  createTableQRCode, 
-  createGeneralQRCode, 
-  createBulkTableQRCodes, 
-  getRestaurantSlug,
-  generateToken
-} from '@/utils/qrCodeGenerator';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useQRStore, type QRCodeData } from '@/store/useQRStore';
 import BusinessSidebar from '@/components/BusinessSidebar';
@@ -30,20 +21,17 @@ import apiService from '@/services/api';
 
 export default function QRCodesPage() {
   const router = useRouter();
-  const { authenticatedRestaurant, authenticatedStaff, isAuthenticated, logout, initializeAuth } = useAuthStore();
-  
-  // Zustand store for persistent QR codes
+  const { authenticatedRestaurant, isAuthenticated, logout, initializeAuth } = useAuthStore();
   const { qrCodes, setQRCodes, clearQRCodes } = useQRStore();
   
   // States
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [bulkCount, setBulkCount] = useState(5);
-  const [selectedTheme, setSelectedTheme] = useState('default');
-  const [qrType, setQrType] = useState<'token'>('token');
-  const [toast, setToast] = useState({ message: '', visible: false });
+  const [tableCount, setTableCount] = useState(10);
   const [loading, setLoading] = useState(true);
-  const [isInitialized, setIsInitialized] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const printRef = useRef<HTMLDivElement>(null);
 
   // Initialize auth on mount
   useEffect(() => {
@@ -58,9 +46,9 @@ export default function QRCodesPage() {
     }
   }, [isAuthenticated, router]);
 
-  const showToast = (message: string) => {
-    setToast({ message, visible: true });
-    setTimeout(() => setToast({ message: '', visible: false }), 3000);
+  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
   };
 
   // Helper: reload from backend and persist to store
@@ -94,7 +82,7 @@ export default function QRCodesPage() {
             qrCode: t.qrUrl || t.qrData || qrImageUrl, // Backend'den gelen veya oluşturulan
             url: t.qrUrl || t.qrData || qrUrl,
             createdAt: t.createdAt || new Date().toISOString(),
-            theme: selectedTheme,
+            theme: 'default',
             isActive: t.isActive !== false,
             scanCount: t.scanCount || 0,
             description: `Masa ${t.tableNumber} için QR kod`,
@@ -115,7 +103,6 @@ export default function QRCodesPage() {
       console.error('Load QR tokens error:', e);
     } finally {
       setLoading(false);
-      setIsInitialized(true);
     }
   };
 
@@ -138,7 +125,6 @@ export default function QRCodesPage() {
               loadWithRetry();
             } else {
               setLoading(false);
-              setIsInitialized(true);
             }
           }
         }, 500 * retryCount); // Exponential backoff
@@ -149,7 +135,6 @@ export default function QRCodesPage() {
         await reloadQRCodes();
       } else {
         setLoading(false);
-        setIsInitialized(true);
       }
     };
     
@@ -164,15 +149,16 @@ export default function QRCodesPage() {
   // Toplu QR kod oluşturma - Sabit QR kodları (basılabilir)
   const handleCreateBulkQRCodes = async () => {
     if (!authenticatedRestaurant) {
-      showToast('Restoran bilgisi bulunamadı!');
+      showToast('Restoran bilgisi bulunamadı!', 'error');
       return;
     }
 
     try {
+      setCreating(true);
       const tokens: string[] = [];
       
       // Her masa için token oluştur
-      for (let i = 1; i <= bulkCount; i++) {
+      for (let i = 1; i <= tableCount; i++) {
         try {
           const response = await apiService.generateQRToken({
             restaurantId: authenticatedRestaurant.id,
@@ -186,7 +172,8 @@ export default function QRCodesPage() {
           }
         } catch (error) {
           console.error('Token oluşturma hatası:', error);
-          showToast('Token oluşturulurken hata oluştu!');
+          showToast('Token oluşturulurken hata oluştu!', 'error');
+          setCreating(false);
           return;
         }
       }
@@ -195,38 +182,12 @@ export default function QRCodesPage() {
       await reloadQRCodes();
       setShowCreateModal(false);
       
-      showToast(`${bulkCount} adet token'lı QR kod oluşturuldu! (Ödeme sonrası yeniden scan gerekli)`);
+      showToast(`${tableCount} adet QR kod başarıyla oluşturuldu!`, 'success');
     } catch (error) {
       console.error('QR kod oluşturma hatası:', error);
-      showToast('QR kod oluşturulurken hata oluştu!');
-    }
-  };
-
-  // Tek QR kod oluşturma - Token'lı
-  const handleCreateSingleQRCode = async (tableNumber: number) => {
-    if (!authenticatedRestaurant) {
-      showToast('Restoran bilgisi bulunamadı!');
-      return;
-    }
-
-    try {
-      // Backend'den token oluştur
-      const response = await apiService.generateQRToken({
-        restaurantId: authenticatedRestaurant.id,
-        tableNumber: tableNumber,
-        duration: 24 // 24 saat geçerli
-      });
-
-      if (response.success && response.data?.token) {
-        // Backend'den QR kodları yeniden yükle (backend'de kaydedildi)
-        await reloadQRCodes();
-        showToast(`Masa ${tableNumber} için token'lı QR kod oluşturuldu!`);
-      } else {
-        throw new Error('Token oluşturulamadı');
-      }
-    } catch (error) {
-      console.error('QR kod oluşturma hatası:', error);
-      showToast('QR kod oluşturulurken hata oluştu!');
+      showToast('QR kod oluşturulurken hata oluştu!', 'error');
+    } finally {
+      setCreating(false);
     }
   };
 
@@ -240,7 +201,7 @@ export default function QRCodesPage() {
       console.error('Deactivate QR error:', e);
     }
     await reloadQRCodes();
-    showToast('QR kod silindi.');
+    showToast('QR kod silindi.', 'success');
   };
 
   // URL kopyalama - backend'in ürettiği qrUrl varsa onu kullan
@@ -251,9 +212,9 @@ export default function QRCodesPage() {
       // fallbackUrl öncelik, yoksa subdomain + table paramı ile kur
       const url = fallbackUrl || `${base}/menu/?table=${tableNumber || ''}`;
       navigator.clipboard.writeText(url);
-      showToast('URL kopyalandı!');
+      showToast('URL kopyalandı!', 'success');
     } catch {
-      showToast('URL kopyalanamadı');
+      showToast('URL kopyalanamadı', 'error');
     }
   };
 
@@ -265,12 +226,17 @@ export default function QRCodesPage() {
     link.click();
   };
 
+  // Print fonksiyonu
+  const handlePrint = () => {
+    window.print();
+  };
+
   const onLogout = () => {
     logout();
     router.push('/isletme-giris');
   };
 
-  if (!authenticatedRestaurant && !authenticatedStaff) {
+  if (!authenticatedRestaurant) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -281,7 +247,7 @@ export default function QRCodesPage() {
     );
   }
 
-  if (loading && !isInitialized) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
         <BusinessSidebar 
@@ -363,7 +329,7 @@ export default function QRCodesPage() {
             </div>
             <div className="bg-white p-6 rounded-lg shadow">
               <div className="flex items-center">
-                <FaClock className="text-3xl text-orange-600" />
+                <FaCheck className="text-3xl text-orange-600" />
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Toplam Tarama</p>
                   <p className="text-2xl font-bold text-gray-900">
@@ -397,20 +363,20 @@ export default function QRCodesPage() {
                   {qrCodes.map((qrCode) => {
                     console.log('Rendering QR Code:', qrCode);
                     return (
-                    <div key={qrCode.id} className="border rounded-lg p-4">
+                    <div key={qrCode.id} className="border rounded-lg p-4 hover:shadow-lg transition-shadow">
                       <div className="text-center mb-4">
                         {qrCode.qrCode ? (
                           <img 
                             src={qrCode.qrCode} 
                             alt={qrCode.name}
-                            className="w-32 h-32 mx-auto mb-2"
+                            className="w-32 h-32 mx-auto mb-2 border border-gray-200 rounded"
                             onError={(e) => {
                               console.error('QR Image load error:', qrCode.qrCode);
                               e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="128" height="128"%3E%3Crect fill="%23ddd" width="128" height="128"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" fill="%23999"%3EQR%3C/text%3E%3C/svg%3E';
                             }}
                           />
                         ) : (
-                          <div className="w-32 h-32 mx-auto mb-2 bg-gray-200 flex items-center justify-center text-gray-500">
+                          <div className="w-32 h-32 mx-auto mb-2 bg-gray-200 flex items-center justify-center text-gray-500 rounded">
                             <FaQrcode className="text-4xl" />
                           </div>
                         )}
@@ -420,32 +386,32 @@ export default function QRCodesPage() {
                       
                       <div className="space-y-2">
                         <button
-                          onClick={() => handleCopyURL(qrCode.url)}
-                          className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100"
+                          onClick={() => handleCopyURL(qrCode.url, qrCode.tableNumber)}
+                          className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition-colors"
                         >
                           <FaCopy />
                           URL Kopyala
                         </button>
                         <button
                           onClick={() => handleDownloadQR(qrCode)}
-                          className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-green-50 text-green-600 rounded hover:bg-green-100"
+                          className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-green-50 text-green-600 rounded hover:bg-green-100 transition-colors"
                         >
                           <FaDownload />
                           QR Kodunu İndir
                         </button>
                         <button
-                          onClick={() => window.print()}
-                          className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-purple-50 text-purple-600 rounded hover:bg-purple-100"
+                          onClick={handlePrint}
+                          className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-purple-50 text-purple-600 rounded hover:bg-purple-100 transition-colors"
                         >
                           <FaPrint />
                           Yazdır
                         </button>
                         <button
                           onClick={() => handleDeleteQRCode(qrCode.id, qrCode.token)}
-                          className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100"
+                          className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors"
                         >
                           <FaTrash />
-                          Listeden Kaldır
+                          Sil
                         </button>
                       </div>
                     </div>
@@ -461,7 +427,15 @@ export default function QRCodesPage() {
       {showCreateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">QR Kod Oluştur</h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-gray-900">QR Kod Oluştur</h2>
+              <button
+                onClick={() => setShowCreateModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <FaTimes />
+              </button>
+            </div>
             
             <div className="space-y-4">
               <div>
@@ -472,58 +446,57 @@ export default function QRCodesPage() {
                   type="number"
                   min="1"
                   max="50"
-                  value={bulkCount}
-                  onChange={(e) => setBulkCount(parseInt(e.target.value) || 1)}
+                  value={tableCount}
+                  onChange={(e) => setTableCount(parseInt(e.target.value) || 1)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
                 <p className="text-sm text-gray-500 mt-1">
-                  Token'lı QR kodlar oluşturulacak (Ödeme sonrası yeniden scan gerekli)
+                  1 ile 50 arasında masa sayısı seçebilirsiniz
                 </p>
               </div>
               
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Tema
-                </label>
-                <select
-                  value={selectedTheme}
-                  onChange={(e) => setSelectedTheme(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowCreateModal(false)}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                  disabled={creating}
                 >
-                  <option value="default">Varsayılan</option>
-                  <option value="modern">Modern</option>
-                  <option value="classic">Klasik</option>
-                  <option value="minimal">Minimal</option>
-                  <option value="romantic">Romantik</option>
-                </select>
+                  İptal
+                </button>
+                <button
+                  onClick={handleCreateBulkQRCodes}
+                  disabled={creating}
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {creating ? (
+                    <>
+                      <FaSpinner className="animate-spin" />
+                      Oluşturuluyor...
+                    </>
+                  ) : (
+                    <>
+                      <FaPlus />
+                      Oluştur
+                    </>
+                  )}
+                </button>
               </div>
-            </div>
-            
-            <div className="flex gap-3 mt-6">
-              <button
-                onClick={() => setShowCreateModal(false)}
-                className="flex-1 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
-              >
-                İptal
-              </button>
-              <button
-                onClick={handleCreateBulkQRCodes}
-                className="flex-1 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-              >
-                Oluştur
-              </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Toast */}
-      {toast.visible && (
-        <div className="fixed bottom-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50">
-          {toast.message}
+      {/* Toast Notification */}
+      {toast && (
+        <div className="fixed bottom-4 right-4 z-50 animate-fade-in">
+          <div className={`flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg ${
+            toast.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+          } text-white`}>
+            {toast.type === 'success' ? <FaCheck /> : <FaTimes />}
+            <span>{toast.message}</span>
+          </div>
         </div>
       )}
     </div>
   );
 }
-
