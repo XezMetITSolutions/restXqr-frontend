@@ -73,22 +73,37 @@ export default function QRCodesPage() {
       
       setLoading(true);
       const res = await apiService.getRestaurantQRTokens(authenticatedRestaurant.id);
+      console.log('Backend QR response:', res);
+      
       if (res?.success && Array.isArray(res.data)) {
-        const mapped: QRCodeData[] = res.data.map((t: any) => ({
-          id: t.id,
-          name: `Masa ${t.tableNumber} - QR Menü`,
-          tableNumber: t.tableNumber,
-          token: t.token,
-          qrCode: t.qrUrl || t.qrData, // Backend'den gelen qrUrl veya qrData
-          url: t.qrUrl || t.qrData,
-          createdAt: t.createdAt || new Date().toISOString(),
-          theme: selectedTheme,
-          isActive: t.isActive !== false,
-          scanCount: t.scanCount || 0,
-          description: `Masa ${t.tableNumber} için QR kod`,
-          type: 'table' as const,
-          restaurantId: authenticatedRestaurant.id
-        }));
+        const mapped: QRCodeData[] = res.data.map((t: any) => {
+          // QR kod URL'i oluştur
+          const restaurantSlug = authenticatedRestaurant.username || 'aksaray';
+          const qrUrl = `https://${restaurantSlug}.restxqr.com/menu/?t=${t.token}&table=${t.tableNumber}`;
+          
+          // QR kod image URL'i oluştur
+          const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrUrl)}&bgcolor=FFFFFF&color=000000&format=png&margin=8`;
+          
+          console.log('QR Code generated:', { tableNumber: t.tableNumber, qrUrl, qrImageUrl });
+          
+          return {
+            id: t.id,
+            name: `Masa ${t.tableNumber} - QR Menü`,
+            tableNumber: t.tableNumber,
+            token: t.token,
+            qrCode: t.qrUrl || t.qrData || qrImageUrl, // Backend'den gelen veya oluşturulan
+            url: t.qrUrl || t.qrData || qrUrl,
+            createdAt: t.createdAt || new Date().toISOString(),
+            theme: selectedTheme,
+            isActive: t.isActive !== false,
+            scanCount: t.scanCount || 0,
+            description: `Masa ${t.tableNumber} için QR kod`,
+            type: 'table' as const,
+            restaurantId: authenticatedRestaurant.id
+          };
+        });
+        
+        console.log('Mapped QR codes:', mapped);
         setQRCodes(mapped);
       } else {
         // Backend'de QR kod yoksa store'u temizle
