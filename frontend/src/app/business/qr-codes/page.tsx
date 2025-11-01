@@ -30,7 +30,7 @@ import apiService from '@/services/api';
 
 export default function QRCodesPage() {
   const router = useRouter();
-  const { authenticatedRestaurant, authenticatedStaff, isAuthenticated, logout } = useAuthStore();
+  const { authenticatedRestaurant, authenticatedStaff, isAuthenticated, logout, initializeAuth } = useAuthStore();
   
   // States
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -40,6 +40,12 @@ export default function QRCodesPage() {
   const [selectedTheme, setSelectedTheme] = useState('default');
   const [qrType, setQrType] = useState<'token'>('token');
   const [toast, setToast] = useState({ message: '', visible: false });
+  const [loading, setLoading] = useState(true);
+
+  // Initialize auth on mount
+  useEffect(() => {
+    initializeAuth();
+  }, [initializeAuth]);
 
   // Authentication check
   useEffect(() => {
@@ -57,7 +63,13 @@ export default function QRCodesPage() {
   // Helper: reload from backend
   const reloadQRCodes = async () => {
     try {
-      if (!authenticatedRestaurant?.id) return;
+      if (!authenticatedRestaurant?.id) {
+        setLoading(false);
+        setQrCodes([]);
+        return;
+      }
+      
+      setLoading(true);
       const res = await apiService.getRestaurantQRTokens(authenticatedRestaurant.id);
       if (res?.success && Array.isArray(res.data)) {
         const mapped: QRCodeData[] = res.data.map((t: any) => ({
@@ -71,16 +83,46 @@ export default function QRCodesPage() {
           theme: selectedTheme,
         }));
         setQrCodes(mapped);
+      } else {
+        setQrCodes([]);
       }
     } catch (e) {
       console.error('Load QR tokens error:', e);
+      setQrCodes([]);
+    } finally {
+      setLoading(false);
     }
   };
 
   // Load existing QR codes from backend on mount/login
   useEffect(() => {
-    reloadQRCodes();
-  }, [authenticatedRestaurant?.id]);
+    // authenticatedRestaurant yüklendiğinde QR kodları yükle
+    if (authenticatedRestaurant?.id) {
+      reloadQRCodes();
+    } else if (!authenticatedRestaurant && !authenticatedStaff) {
+      // Henüz authentication bilgisi yükleniyor, biraz bekle
+      if (isAuthenticated()) {
+        const timer = setTimeout(() => {
+          // initializeAuth çalıştıktan sonra tekrar kontrol et
+          const checkAgain = () => {
+            const state = useAuthStore.getState();
+            if (state.authenticatedRestaurant?.id) {
+              reloadQRCodes();
+            } else {
+              setLoading(false);
+            }
+          };
+          checkAgain();
+        }, 1000);
+        return () => clearTimeout(timer);
+      } else {
+        setLoading(false);
+      }
+    } else {
+      setLoading(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authenticatedRestaurant?.id, authenticatedRestaurant, authenticatedStaff]);
 
   // Toplu QR kod oluşturma - Sabit QR kodları (basılabilir)
   const handleCreateBulkQRCodes = async () => {
@@ -207,7 +249,32 @@ export default function QRCodesPage() {
   };
 
   if (!authenticatedRestaurant && !authenticatedStaff) {
-    return <div>Yükleniyor...</div>;
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Yükleniyor...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading && qrCodes.length === 0) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <BusinessSidebar 
+          sidebarOpen={sidebarOpen} 
+          setSidebarOpen={setSidebarOpen}
+          onLogout={onLogout}
+        />
+        <div className="lg:pl-64 flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">QR kodlar yükleniyor...</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
