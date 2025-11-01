@@ -1,10 +1,12 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-interface QRCode {
+export interface QRCodeData {
   id: string;
   name: string;
+  type: 'table' | 'general' | 'custom';
   tableNumber?: number;
+  restaurantId: string;
   token: string;
   qrCode: string;
   url: string;
@@ -16,7 +18,7 @@ interface QRCode {
 }
 
 interface QRState {
-  qrCodes: QRCode[];
+  qrCodes: QRCodeData[];
   activeTableSession: {
     restaurantId: string;
     tableNumber: number;
@@ -24,8 +26,8 @@ interface QRState {
   } | null;
   
   // QR Actions
-  setQRCodes: (codes: QRCode[]) => void;
-  generateQRCodes: (restaurantId: string, restaurantSlug: string, tableCount: number) => QRCode[];
+  setQRCodes: (codes: QRCodeData[]) => void;
+  generateQRCodes: (restaurantId: string, restaurantSlug: string, tableCount: number) => QRCodeData[];
   activateQRCode: (id: string) => void;
   deactivateQRCode: (id: string) => void;
   clearQRCodes: () => void;
@@ -50,13 +52,15 @@ export const useQRStore = create<QRState>()(
       },
       
       generateQRCodes: (restaurantId, restaurantSlug, tableCount) => {
-        const codes: QRCode[] = [];
+        const codes: QRCodeData[] = [];
         
         for (let i = 1; i <= tableCount; i++) {
-          const code: QRCode = {
+          const code: QRCodeData = {
             id: `qr_${restaurantId}_table_${i}_${Date.now()}`,
             name: `Masa ${i}`,
+            type: 'table',
             tableNumber: i,
+            restaurantId,
             token: `MASAPP_${restaurantId}_T${i}`,
             qrCode: '',
             url: `https://masapp.com/r/${restaurantSlug}/masa/${i}`,

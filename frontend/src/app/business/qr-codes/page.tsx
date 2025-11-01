@@ -21,11 +21,10 @@ import {
   createGeneralQRCode, 
   createBulkTableQRCodes, 
   getRestaurantSlug,
-  generateToken,
-  type QRCodeData 
+  generateToken
 } from '@/utils/qrCodeGenerator';
 import { useAuthStore } from '@/store/useAuthStore';
-import { useQRStore } from '@/store/useQRStore';
+import { useQRStore, type QRCodeData } from '@/store/useQRStore';
 import BusinessSidebar from '@/components/BusinessSidebar';
 import apiService from '@/services/api';
 
