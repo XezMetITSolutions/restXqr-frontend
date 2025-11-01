@@ -69,10 +69,15 @@ export default function QRCodesPage() {
           const restaurantSlug = authenticatedRestaurant.username || 'aksaray';
           const qrUrl = `https://${restaurantSlug}.restxqr.com/menu/?t=${t.token}&table=${t.tableNumber}`;
           
-          // QR kod image URL'i oluştur
-          const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrUrl)}&bgcolor=FFFFFF&color=000000&format=png&margin=8`;
+          // QR kod image URL'i oluştur - Alternatif API'ler dene
+          const qrImageUrl = `https://quickchart.io/qr?text=${encodeURIComponent(qrUrl)}&size=300&margin=2`;
           
-          console.log('QR Code generated:', { tableNumber: t.tableNumber, qrUrl, qrImageUrl });
+          console.log('QR Code generated:', { 
+            tableNumber: t.tableNumber, 
+            qrUrl, 
+            qrImageUrl,
+            token: t.token 
+          });
           
           return {
             id: t.id,
