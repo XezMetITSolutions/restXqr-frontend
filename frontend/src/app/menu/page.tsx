@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FaShoppingCart, FaBell, FaArrowLeft, FaStar, FaPlus, FaInfo, FaUtensils, FaFilter, FaBug } from 'react-icons/fa';
+import { FaShoppingCart, FaBell, FaArrowLeft, FaStar, FaPlus, FaInfo, FaUtensils, FaFilter } from 'react-icons/fa';
 import useRestaurantStore from '@/store/useRestaurantStore';
 import { useCartStore } from '@/store';
 import Toast from '@/components/Toast';
@@ -487,20 +487,13 @@ function MenuPageContent() {
               <h1 className="text-dynamic-lg font-bold text-primary">
                 <TranslatedText>Menü</TranslatedText>
               </h1>
-              {tableNumber && (
+              {tableNumber > 0 && (
               <div className="ml-2 px-2 py-1 rounded-lg text-xs" style={{ backgroundColor: 'var(--tone1-bg)', color: 'var(--tone1-text)', border: '1px solid var(--tone1-border)' }}>
-                <TranslatedText>Masa</TranslatedText> #{tableNumber}
+                {currentRestaurant?.name || 'Restoran'} Masa {tableNumber}
             </div>
               )}
           </div>
           <div className="flex items-center gap-2">
-            <button
-              onClick={showDebugInfo}
-              className="p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-colors"
-              title="Debug Bilgileri"
-            >
-              <FaBug />
-            </button>
             <Link href="/cart" className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors">
               <FaShoppingCart className="text-xl" style={{ color: primary }} />
               {cartItems.length > 0 && (
