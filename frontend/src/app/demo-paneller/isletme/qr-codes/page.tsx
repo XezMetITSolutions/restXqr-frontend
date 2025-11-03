@@ -34,7 +34,83 @@ export default function QRCodesPage() {
   
   // States
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [qrCodes, setQrCodes] = useState<QRCodeData[]>([]);
+  const [qrCodes, setQrCodes] = useState<QRCodeData[]>([
+    {
+      id: '1',
+      name: 'Masa 1 - QR Menü',
+      tableNumber: 1,
+      token: 'demo-token-1',
+      qrCode: 'https://quickchart.io/qr?text=https://restxqr.com/menu/demo/1&size=300',
+      url: 'https://restxqr.com/menu/demo/1',
+      createdAt: new Date(Date.now() - 30 * 86400000).toISOString(),
+      theme: 'default',
+      type: 'table',
+      restaurantId: 'demo-restaurant',
+      description: 'Demo QR kod',
+      isActive: true,
+      scanCount: 45
+    },
+    {
+      id: '2',
+      name: 'Masa 2 - QR Menü',
+      tableNumber: 2,
+      token: 'demo-token-2',
+      qrCode: 'https://quickchart.io/qr?text=https://restxqr.com/menu/demo/2&size=300',
+      url: 'https://restxqr.com/menu/demo/2',
+      createdAt: new Date(Date.now() - 30 * 86400000).toISOString(),
+      theme: 'default',
+      type: 'table',
+      restaurantId: 'demo-restaurant',
+      description: 'Demo QR kod',
+      isActive: true,
+      scanCount: 38
+    },
+    {
+      id: '3',
+      name: 'Masa 3 - QR Menü',
+      tableNumber: 3,
+      token: 'demo-token-3',
+      qrCode: 'https://quickchart.io/qr?text=https://restxqr.com/menu/demo/3&size=300',
+      url: 'https://restxqr.com/menu/demo/3',
+      createdAt: new Date(Date.now() - 30 * 86400000).toISOString(),
+      theme: 'default',
+      type: 'table',
+      restaurantId: 'demo-restaurant',
+      description: 'Demo QR kod',
+      isActive: true,
+      scanCount: 52
+    },
+    {
+      id: '4',
+      name: 'Masa 4 - QR Menü',
+      tableNumber: 4,
+      token: 'demo-token-4',
+      qrCode: 'https://quickchart.io/qr?text=https://restxqr.com/menu/demo/4&size=300',
+      url: 'https://restxqr.com/menu/demo/4',
+      createdAt: new Date(Date.now() - 30 * 86400000).toISOString(),
+      theme: 'default',
+      type: 'table',
+      restaurantId: 'demo-restaurant',
+      description: 'Demo QR kod',
+      isActive: true,
+      scanCount: 41
+    },
+    {
+      id: '5',
+      name: 'Masa 5 - QR Menü',
+      tableNumber: 5,
+      token: 'demo-token-5',
+      qrCode: 'https://quickchart.io/qr?text=https://restxqr.com/menu/demo/5&size=300',
+      url: 'https://restxqr.com/menu/demo/5',
+      createdAt: new Date(Date.now() - 30 * 86400000).toISOString(),
+      theme: 'default',
+      type: 'table',
+      restaurantId: 'demo-restaurant',
+      description: 'Demo QR kod',
+      isActive: true,
+      scanCount: 29
+    }
+  ]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [bulkCount, setBulkCount] = useState(5);
   const [selectedTheme, setSelectedTheme] = useState('default');
@@ -43,7 +119,7 @@ export default function QRCodesPage() {
 
   // Demo için session kontrolü yok
   useEffect(() => {
-    console.log('Demo panel sayfası');
+    console.log('Demo panel sayfası - QR kodlar yüklendi');
   }, []);
 
   const showToast = (message: string) => {
@@ -51,33 +127,16 @@ export default function QRCodesPage() {
     setTimeout(() => setToast({ message: '', visible: false }), 3000);
   };
 
-  // Helper: reload from backend
+  // Helper: reload from backend - Demo modda kullanılmıyor
   const reloadQRCodes = async () => {
-    try {
-      if (!authenticatedRestaurant?.id) return;
-      const res = await apiService.getRestaurantQRTokens(authenticatedRestaurant.id);
-      if (res?.success && Array.isArray(res.data)) {
-        const mapped: QRCodeData[] = res.data.map((t: any) => ({
-          id: t.id,
-          name: `Masa ${t.tableNumber} - QR Menü`,
-          tableNumber: t.tableNumber,
-          token: t.token,
-          qrCode: t.qrUrl,
-          url: t.qrUrl,
-          createdAt: t.createdAt || new Date().toISOString(),
-          theme: selectedTheme,
-        }));
-        setQrCodes(mapped);
-      }
-    } catch (e) {
-      console.error('Load QR tokens error:', e);
-    }
+    // Demo modda backend'e gitme
+    console.log('Demo mod - QR kodlar zaten yüklü');
   };
 
-  // Load existing QR codes from backend on mount/login
+  // Load existing QR codes from backend on mount/login - Demo modda devre dışı
   useEffect(() => {
-    reloadQRCodes();
-  }, [authenticatedRestaurant?.id]);
+    // Demo modda backend çağrısı yapma
+  }, []);
 
   // Toplu QR kod oluşturma - Sabit QR kodları (basılabilir)
   const handleCreateBulkQRCodes = async () => {

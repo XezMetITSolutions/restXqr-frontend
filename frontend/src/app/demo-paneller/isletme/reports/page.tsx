@@ -201,30 +201,60 @@ export default function ReportsPage() {
     }
   };
   
-  // Gerçek veriler API'den gelecek - şu an için boş
+  // Demo veriler
   const currentDailyReport = {
-    totalSales: 0,
-    totalOrders: 0,
-    averageOrderValue: 0,
-    totalTables: 0,
-    averageTableTime: 0
+    totalSales: 45680,
+    totalOrders: 127,
+    averageOrderValue: 359.68,
+    totalTables: 18,
+    averageTableTime: 52
   };
 
   const revenueData = {
-    daily: { today: 0, yesterday: 0, change: 0 },
-    weekly: { thisWeek: 0, lastWeek: 0, change: 0 },
-    monthly: { thisMonth: 0, lastMonth: 0, change: 0 }
+    daily: { today: 45680, yesterday: 40850, change: 12 },
+    weekly: { thisWeek: 285400, lastWeek: 263200, change: 8 },
+    monthly: { thisMonth: 1245000, lastMonth: 1150000, change: 8 }
   };
 
-  const dailyTrend: { date: string; revenue: number; orders: number }[] = [];
-  const maxDailyRevenue = 0;
-  const weeklyTrend: { week: string; revenue: number; orders: number }[] = [];
-  const monthlyTrend: { month: string; revenue: number; orders: number }[] = [];
-  const topProducts: { productId: string; productName: string; totalQuantity: number; totalRevenue: number; orderCount: number }[] = [];
-  const hourlySales: number[] = [];
-  const maxHourly = 0;
+  const dailyTrend: { date: string; revenue: number; orders: number }[] = [
+    { date: new Date(Date.now() - 6 * 86400000).toISOString().split('T')[0], revenue: 38500, orders: 105 },
+    { date: new Date(Date.now() - 5 * 86400000).toISOString().split('T')[0], revenue: 42300, orders: 118 },
+    { date: new Date(Date.now() - 4 * 86400000).toISOString().split('T')[0], revenue: 39800, orders: 112 },
+    { date: new Date(Date.now() - 3 * 86400000).toISOString().split('T')[0], revenue: 44200, orders: 125 },
+    { date: new Date(Date.now() - 2 * 86400000).toISOString().split('T')[0], revenue: 41500, orders: 115 },
+    { date: new Date(Date.now() - 1 * 86400000).toISOString().split('T')[0], revenue: 40850, orders: 114 },
+    { date: new Date().toISOString().split('T')[0], revenue: 45680, orders: 127 }
+  ];
+  const maxDailyRevenue = Math.max(...dailyTrend.map(d => d.revenue));
+  
+  const weeklyTrend: { week: string; revenue: number; orders: number }[] = [
+    { week: 'Bu Hafta', revenue: 285400, orders: 816 },
+    { week: 'Geçen Hafta', revenue: 263200, orders: 752 },
+    { week: '2 Hafta Önce', revenue: 278900, orders: 798 },
+    { week: '3 Hafta Önce', revenue: 255600, orders: 731 }
+  ];
+  
+  const monthlyTrend: { month: string; revenue: number; orders: number }[] = [
+    { month: 'Bu Ay', revenue: 1245000, orders: 3560 },
+    { month: 'Geçen Ay', revenue: 1150000, orders: 3280 },
+    { month: '2 Ay Önce', revenue: 1198000, orders: 3420 }
+  ];
+  
+  const topProducts: { productId: string; productName: string; totalQuantity: number; totalRevenue: number; orderCount: number }[] = [
+    { productId: '1', productName: 'Karışık Pizza', totalQuantity: 156, totalRevenue: 23400, orderCount: 89 },
+    { productId: '2', productName: 'Izgara Köfte', totalQuantity: 142, totalRevenue: 21300, orderCount: 78 },
+    { productId: '3', productName: 'Tavuk Şiş', totalQuantity: 128, totalRevenue: 19200, orderCount: 71 },
+    { productId: '4', productName: 'Çoban Salata', totalQuantity: 98, totalRevenue: 7350, orderCount: 98 },
+    { productId: '5', productName: 'Adana Kebap', totalQuantity: 87, totalRevenue: 15660, orderCount: 52 },
+    { productId: '6', productName: 'Lahmacun', totalQuantity: 76, totalRevenue: 6080, orderCount: 45 },
+    { productId: '7', productName: 'Mercimek Çorbası', totalQuantity: 65, totalRevenue: 3250, orderCount: 65 },
+    { productId: '8', productName: 'Künefe', totalQuantity: 54, totalRevenue: 6480, orderCount: 54 }
+  ];
+  
+  const hourlySales: number[] = [12, 18, 25, 42, 68, 95, 87, 76, 58, 45, 32, 28];
+  const maxHourly = Math.max(...hourlySales);
   const hourLabels = Array.from({ length: 12 }, (_, i) => `${i + 8}:00`);
-  const profitableHours = new Set<number>();
+  const profitableHours = new Set<number>([4, 5, 6]);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('tr-TR', {
