@@ -27,11 +27,12 @@ export default function IsletmeGirisPage() {
       
       // Ana domain'den geliyorsa demo panele yönlendir
       if (mainDomains.includes(currentSubdomain) || !hostname.includes('.')) {
-        router.push('/demo-paneller/isletme/dashboard');
+        // window.location kullanarak hard redirect yap
+        window.location.href = '/demo-paneller/isletme/dashboard';
         return;
       }
     }
-  }, [router]);
+  }, []);
 
   // Subdomain ve restoran bilgilerini yükle
   useEffect(() => {
