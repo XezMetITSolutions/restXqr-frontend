@@ -18,6 +18,21 @@ export default function IsletmeGirisPage() {
   const [subdomain, setSubdomain] = useState('');
   const [restaurantInfo, setRestaurantInfo] = useState<any>(null);
 
+  // Ana domain'den gelenleri demo panele yönlendir
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const hostname = window.location.hostname;
+      const currentSubdomain = hostname.split('.')[0];
+      const mainDomains = ['localhost', 'www', 'restxqr'];
+      
+      // Ana domain'den geliyorsa demo panele yönlendir
+      if (mainDomains.includes(currentSubdomain) || !hostname.includes('.')) {
+        router.push('/demo-paneller/isletme/dashboard');
+        return;
+      }
+    }
+  }, [router]);
+
   // Subdomain ve restoran bilgilerini yükle
   useEffect(() => {
     const savedUsername = localStorage.getItem('rememberedUsername');
