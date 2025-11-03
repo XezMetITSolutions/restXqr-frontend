@@ -34,80 +34,122 @@ interface Transaction {
 
 export default function AccountingPage() {
   const router = useRouter();
-  const { isAuthenticated, logout, user } = useAuthStore();
+  const { isAuthenticated, logout } = useAuthStore();
   const hasAccountingSoftware = useFeature('accounting_software');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [showAddModal, setShowAddModal] = useState(false);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [transactions, setTransactions] = useState<Transaction[]>([
+    {
+      id: '1',
+      date: new Date().toISOString().split('T')[0],
+      description: 'Günlük Satış Geliri',
+      category: 'Satış',
+      type: 'income',
+      amount: 12500,
+      paymentMethod: 'Nakit',
+      invoiceNumber: 'INV-2024-001'
+    },
+    {
+      id: '2',
+      date: new Date().toISOString().split('T')[0],
+      description: 'Sebze ve Meyve Alımı',
+      category: 'Malzeme',
+      type: 'expense',
+      amount: 3200,
+      paymentMethod: 'Banka Transferi',
+      invoiceNumber: 'EXP-2024-045'
+    },
+    {
+      id: '3',
+      date: new Date(Date.now() - 86400000).toISOString().split('T')[0],
+      description: 'Personel Maaşları',
+      category: 'İnsan Kaynakları',
+      type: 'expense',
+      amount: 45000,
+      paymentMethod: 'Banka Transferi'
+    },
+    {
+      id: '4',
+      date: new Date(Date.now() - 86400000).toISOString().split('T')[0],
+      description: 'Hafta Sonu Satışları',
+      category: 'Satış',
+      type: 'income',
+      amount: 28000,
+      paymentMethod: 'Kredi Kartı',
+      invoiceNumber: 'INV-2024-002'
+    },
+    {
+      id: '5',
+      date: new Date(Date.now() - 172800000).toISOString().split('T')[0],
+      description: 'Elektrik Faturası',
+      category: 'Faturalar',
+      type: 'expense',
+      amount: 2800,
+      paymentMethod: 'Otomatik Ödeme',
+      invoiceNumber: 'EXP-2024-046'
+    },
+    {
+      id: '6',
+      date: new Date(Date.now() - 172800000).toISOString().split('T')[0],
+      description: 'Et ve Tavuk Alımı',
+      category: 'Malzeme',
+      type: 'expense',
+      amount: 8500,
+      paymentMethod: 'Nakit',
+      invoiceNumber: 'EXP-2024-047'
+    },
+    {
+      id: '7',
+      date: new Date(Date.now() - 259200000).toISOString().split('T')[0],
+      description: 'Hafta İçi Satışları',
+      category: 'Satış',
+      type: 'income',
+      amount: 15600,
+      paymentMethod: 'Karışık',
+      invoiceNumber: 'INV-2024-003'
+    },
+    {
+      id: '8',
+      date: new Date(Date.now() - 345600000).toISOString().split('T')[0],
+      description: 'Temizlik Malzemeleri',
+      category: 'Genel Giderler',
+      type: 'expense',
+      amount: 1200,
+      paymentMethod: 'Nakit'
+    }
+  ]);
+  const [loading, setLoading] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
 
   useEffect(() => {
     // Demo için session kontrolü yok
-    fetchTransactions();
   }, []);
 
-  const fetchTransactions = async () => {
-    try {
-      setLoading(true);
-      const restaurantId = user?.id;
-      if (!restaurantId) return;
-      
-      const response = await apiService.getTransactions(restaurantId);
-      if (response.success && response.data) {
-        setTransactions(response.data);
-      }
-    } catch (error) {
-      console.error('İşlemler yüklenirken hata:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleAddTransaction = async (transactionData: Partial<Transaction>) => {
-    try {
-      const restaurantId = user?.id;
-      if (!restaurantId) return;
-
-      const response = await apiService.createTransaction({
-        ...transactionData,
-        restaurantId
-      });
-      
-      if (response.success) {
-        await fetchTransactions();
-        setShowAddModal(false);
-      }
-    } catch (error) {
-      console.error('İşlem eklenirken hata:', error);
-    }
+    const newTransaction: Transaction = {
+      id: String(Date.now()),
+      date: transactionData.date || new Date().toISOString().split('T')[0],
+      description: transactionData.description || '',
+      category: transactionData.category || '',
+      type: transactionData.type || 'income',
+      amount: transactionData.amount || 0,
+      paymentMethod: transactionData.paymentMethod || '',
+      invoiceNumber: transactionData.invoiceNumber
+    };
+    setTransactions(prev => [newTransaction, ...prev]);
+    setShowAddModal(false);
   };
 
   const handleUpdateTransaction = async (id: string, transactionData: Partial<Transaction>) => {
-    try {
-      const response = await apiService.updateTransaction(id, transactionData);
-      if (response.success) {
-        await fetchTransactions();
-        setEditingTransaction(null);
-      }
-    } catch (error) {
-      console.error('İşlem güncellenirken hata:', error);
-    }
+    setTransactions(prev => prev.map(t => t.id === id ? { ...t, ...transactionData } : t));
+    setEditingTransaction(null);
   };
 
   const handleDeleteTransaction = async (id: string) => {
     if (!confirm('Bu işlemi silmek istediğinizden emin misiniz?')) return;
-    
-    try {
-      const response = await apiService.deleteTransaction(id);
-      if (response.success) {
-        await fetchTransactions();
-      }
-    } catch (error) {
-      console.error('İşlem silinirken hata:', error);
-    }
+    setTransactions(prev => prev.filter(t => t.id !== id));
   };
 
   // Demo için session kontrolü yok

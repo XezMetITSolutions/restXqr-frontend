@@ -38,80 +38,100 @@ interface Branch {
 
 export default function BranchesPage() {
   const router = useRouter();
-  const { isAuthenticated, logout, user } = useAuthStore();
+  const { isAuthenticated, logout } = useAuthStore();
   const hasMultiBranch = useFeature('multi_branch');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [showAddModal, setShowAddModal] = useState(false);
-  const [branches, setBranches] = useState<Branch[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [branches, setBranches] = useState<Branch[]>([
+    {
+      id: '1',
+      name: 'Merkez Şube',
+      address: 'Atatürk Caddesi No:123',
+      city: 'İstanbul',
+      phone: '+90 212 555 0101',
+      manager: 'Ahmet Yılmaz',
+      status: 'active',
+      openingHours: '09:00 - 23:00',
+      employeeCount: 25,
+      monthlyRevenue: 450000,
+      createdAt: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString()
+    },
+    {
+      id: '2',
+      name: 'Kadıköy Şubesi',
+      address: 'Bahariye Caddesi No:45',
+      city: 'İstanbul',
+      phone: '+90 216 555 0202',
+      manager: 'Ayşe Demir',
+      status: 'active',
+      openingHours: '10:00 - 22:00',
+      employeeCount: 18,
+      monthlyRevenue: 320000,
+      createdAt: new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString()
+    },
+    {
+      id: '3',
+      name: 'Ankara Şubesi',
+      address: 'Tunalı Hilmi Caddesi No:67',
+      city: 'Ankara',
+      phone: '+90 312 555 0303',
+      manager: 'Mehmet Kaya',
+      status: 'active',
+      openingHours: '09:00 - 23:00',
+      employeeCount: 22,
+      monthlyRevenue: 380000,
+      createdAt: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString()
+    },
+    {
+      id: '4',
+      name: 'İzmir Şubesi',
+      address: 'Kordon Boyu No:89',
+      city: 'İzmir',
+      phone: '+90 232 555 0404',
+      manager: 'Fatma Şahin',
+      status: 'inactive',
+      openingHours: '10:00 - 22:00',
+      employeeCount: 15,
+      monthlyRevenue: 0,
+      createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+    }
+  ]);
+  const [loading, setLoading] = useState(false);
   const [editingBranch, setEditingBranch] = useState<Branch | null>(null);
 
   useEffect(() => {
     // Demo için session kontrolü yok
-    fetchBranches();
   }, []);
 
-  const fetchBranches = async () => {
-    try {
-      setLoading(true);
-      const restaurantId = user?.id;
-      if (!restaurantId) return;
-      
-      const response = await apiService.getBranches(restaurantId);
-      if (response.success && response.data) {
-        setBranches(response.data);
-      }
-    } catch (error) {
-      console.error('Şubeler yüklenirken hata:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleAddBranch = async (branchData: Partial<Branch>) => {
-    try {
-      const restaurantId = user?.id;
-      if (!restaurantId) return;
-
-      const response = await apiService.createBranch({
-        ...branchData,
-        restaurantId
-      });
-      
-      if (response.success) {
-        await fetchBranches();
-        setShowAddModal(false);
-      }
-    } catch (error) {
-      console.error('Şube eklenirken hata:', error);
-    }
+    // Demo modda yeni şube ekle
+    const newBranch: Branch = {
+      id: String(Date.now()),
+      name: branchData.name || '',
+      address: branchData.address || '',
+      city: branchData.city || '',
+      phone: branchData.phone || '',
+      manager: branchData.manager || '',
+      status: 'active',
+      openingHours: branchData.openingHours || '09:00 - 23:00',
+      employeeCount: branchData.employeeCount || 0,
+      monthlyRevenue: 0,
+      createdAt: new Date().toISOString()
+    };
+    setBranches(prev => [...prev, newBranch]);
+    setShowAddModal(false);
   };
 
   const handleUpdateBranch = async (id: string, branchData: Partial<Branch>) => {
-    try {
-      const response = await apiService.updateBranch(id, branchData);
-      if (response.success) {
-        await fetchBranches();
-        setEditingBranch(null);
-      }
-    } catch (error) {
-      console.error('Şube güncellenirken hata:', error);
-    }
+    setBranches(prev => prev.map(b => b.id === id ? { ...b, ...branchData } : b));
+    setEditingBranch(null);
   };
 
   const handleDeleteBranch = async (id: string) => {
     if (!confirm('Bu şubeyi silmek istediğinizden emin misiniz?')) return;
-    
-    try {
-      const response = await apiService.deleteBranch(id);
-      if (response.success) {
-        await fetchBranches();
-      }
-    } catch (error) {
-      console.error('Şube silinirken hata:', error);
-    }
+    setBranches(prev => prev.filter(b => b.id !== id));
   };
 
   // Özellik kontrolü

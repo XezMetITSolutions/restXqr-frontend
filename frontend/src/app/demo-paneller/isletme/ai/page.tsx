@@ -33,40 +33,100 @@ interface AIRecommendation {
 
 export default function AIPage() {
   const router = useRouter();
-  const { isAuthenticated, logout, user } = useAuthStore();
+  const { isAuthenticated, logout } = useAuthStore();
   const hasAIRecommendations = useFeature('ai_recommendations');
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [recommendations, setRecommendations] = useState<AIRecommendation[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [recommendations, setRecommendations] = useState<AIRecommendation[]>([
+    {
+      id: '1',
+      type: 'menu',
+      title: 'Vegan Menü Seçenekleri Ekleyin',
+      description: 'Bölgenizdeki vegan müşteri talebinde %45 artış görülüyor. Menünüze 3-4 vegan seçenek eklemek, haftalık cironuzu ₺8,500 artırabilir.',
+      impact: 'high',
+      confidence: 87,
+      potentialRevenue: 8500,
+      actionRequired: 'Menüye vegan ürünler ekleyin'
+    },
+    {
+      id: '2',
+      type: 'pricing',
+      title: 'Öğle Menüsü Fiyat Optimizasyonu',
+      description: 'Öğle menü fiyatlarınız rakiplerinizden %12 daha yüksek. Fiyatları ₺5-7 düşürmek, sipariş sayısını %30 artırabilir.',
+      impact: 'high',
+      confidence: 92,
+      potentialRevenue: 12000,
+      actionRequired: 'Öğle menü fiyatlarını gözden geçirin'
+    },
+    {
+      id: '3',
+      type: 'inventory',
+      title: 'Stok Yönetimi İyileştirmesi',
+      description: 'Bazı ürünlerde %15 fire oranı tespit edildi. Stok rotasyonunu optimize ederek aylık ₺3,200 tasarruf edebilirsiniz.',
+      impact: 'medium',
+      confidence: 78,
+      potentialRevenue: 3200,
+      actionRequired: 'Stok rotasyon sistemini güncelleyin'
+    },
+    {
+      id: '4',
+      type: 'marketing',
+      title: 'Sosyal Medya Kampanyası',
+      description: 'Rakipleriniz Instagram\'da aktif ancak siz pasifsiniz. Haftalık 3 gönderi ile müşteri sayınızı %25 artırabilirsiniz.',
+      impact: 'high',
+      confidence: 85,
+      potentialRevenue: 15000,
+      actionRequired: 'Sosyal medya stratejisi oluşturun'
+    },
+    {
+      id: '5',
+      type: 'operations',
+      title: 'Personel Vardiya Optimizasyonu',
+      description: 'Yoğun saatlerde personel eksikliği, sakin saatlerde fazlalık var. Vardiya planlamasını optimize ederek aylık ₺5,000 tasarruf edebilirsiniz.',
+      impact: 'medium',
+      confidence: 81,
+      potentialRevenue: 5000,
+      actionRequired: 'Vardiya planlamasını yeniden düzenleyin'
+    },
+    {
+      id: '6',
+      type: 'menu',
+      title: 'Combo Menü Paketleri',
+      description: 'Müşterilerinizin %60\'ı birden fazla ürün sipariş ediyor. Combo menüler oluşturarak ortalama sipariş tutarını ₺25 artırabilirsiniz.',
+      impact: 'medium',
+      confidence: 88,
+      potentialRevenue: 9500,
+      actionRequired: 'Combo menü paketleri oluşturun'
+    },
+    {
+      id: '7',
+      type: 'pricing',
+      title: 'İçecek Fiyatlandırması',
+      description: 'İçecek fiyatlarınız pazar ortalamasının altında. %8-10 fiyat artışı yaparak aylık ₺4,200 ek gelir elde edebilirsiniz.',
+      impact: 'low',
+      confidence: 75,
+      potentialRevenue: 4200,
+      actionRequired: 'İçecek fiyatlarını güncelleyin'
+    },
+    {
+      id: '8',
+      type: 'marketing',
+      title: 'Sadakat Programı Başlatın',
+      description: 'Müşterilerinizin %70\'i tek seferlik ziyaretçi. Sadakat programı ile tekrar ziyaret oranını %40 artırabilirsiniz.',
+      impact: 'high',
+      confidence: 90,
+      potentialRevenue: 18000,
+      actionRequired: 'Sadakat programı sistemi kurun'
+    }
+  ]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     // Demo için session kontrolü yok
-    fetchRecommendations();
   }, []);
-
-  const fetchRecommendations = async () => {
-    try {
-      setLoading(true);
-      const restaurantId = user?.id;
-      if (!restaurantId) return;
-      
-      const response = await apiService.getAIRecommendations(restaurantId);
-      if (response.success && response.data) {
-        setRecommendations(response.data);
-      }
-    } catch (error) {
-      console.error('AI önerileri yüklenirken hata:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleDeleteRecommendation = async (id: string) => {
     try {
-      const response = await apiService.deleteAIRecommendation(id);
-      if (response.success) {
-        await fetchRecommendations();
-      }
+      setRecommendations(prev => prev.filter(r => r.id !== id));
     } catch (error) {
       console.error('Öneri silinirken hata:', error);
     }

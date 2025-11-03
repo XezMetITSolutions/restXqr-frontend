@@ -66,12 +66,9 @@ export default function SupportPage() {
     console.log('Demo panel sayfası');
   }, []);
 
-  // Destek talepleri her restoran için ayrı (boş başla, Kardeşler için demo yüklenecek)
+  // Demo panel için örnek destek talepleri
   useEffect(() => {
-    // Eğer Kardeşler restoranı ise demo ticket verilerini ekle
-    if (authenticatedRestaurant?.name.toLowerCase().includes('kardeşler') || 
-        authenticatedRestaurant?.name.toLowerCase().includes('kardesler')) {
-      const demoTickets: SupportTicket[] = [
+    const demoTickets: SupportTicket[] = [
       {
         id: 1,
         subject: 'QR Kod Tarama Sorunu',
@@ -82,7 +79,8 @@ export default function SupportPage() {
         createdAt: '2024-01-15 10:30',
         updatedAt: '2024-01-15 14:20',
         responses: [
-          { message: 'Sorununuzu inceliyoruz, kısa süre içinde dönüş yapacağız.', from: 'Destek Ekibi', time: '2024-01-15 11:00' }
+          { message: 'Sorununuzu inceliyoruz, kısa süre içinde dönüş yapacağız.', from: 'Destek Ekibi', time: '2024-01-15 11:00' },
+          { message: 'QR kod bağlantısı düzeltildi. Lütfen test edin.', from: 'Teknik Destek', time: '2024-01-15 14:20' }
         ]
       },
       {
@@ -97,12 +95,47 @@ export default function SupportPage() {
         responses: [
           { message: 'Fatura düzeltildi ve yeni fatura gönderildi.', from: 'Mali İşler', time: '2024-01-12 16:45' }
         ]
+      },
+      {
+        id: 3,
+        subject: 'Menü Güncelleme Talebi',
+        category: 'feature',
+        priority: 'normal',
+        status: 'open',
+        description: 'Menüye yeni kategori eklemek istiyorum, nasıl yapabilirim?',
+        createdAt: '2024-01-18 15:20',
+        updatedAt: '2024-01-18 15:20',
+        responses: []
+      },
+      {
+        id: 4,
+        subject: 'Personel Erişim Sorunu',
+        category: 'account',
+        priority: 'urgent',
+        status: 'in_progress',
+        description: 'Garson personelim sisteme giriş yapamıyor.',
+        createdAt: '2024-01-19 08:45',
+        updatedAt: '2024-01-19 09:30',
+        responses: [
+          { message: 'Personel hesabı kontrol ediliyor.', from: 'Destek Ekibi', time: '2024-01-19 09:00' }
+        ]
+      },
+      {
+        id: 5,
+        subject: 'Rapor İndirme Hatası',
+        category: 'technical',
+        priority: 'low',
+        status: 'closed',
+        description: 'Excel raporu indirilemiyor.',
+        createdAt: '2024-01-05 11:00',
+        updatedAt: '2024-01-06 14:30',
+        responses: [
+          { message: 'Sorun düzeltildi. Artık raporları indirebilirsiniz.', from: 'Teknik Destek', time: '2024-01-06 14:30' }
+        ]
       }
-      ];
-      setTickets(demoTickets);
-    }
-    // Diğer restoranlar boş başlar
-  }, [authenticatedRestaurant]);
+    ];
+    setTickets(demoTickets);
+  }, []);
 
   const handleLogout = () => {
     logout();
