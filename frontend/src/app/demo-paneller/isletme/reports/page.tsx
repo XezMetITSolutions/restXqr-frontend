@@ -170,7 +170,7 @@ export default function ReportsPage() {
         printWindow.document.write(`
           <html>
             <head>
-              <title>MasApp Rapor - ${activeTab}</title>
+              <title>RestXQr Rapor - ${activeTab}</title>
               <style>
                 body { font-family: Arial, sans-serif; margin: 20px; }
                 .header { text-align: center; margin-bottom: 30px; }
@@ -185,7 +185,7 @@ export default function ReportsPage() {
             </head>
             <body>
               <div class="header">
-                <h1>MasApp İşletme Raporu</h1>
+                <h1>RestXQr İşletme Raporu</h1>
                 <p>Rapor Türü: ${activeTab === 'overview' ? 'Genel Bakış' : 
                   activeTab === 'products' ? 'Ürün Performansı' : 
                   activeTab === 'revenue' ? 'Ciro Analizi' : 'Saat Analizi'}</p>

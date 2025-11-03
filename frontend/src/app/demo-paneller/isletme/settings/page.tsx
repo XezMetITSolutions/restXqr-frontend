@@ -485,9 +485,9 @@ export default function SettingsPage() {
                         </div>
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-purple-800 mb-2">MasApp'e Hoş Geldiniz!</h3>
+                        <h3 className="text-lg font-semibold text-purple-800 mb-2">RestXQr'e Hoş Geldiniz!</h3>
                         <p className="text-purple-700 text-sm mb-4">
-                          İşletmenizi MasApp ile dijitalleştirin. QR kod menü sistemi, mutfak paneli, garson hizmetleri ve ödeme sistemi ile müşteri deneyimini geliştirin.
+                          İşletmenizi RestXQr ile dijitalleştirin. QR kod menü sistemi, mutfak paneli, garson hizmetleri ve ödeme sistemi ile müşteri deneyimini geliştirin.
                         </p>
                         <div className="flex flex-wrap gap-2">
                           <button

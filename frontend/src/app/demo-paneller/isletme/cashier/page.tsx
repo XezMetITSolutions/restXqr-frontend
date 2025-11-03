@@ -32,10 +32,10 @@ export default function CashierDashboard() {
         case 'cafe':
           return 'Cafe Central';
         default:
-          return authenticatedRestaurant?.name || authenticatedStaff?.name || 'MasApp';
+          return authenticatedRestaurant?.name || authenticatedStaff?.name || 'RestXQr';
       }
     }
-    return authenticatedRestaurant?.name || authenticatedStaff?.name || 'MasApp';
+    return authenticatedRestaurant?.name || authenticatedStaff?.name || 'RestXQr';
   };
   
   const restaurantName = getRestaurantName();
@@ -222,7 +222,7 @@ export default function CashierDashboard() {
         method: paymentMethod,
         tip: 0,
         timestamp: new Date().toISOString(),
-        cashier: 'MasApp'
+        cashier: 'RestXQr'
       };
       
       // Local storage'a kaydet
@@ -368,7 +368,7 @@ export default function CashierDashboard() {
           method: payment.method,
           tip: index === 0 ? tipAmount : 0, // Bahşiş sadece ilk ödemeye
           timestamp: new Date().toISOString(),
-          cashier: 'MasApp',
+          cashier: 'RestXQr',
           isSplit: true,
           splitIndex: index + 1,
           totalSplit: splitPayments.length
