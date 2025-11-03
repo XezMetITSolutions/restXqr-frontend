@@ -262,7 +262,9 @@ export default function QRCodesPage() {
     router.push('/');
   };
 
-  if (!authenticatedRestaurant && !authenticatedStaff) {
+  // Demo modda authentication kontrolü yapma
+  const isDemo = typeof window !== 'undefined' && window.location.pathname.includes('/demo-paneller/');
+  if (!isDemo && !authenticatedRestaurant && !authenticatedStaff) {
     return <div>Yükleniyor...</div>;
   }
 
