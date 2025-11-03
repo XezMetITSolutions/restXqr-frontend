@@ -110,14 +110,14 @@ export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout 
           };
         default:
           return {
-            name: authenticatedRestaurant?.name || authenticatedStaff?.name || 'MasApp',
-            email: authenticatedRestaurant?.email || authenticatedStaff?.email || 'info@masapp.com'
+            name: authenticatedRestaurant?.name || authenticatedStaff?.name || 'RestXQr',
+            email: authenticatedRestaurant?.email || authenticatedStaff?.email || 'info@restxqr.com'
           };
       }
     }
     return {
-      name: authenticatedRestaurant?.name || authenticatedStaff?.name || 'MasApp',
-      email: authenticatedRestaurant?.email || authenticatedStaff?.email || 'info@masapp.com'
+      name: authenticatedRestaurant?.name || authenticatedStaff?.name || 'RestXQr',
+      email: authenticatedRestaurant?.email || authenticatedStaff?.email || 'info@restxqr.com'
     };
   };
   
