@@ -14,10 +14,16 @@ export function useFeature(featureId: string): boolean {
   const { restaurants, fetchRestaurantByUsername } = useRestaurantStore();
   const [loading, setLoading] = useState(false);
   
+  // Demo panelde tüm özellikler aktif
+  const isDemo = typeof window !== 'undefined' && window.location.pathname.includes('/demo-paneller/');
+  if (isDemo) {
+    console.log('📦 useFeature: Demo mode - all features enabled');
+    return true;
+  }
+  
   // Real-time data fetch için subdomain'i al ve backend'den çek
   useEffect(() => {
     // Demo panelde backend'e gitme
-    const isDemo = typeof window !== 'undefined' && window.location.pathname.includes('/demo-paneller/');
     if (isDemo) {
       console.log('📦 useFeature: Demo mode, skipping fetch');
       return;
@@ -94,6 +100,12 @@ export function useFeatures(featureIds: string[]): Record<string, boolean> {
   const { restaurants } = useRestaurantStore();
   const [remoteFeatures, setRemoteFeatures] = useState<string[] | null>(null);
 
+  // Demo panelde tüm özellikler aktif
+  const isDemo = typeof window !== 'undefined' && window.location.pathname.includes('/demo-paneller/');
+  if (isDemo) {
+    return featureIds.reduce((acc, id) => ({ ...acc, [id]: true }), {} as Record<string, boolean>);
+  }
+
   const local = useMemo(() => {
     if (authenticatedRestaurant) {
       return featureIds.reduce((acc, id) => ({
@@ -160,6 +172,21 @@ export function useActiveFeatures(): string[] {
   const { authenticatedRestaurant } = useAuthStore();
   const { restaurants } = useRestaurantStore();
   const [remoteFeatures, setRemoteFeatures] = useState<string[] | null>(null);
+
+  // Demo panelde tüm özellikler aktif - tüm mevcut özellikleri döndür
+  const isDemo = typeof window !== 'undefined' && window.location.pathname.includes('/demo-paneller/');
+  if (isDemo) {
+    return [
+      'basic_reports',
+      'advanced_analytics',
+      'google_reviews',
+      'online_ordering',
+      'loyalty_program',
+      'custom_branding',
+      'multi_location',
+      'api_access'
+    ];
+  }
 
   const local = useMemo(() => {
     if (authenticatedRestaurant) return authenticatedRestaurant.features ?? [];
