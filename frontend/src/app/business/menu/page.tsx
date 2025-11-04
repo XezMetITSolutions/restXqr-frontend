@@ -590,6 +590,15 @@ export default function MenuManagement() {
 
         {/* Action Buttons */}
         <div className="flex gap-4 mt-6 flex-wrap">
+          {/* Yeni Ürün Ekle */}
+          <button 
+            onClick={handleAddItem}
+            className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-xl hover:from-purple-600 hover:to-pink-700 transition-all shadow-lg hover:shadow-xl hover:scale-105 font-bold"
+          >
+            <FaPlus className="text-white text-xl" />
+            <span className="font-bold">Yeni Ürün Ekle</span>
+          </button>
+
           {/* Toplu Fiyat Düzenle */}
               <button 
                 onClick={() => setShowBulkPriceModal(true)}
