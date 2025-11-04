@@ -127,6 +127,7 @@ app.use('/api/apikeys', require('./routes/apikeys')); // API key management
 app.use('/api/deliveries', require('./routes/deliveries')); // Delivery management
 app.use('/api/pos', require('./routes/pos')); // POS device management
 app.use('/api/transactions', require('./routes/transactions')); // Transaction management
+app.use('/api/inventory', require('./routes/inventory')); // Inventory management
 app.use('/api/ai', require('./routes/ai')); // AI recommendations
 app.use('/api/videomenu', require('./routes/videomenu')); // Video menu
 app.use('/api/events', require('./routes/events')); // Event management
