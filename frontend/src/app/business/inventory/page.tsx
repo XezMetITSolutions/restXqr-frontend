@@ -56,40 +56,6 @@ export default function InventoryPage() {
   });
 
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
-    {
-      id: '1',
-      name: 'Domates',
-      category: 'Sebze',
-      quantity: 50,
-      unit: 'kg',
-      minStock: 20,
-      price: 15,
-      supplier: 'Yerel Hal',
-      lastUpdated: new Date().toISOString()
-    },
-    {
-      id: '2',
-      name: 'Tavuk Göğsü',
-      category: 'Et & Tavuk',
-      quantity: 15,
-      unit: 'kg',
-      minStock: 10,
-      price: 85,
-      supplier: 'Et Market',
-      lastUpdated: new Date().toISOString()
-    },
-    {
-      id: '3',
-      name: 'Zeytinyağı',
-      category: 'Yağlar',
-      quantity: 5,
-      unit: 'litre',
-      minStock: 10,
-      price: 120,
-      supplier: 'Gıda Deposu',
-      lastUpdated: new Date().toISOString()
-    }
-  ]);
 
   useEffect(() => {
     if (!isAuthenticated()) {
