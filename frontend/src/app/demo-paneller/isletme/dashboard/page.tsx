@@ -467,7 +467,7 @@ export default function BusinessDashboard() {
                       Aktif Siparişler
                     </h3>
                   </div>
-                  <Link href="/business/orders" className="text-purple-600 hover:text-purple-700 text-sm font-bold bg-gradient-to-r from-purple-100 to-pink-100 px-4 py-2 rounded-full hover:from-purple-200 hover:to-pink-200 transition-all duration-300 hover:scale-105">
+                  <Link href="/demo-paneller/isletme/orders" className="text-purple-600 hover:text-purple-700 text-sm font-bold bg-gradient-to-r from-purple-100 to-pink-100 px-4 py-2 rounded-full hover:from-purple-200 hover:to-pink-200 transition-all duration-300 hover:scale-105">
                     Tümünü Gör →
                   </Link>
                 </div>
@@ -514,25 +514,25 @@ export default function BusinessDashboard() {
                   </h3>
                 </div>
                 <div className="grid grid-cols-2 gap-6">
-                  <Link href="/business/menu" className="group/btn p-8 bg-gradient-to-br from-purple-50/80 to-purple-100/80 rounded-2xl hover:from-purple-100 hover:to-purple-200 transition-all duration-300 flex flex-col items-center justify-center gap-4 border border-purple-200/50 hover:shadow-xl hover:scale-105 backdrop-blur-sm">
+                  <Link href="/demo-paneller/isletme/menu" className="group/btn p-8 bg-gradient-to-br from-purple-50/80 to-purple-100/80 rounded-2xl hover:from-purple-100 hover:to-purple-200 transition-all duration-300 flex flex-col items-center justify-center gap-4 border border-purple-200/50 hover:shadow-xl hover:scale-105 backdrop-blur-sm cursor-pointer">
                     <div className="h-16 w-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl group-hover/btn:shadow-2xl transition-all duration-300">
                       <FaPlus className="text-2xl text-white" />
                     </div>
                     <span className="text-base font-black text-purple-800">Yeni Ürün</span>
                   </Link>
-                  <Link href="/business/orders" className="group/btn p-8 bg-gradient-to-br from-blue-50/80 to-blue-100/80 rounded-2xl hover:from-blue-100 hover:to-blue-200 transition-all duration-300 flex flex-col items-center justify-center gap-4 border border-blue-200/50 hover:shadow-xl hover:scale-105 backdrop-blur-sm">
+                  <Link href="/demo-paneller/isletme/orders" className="group/btn p-8 bg-gradient-to-br from-blue-50/80 to-blue-100/80 rounded-2xl hover:from-blue-100 hover:to-blue-200 transition-all duration-300 flex flex-col items-center justify-center gap-4 border border-blue-200/50 hover:shadow-xl hover:scale-105 backdrop-blur-sm cursor-pointer">
                     <div className="h-16 w-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-xl group-hover/btn:shadow-2xl transition-all duration-300">
                       <FaEye className="text-2xl text-white" />
                     </div>
                     <span className="text-base font-black text-blue-800">Siparişleri Gör</span>
                   </Link>
-                  <Link href="/business/menu" className="group/btn p-8 bg-gradient-to-br from-green-50/80 to-green-100/80 rounded-2xl hover:from-green-100 hover:to-green-200 transition-all duration-300 flex flex-col items-center justify-center gap-4 border border-green-200/50 hover:shadow-xl hover:scale-105 backdrop-blur-sm">
+                  <Link href="/demo-paneller/isletme/menu" className="group/btn p-8 bg-gradient-to-br from-green-50/80 to-green-100/80 rounded-2xl hover:from-green-100 hover:to-green-200 transition-all duration-300 flex flex-col items-center justify-center gap-4 border border-green-200/50 hover:shadow-xl hover:scale-105 backdrop-blur-sm cursor-pointer">
                     <div className="h-16 w-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-xl group-hover/btn:shadow-2xl transition-all duration-300">
                       <FaEdit className="text-2xl text-white" />
                     </div>
                     <span className="text-base font-black text-green-800">Menüyü Düzenle</span>
                   </Link>
-                  <button data-open-announcements onClick={() => setShowAnnModal(true)} className="group/btn p-8 bg-gradient-to-br from-yellow-50/80 to-yellow-100/80 rounded-2xl hover:from-yellow-100 hover:to-yellow-200 transition-all duration-300 flex flex-col items-center justify-center gap-4 border border-yellow-200/50 hover:shadow-xl hover:scale-105 backdrop-blur-sm">
+                  <button data-open-announcements onClick={() => setShowAnnModal(true)} className="group/btn p-8 bg-gradient-to-br from-yellow-50/80 to-yellow-100/80 rounded-2xl hover:from-yellow-100 hover:to-yellow-200 transition-all duration-300 flex flex-col items-center justify-center gap-4 border border-yellow-200/50 hover:shadow-xl hover:scale-105 backdrop-blur-sm cursor-pointer">
                     <div className="h-16 w-16 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-2xl flex items-center justify-center shadow-xl group-hover/btn:shadow-2xl transition-all duration-300">
                       <FaBullhorn className="text-2xl text-white" />
                     </div>
