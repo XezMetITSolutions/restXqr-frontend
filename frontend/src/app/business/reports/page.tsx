@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { 
@@ -45,7 +45,10 @@ export default function ReportsPage() {
   };
 
   // Feature kontrolü - erişim yok sayfası göster
-  if (!hasBasicReports && !hasAdvancedAnalytics) {
+  // Önce feature kontrolünü yap, sonra diğer işlemleri yap
+  const hasFeatureAccess = hasBasicReports || hasAdvancedAnalytics;
+  
+  if (!hasFeatureAccess) {
     return (
       <div className="min-h-screen bg-gray-50">
         <BusinessSidebar 
@@ -89,76 +92,88 @@ export default function ReportsPage() {
 
   // Excel indirme (gerçek .xlsx)
   const handleExcelExport = async () => {
-    const XLSX: any = await loadXLSX();
-    const wb = XLSX.utils.book_new();
-    const currentDate = new Date().toISOString().split('T')[0];
-    
-    if (activeTab === 'overview') {
-      const rows = [
-        ['Metrik', 'Değer'],
-        ['Bugünkü Ciro (TRY)', currentDailyReport.totalSales],
-        ['Toplam Sipariş', currentDailyReport.totalOrders],
-        ['Ortalama Sipariş (TRY)', currentDailyReport.averageOrderValue],
-        ['Aktif Masa', currentDailyReport.totalTables],
-        ['Ortalama Masa Süresi (dk)', currentDailyReport.averageTableTime]
-      ];
-      const ws = XLSX.utils.aoa_to_sheet(rows);
-      XLSX.utils.book_append_sheet(wb, ws, 'Genel Bakış');
+    try {
+      const XLSX: any = await loadXLSX();
+      if (!XLSX) {
+        throw new Error('XLSX kütüphanesi yüklenemedi');
+      }
+      
+      const wb = XLSX.utils.book_new();
+      const currentDate = new Date().toISOString().split('T')[0];
+      
+      if (activeTab === 'overview') {
+        const rows = [
+          ['Metrik', 'Değer'],
+          ['Bugünkü Ciro (TRY)', currentDailyReport?.totalSales || 0],
+          ['Toplam Sipariş', currentDailyReport?.totalOrders || 0],
+          ['Ortalama Sipariş (TRY)', currentDailyReport?.averageOrderValue || 0],
+          ['Aktif Masa', currentDailyReport?.totalTables || 0],
+          ['Ortalama Masa Süresi (dk)', currentDailyReport?.averageTableTime || 0]
+        ];
+        const ws = XLSX.utils.aoa_to_sheet(rows);
+        XLSX.utils.book_append_sheet(wb, ws, 'Genel Bakış');
+      }
+
+      if (activeTab === 'products') {
+        const rows = [
+          ['Ürün', 'Adet', 'Toplam (TRY)', 'Sipariş', 'Birim Fiyat (TRY)'],
+          ...(topProducts || []).map(p => [
+            p.productName || '',
+            p.totalQuantity || 0,
+            p.totalRevenue || 0,
+            p.orderCount || 0,
+            p.totalQuantity > 0 ? ((p.totalRevenue || 0) / p.totalQuantity).toFixed(2) : '0.00'
+          ])
+        ];
+        const ws = XLSX.utils.aoa_to_sheet(rows);
+        XLSX.utils.book_append_sheet(wb, ws, 'Ürünler');
+      }
+
+      if (activeTab === 'revenue') {
+        const dailyWs = XLSX.utils.aoa_to_sheet([
+          ['Tarih', 'Ciro (TRY)', 'Sipariş'],
+          ...(dailyTrend || []).map(d => [d.date || '', d.revenue || 0, d.orders || 0])
+        ]);
+        XLSX.utils.book_append_sheet(wb, dailyWs, 'Günlük Trend');
+
+        const weeklyWs = XLSX.utils.aoa_to_sheet([
+          ['Hafta', 'Ciro (TRY)', 'Sipariş'],
+          ...(weeklyTrend || []).map(w => [w.week || '', w.revenue || 0, w.orders || 0])
+        ]);
+        XLSX.utils.book_append_sheet(wb, weeklyWs, 'Haftalık');
+
+        const monthlyWs = XLSX.utils.aoa_to_sheet([
+          ['Ay', 'Ciro (TRY)', 'Sipariş'],
+          ...(monthlyTrend || []).map(m => [m.month || '', m.revenue || 0, m.orders || 0])
+        ]);
+        XLSX.utils.book_append_sheet(wb, monthlyWs, 'Aylık');
+      }
+
+      if (activeTab === 'hours') {
+        const ws = XLSX.utils.aoa_to_sheet([
+          ['Saat Aralığı', 'Sipariş'],
+          // Gerçek veriler API'den gelecek
+        ]);
+        XLSX.utils.book_append_sheet(wb, ws, 'Yoğun Saatler');
+      }
+
+      const arr = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+      const blob = new Blob([arr], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = URL.createObjectURL(blob);
+      try {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `masapp-rapor-${activeTab}-${currentDate}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      } finally {
+        URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error('Excel export hatası:', error);
+      alert('Excel dosyası indirilirken bir hata oluştu. Lütfen tekrar deneyin.');
     }
-
-    if (activeTab === 'products') {
-      const rows = [
-        ['Ürün', 'Adet', 'Toplam (TRY)', 'Sipariş', 'Birim Fiyat (TRY)'],
-        ...topProducts.map(p => [
-          p.productName,
-          p.totalQuantity,
-          p.totalRevenue,
-          p.orderCount,
-          (p.totalRevenue / p.totalQuantity).toFixed(2)
-        ])
-      ];
-      const ws = XLSX.utils.aoa_to_sheet(rows);
-      XLSX.utils.book_append_sheet(wb, ws, 'Ürünler');
-    }
-
-    if (activeTab === 'revenue') {
-      const dailyWs = XLSX.utils.aoa_to_sheet([
-        ['Tarih', 'Ciro (TRY)', 'Sipariş'],
-        ...dailyTrend.map(d => [d.date, d.revenue, d.orders])
-      ]);
-      XLSX.utils.book_append_sheet(wb, dailyWs, 'Günlük Trend');
-
-      const weeklyWs = XLSX.utils.aoa_to_sheet([
-        ['Hafta', 'Ciro (TRY)', 'Sipariş'],
-        ...weeklyTrend.map(w => [w.week, w.revenue, w.orders])
-      ]);
-      XLSX.utils.book_append_sheet(wb, weeklyWs, 'Haftalık');
-
-      const monthlyWs = XLSX.utils.aoa_to_sheet([
-        ['Ay', 'Ciro (TRY)', 'Sipariş'],
-        ...monthlyTrend.map(m => [m.month, m.revenue, m.orders])
-      ]);
-      XLSX.utils.book_append_sheet(wb, monthlyWs, 'Aylık');
-    }
-
-    if (activeTab === 'hours') {
-      const ws = XLSX.utils.aoa_to_sheet([
-        ['Saat Aralığı', 'Sipariş'],
-        // Gerçek veriler API'den gelecek
-      ]);
-      XLSX.utils.book_append_sheet(wb, ws, 'Yoğun Saatler');
-    }
-
-    const arr = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    const blob = new Blob([arr], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `masapp-rapor-${activeTab}-${currentDate}.xlsx`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
   };
 
   // Yazdırma fonksiyonu
@@ -614,7 +629,7 @@ export default function ReportsPage() {
                         <div className="h-6 bg-gray-100 rounded-full overflow-hidden">
                           <div
                             className="h-full bg-green-500/80"
-                            style={{ width: `${Math.max(8, Math.round((day.revenue / maxDailyRevenue) * 100))}%` }}
+                            style={{ width: `${maxDailyRevenue > 0 ? Math.max(8, Math.round((day.revenue / maxDailyRevenue) * 100)) : 8}%` }}
                           />
                         </div>
                         <div className="mt-1 flex justify-between text-[11px] text-gray-600">
@@ -741,11 +756,11 @@ export default function ReportsPage() {
                 {/* Tek bir grafik: saatlik yoğunluk + kârlı saat vurgusu */}
                 <div className="bg-gray-50 p-4 rounded-lg overflow-x-auto">
                   <div className="flex items-end gap-2 h-56 min-w-[640px] sm:min-w-0">
-                    {hourlySales.map((val, idx) => {
-                      const pct = maxHourly === 0 ? 0 : Math.round((val / maxHourly) * 100);
+                    {(hourlySales || []).map((val, idx) => {
+                      const pct = maxHourly > 0 ? Math.round((val / maxHourly) * 100) : 0;
                       const height = val === 0 ? 2 : Math.max(12, pct);
                       const hour = idx + 8;
-                      const isProfit = profitableHours.has(hour);
+                      const isProfit = profitableHours?.has(hour) || false;
                       return (
                         <div key={idx} className="flex flex-col items-center w-10 sm:w-12 h-full">
                           <div
