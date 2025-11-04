@@ -566,8 +566,8 @@ export default function BusinessDashboard() {
                     <FaChartLine className="text-3xl text-white" />
                   </div>
                   <div>
-                    <h3 className="text-4xl font-black mb-4">Aylık Performans</h3>
-                    <p className="text-purple-200 text-xl font-bold">
+                    <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black mb-2 sm:mb-4">Aylık Performans</h3>
+                    <p className="text-purple-200 text-sm sm:text-base lg:text-xl font-bold">
                       {stats.monthlyOrders > 0 ? 'Bu ay harika gidiyorsunuz! 🚀' : 'Henüz veri bulunmuyor 📊'}
                     </p>
                   </div>
@@ -581,8 +581,8 @@ export default function BusinessDashboard() {
                     </div>
                     <div className="text-green-200 text-sm font-bold bg-green-500/20 px-3 py-1 rounded-full">Ciro</div>
                   </div>
-                  <p className="text-5xl font-black mb-2">₺{stats.monthlyRevenue.toLocaleString('tr-TR')}</p>
-                  <p className="text-purple-200 text-lg font-bold">Aylık Ciro</p>
+                  <p className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black mb-2 break-words">₺{stats.monthlyRevenue.toLocaleString('tr-TR')}</p>
+                  <p className="text-purple-200 text-sm sm:text-base lg:text-lg font-bold">Aylık Ciro</p>
                 </div>
                 <div className="group/metric bg-white/15 backdrop-blur-xl rounded-2xl p-8 hover:bg-white/25 transition-all duration-500 hover:scale-105 hover:shadow-2xl border border-white/20">
                   <div className="flex items-center gap-4 mb-4">
@@ -591,8 +591,8 @@ export default function BusinessDashboard() {
                     </div>
                     <div className="text-blue-200 text-sm font-bold bg-blue-500/20 px-3 py-1 rounded-full">Sipariş</div>
                   </div>
-                  <p className="text-5xl font-black mb-2">{stats.monthlyOrders}</p>
-                  <p className="text-purple-200 text-lg font-bold">Toplam Sipariş</p>
+                  <p className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black mb-2">{stats.monthlyOrders}</p>
+                  <p className="text-purple-200 text-sm sm:text-base lg:text-lg font-bold">Toplam Sipariş</p>
                 </div>
                 <div className="group/metric bg-white/15 backdrop-blur-xl rounded-2xl p-8 hover:bg-white/25 transition-all duration-500 hover:scale-105 hover:shadow-2xl border border-white/20">
                   <div className="flex items-center gap-4 mb-4">
@@ -601,8 +601,8 @@ export default function BusinessDashboard() {
                     </div>
                     <div className="text-yellow-200 text-sm font-bold bg-yellow-500/20 px-3 py-1 rounded-full">Puan</div>
                   </div>
-                  <p className="text-5xl font-black mb-2">{stats.averageRating > 0 ? stats.averageRating.toFixed(1) : '-'}</p>
-                  <p className="text-purple-200 text-lg font-bold">Ortalama Puan</p>
+                  <p className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black mb-2">{stats.averageRating > 0 ? stats.averageRating.toFixed(1) : '-'}</p>
+                  <p className="text-purple-200 text-sm sm:text-base lg:text-lg font-bold">Ortalama Puan</p>
                 </div>
                 <div className="group/metric bg-white/15 backdrop-blur-xl rounded-2xl p-8 hover:bg-white/25 transition-all duration-500 hover:scale-105 hover:shadow-2xl border border-white/20">
                   <div className="flex items-center gap-4 mb-4">
@@ -611,8 +611,8 @@ export default function BusinessDashboard() {
                     </div>
                     <div className="text-pink-200 text-sm font-bold bg-pink-500/20 px-3 py-1 rounded-full">Memnuniyet</div>
                   </div>
-                  <p className="text-5xl font-black mb-2">{stats.customerSatisfaction > 0 ? `${stats.customerSatisfaction}%` : '-'}</p>
-                  <p className="text-purple-200 text-lg font-bold">Müşteri Memnuniyeti</p>
+                  <p className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black mb-2">{stats.customerSatisfaction > 0 ? `${stats.customerSatisfaction}%` : '-'}</p>
+                  <p className="text-purple-200 text-sm sm:text-base lg:text-lg font-bold">Müşteri Memnuniyeti</p>
                 </div>
               </div>
             </div>
