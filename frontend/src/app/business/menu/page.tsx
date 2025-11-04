@@ -1010,8 +1010,8 @@ export default function MenuManagement() {
 
           {/* Modals */}
           {showItemForm && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 z-[60] flex items-center justify-center p-4">
-              <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-[100] flex items-center justify-center p-4">
+              <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden relative z-[100]">
                 <div className="p-6 border-b flex justify-between items-center">
                   <h2 className="text-2xl font-bold">
                     {editingItem ? 'Ürünü Düzenle' : 'Yeni Ürün Ekle'}
@@ -1512,8 +1512,8 @@ export default function MenuManagement() {
           )}
 
           {showCategoryForm && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 z-[60] flex items-center justify-center p-4">
-              <div className="bg-white rounded-xl max-w-md w-full overflow-hidden">
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-[100] flex items-center justify-center p-4">
+              <div className="bg-white rounded-xl max-w-md w-full overflow-hidden relative z-[100]">
                 <div className="p-6 border-b flex justify-between items-center">
                   <h2 className="text-2xl font-bold">
                     {editingCategory ? 'Kategoriyi Düzenle' : 'Yeni Kategori Ekle'}
@@ -1624,8 +1624,8 @@ export default function MenuManagement() {
 
           {/* Kamera Modal */}
           {showCameraModal && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 z-[60] flex items-center justify-center p-4">
-              <div className="bg-white rounded-xl max-w-md w-full overflow-hidden">
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-[100] flex items-center justify-center p-4">
+              <div className="bg-white rounded-xl max-w-md w-full overflow-hidden relative z-[100]">
                 <div className="p-6 border-b flex justify-between items-center">
                   <h2 className="text-xl font-bold">Fotoğraf Çek</h2>
                   <button
@@ -1675,8 +1675,8 @@ export default function MenuManagement() {
 
           {/* Bulk Price Update Modal */}
           {showBulkPriceModal && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 z-[60] flex items-center justify-center p-4">
-              <div className="bg-white rounded-xl max-w-md w-full">
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-[100] flex items-center justify-center p-4">
+              <div className="bg-white rounded-xl max-w-md w-full relative z-[100]">
                 <div className="p-6 border-b flex justify-between items-center">
                   <h2 className="text-xl font-bold">Toplu Fiyat Düzenle</h2>
                   <button
