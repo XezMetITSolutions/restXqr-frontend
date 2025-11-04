@@ -1692,6 +1692,135 @@ export default function MenuManagement() {
             </div>
           )}
 
+          {/* Bulk Import Modal */}
+          {showBulkImport && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-[9999] flex items-center justify-end p-4">
+              <div className="bg-white rounded-xl max-w-2xl w-full relative z-[9999] lg:ml-72">
+                <div className="p-6 border-b flex justify-between items-center">
+                  <h2 className="text-xl font-bold flex items-center gap-2">
+                    <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    Toplu Ürün İçe Aktar
+                  </h2>
+                  <button
+                    onClick={() => setShowBulkImport(false)}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    <FaTimes size={20} />
+                  </button>
+                </div>
+                <div className="p-6 space-y-6">
+                  {/* Info Box */}
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                      </svg>
+                      <div>
+                        <h4 className="font-semibold text-blue-900 mb-1">CSV Formatı</h4>
+                        <p className="text-sm text-blue-800">
+                          CSV dosyanız şu sütunları içermelidir: <strong>Ürün Adı, Açıklama, Fiyat, Kategori</strong>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Upload Area */}
+                  <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-purple-400 transition-colors">
+                    <input
+                      type="file"
+                      accept=".csv"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          console.log('CSV dosyası seçildi:', file.name);
+                          // CSV işleme mantığı buraya eklenecek
+                          alert('CSV yükleme özelliği yakında aktif olacak! 🚀');
+                        }
+                      }}
+                      className="hidden"
+                      id="csv-upload"
+                    />
+                    <label htmlFor="csv-upload" className="cursor-pointer">
+                      <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-purple-100 to-pink-100 rounded-full flex items-center justify-center">
+                        <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                        </svg>
+                      </div>
+                      <p className="text-lg font-semibold text-gray-700 mb-2">CSV Dosyası Yükle</p>
+                      <p className="text-sm text-gray-500">Tıklayın veya dosyayı sürükleyin</p>
+                      <p className="text-xs text-gray-400 mt-2">Maksimum dosya boyutu: 5MB</p>
+                    </label>
+                  </div>
+
+                  {/* Example Template */}
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="font-semibold text-gray-700">Örnek Şablon</h4>
+                      <button
+                        onClick={() => {
+                          // CSV şablonu oluştur
+                          const csvContent = "Ürün Adı,Açıklama,Fiyat,Kategori\nMargherita Pizza,Domates sosu ve mozzarella,89.90,Ana Yemek\nCaesar Salad,Marul ve parmesan peyniri,45.00,Salata\nTiramisu,İtalyan tatlısı,35.00,Tatlı";
+                          const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                          const link = document.createElement('a');
+                          link.href = URL.createObjectURL(blob);
+                          link.download = 'ornek_menu_sablonu.csv';
+                          link.click();
+                        }}
+                        className="text-sm text-purple-600 hover:text-purple-700 font-medium flex items-center gap-1"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Şablonu İndir
+                      </button>
+                    </div>
+                    <div className="bg-white rounded border border-gray-200 p-3 text-xs font-mono overflow-x-auto">
+                      <div className="text-gray-600">Ürün Adı,Açıklama,Fiyat,Kategori</div>
+                      <div className="text-gray-500">Margherita Pizza,Domates sosu...,89.90,Ana Yemek</div>
+                      <div className="text-gray-500">Caesar Salad,Marul ve parmesan...,45.00,Salata</div>
+                    </div>
+                  </div>
+
+                  {/* Features */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex items-start gap-2">
+                      <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg className="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-700">Hızlı İçe Aktar</p>
+                        <p className="text-xs text-gray-500">Yüzlerce ürünü tek seferde ekleyin</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg className="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-700">Otomatik Doğrulama</p>
+                        <p className="text-xs text-gray-500">Hatalı veriler otomatik tespit edilir</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-6 border-t flex justify-end gap-3 bg-gray-50">
+                  <button
+                    onClick={() => setShowBulkImport(false)}
+                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 font-medium"
+                  >
+                    İptal
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Bulk Price Update Modal */}
           {showBulkPriceModal && (
             <div className="fixed inset-0 bg-black bg-opacity-50 z-[9999] flex items-center justify-end p-4">
