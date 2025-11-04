@@ -13,7 +13,6 @@ import {
   FaSignOutAlt,
   FaBars,
   FaRocket,
-  FaSparkles,
   FaTruck,
   FaCashRegister,
   FaCalculator,
@@ -264,14 +263,14 @@ export default function BusinessSidebar({ sidebarOpen, setSidebarOpen, onLogout 
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
       <div 
-        className={`fixed inset-y-0 left-0 w-72 text-white transform transition-all duration-500 ease-in-out z-50 shadow-2xl flex flex-col ${
+        className={`fixed inset-y-0 left-0 w-72 text-white transform transition-all duration-500 ease-in-out z-40 shadow-2xl flex flex-col ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0`}
         style={{
